@@ -4,6 +4,9 @@ from flask_cors import CORS
 import pymongo
 import json
 
+from findDataFromLMK import findDataFromLMK
+from addEPCDataToUser import addEPCDataToUser
+
 app = Flask(__name__)
 
 CORS(app)
@@ -26,45 +29,35 @@ def index():
 
     return str(cursor)
 
-@app.route("/api/get_a_doc", methods=["POST"])
+@app.route("/api/add_property_to_user", methods=["POST"])
 def retrieve_doc():
     # return str(request.args)
     # response = app.make_response("helloW")
     # response.headers['Access-Control-Allow-Origin'] = '*'
     data = request.data
+    print("for starters: ")
     print(data)
     data = data.decode('utf-8')
     data = data.replace("\\", "")
-    print(data)
+    print("and again" + data)
     data = json.loads(data)
     data = data['data']
     lmk_key = data['lmk_key']
-    print(lmk_key)
+    email = data['email']
 
-    conn_str = "mongodb+srv://tm21:TomM7802@housingpassportcluster.wufr0o8.mongodb.net/?retryWrites=true&w=majority"
-    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+    print("lmk: " + lmk_key)
+    epc_data = findDataFromLMK(lmk_key)
+    print("epc_data: " + json.dumps(epc_data))
 
-    try:
-        client.server_info()
-        print("Connected...")
-    except Exception:
-        print("Unable to connect to the server.")
+    success = addEPCDataToUser(epc_data, email)
 
-    passports = client.business
+    if(success == True):
+        return 'True'
+    return 'False'
 
-    cursor = passports.passports.find({"LMK_KEY": lmk_key})
-    print("STRINGED" + str(cursor))
-    returner = cursor.next()
-    try:
-        del returner['_id']
-    except:
-        print("house not found")
-    # for record in cursor:
-    #     print(record)
-    print(returner)
     # response.set_data(str(cursor))
     # return response
-    return (str(returner))
+    # return (str(returner))
 
 @app.route("/api/get_list_of_addresses", methods=["POST"])
 def retrieve_addresses():
@@ -103,31 +96,31 @@ def retrieve_addresses():
     print(list_of_addresses)
     return list_of_addresses
 
-@app.route("/api/add_property_to_user", methods=["POST"])
+@app.route("/api/get_a_doc", methods=["POST"])
 def add_property_to_user():
     data = request.data
-    print(data)
-    # data = data.decode('utf-8')
-    # data = data.replace("\\", "")
-    # print(data)
-    # data = json.loads(data)
-    # data = data['data']
-    # lmk_key = data['lmk_key']
+    data = data.decode('utf-8')
+    print("this here is what we're at: " + data)
+    data = json.loads(data)
+    data = data['data']
+    lmk_key = data['lmk_key']
+    email = data['email']
+    print(email)
     # print(lmk_key)
 
-    # conn_str = "mongodb+srv://tm21:TomM7802@housingpassportcluster.wufr0o8.mongodb.net/?retryWrites=true&w=majority"
-    # client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+    conn_str = "mongodb+srv://tm21:TomM7802@housingpassportcluster.wufr0o8.mongodb.net/?retryWrites=true&w=majority"
+    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+    try:
+        client.server_info()
+        print("Connected...")
+    except Exception:
+        print("Unable to connect to the server.")
 
-    # try:
-    #     client.server_info()
-    #     print("Connected...")
-    # except Exception:
-    #     print("Unable to connect to the server.")
+    passports = client.business
+    cursor = passports.passports.find({"LMK_KEY": lmk_key})
 
-    # passports = client.business
-
-    # cursor = passports.passports.find({"LMK_KEY": lmk_key})
-    # print("STRINGED" + str(cursor))
+    return data
+    print("STRINGED" + str(cursor))
     # returner = cursor.next()
     # try:
     #     del returner['_id']

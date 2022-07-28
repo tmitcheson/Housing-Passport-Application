@@ -8,11 +8,10 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
+import { useSession, getSession } from 'next-auth/react';
 import Button from '@mui/material/Button';
 import styles from '../styles/List.module.css';
 // import { MongoClient } from 'mongodb';
-
 
 export default function PostcodeSearch() {
 
@@ -32,12 +31,13 @@ export default function PostcodeSearch() {
     //     'Content-Type': 'application/json' }
     // };
 
-    // axios.post('http://localhost:5000/api/get_list_of_addresses', {data})
-    axios.post('https://housing-passport-back-end.herokuapp.com/api/get_list_of_addresses', {data})
+    axios.post('http://localhost:5000/api/get_list_of_addresses', {data})
+    // axios.post('https://housing-passport-back-end.herokuapp.com/api/get_list_of_addresses', {data})
       .then(function(response) {
         const receivedData = response.data;
         console.log(receivedData);
         const newData = [];
+        // console.log(status)
         for (const i in receivedData) {
           newData.push([i, receivedData[i]]);
         }
@@ -45,18 +45,20 @@ export default function PostcodeSearch() {
       });
   };
 
+//   console.log(status);
+
   const router = useRouter();
 
   const onClick = data => {
     console.log(data);
-    data = '{"lmk_key":"' + data[1] + '", "email": "' + toString(session.user.email) + '"}';
+    data = '{"lmk_key":"' + data[1] + '", "email": "' + session.user.email + '"}';
+    console.log(data)
     data = JSON.parse(data);
     console.log('payload ready to go: ' + data);
-    // axios.post('http://localhost:5000/api/get_a_doc', {data})
-    axios.post('https://housing-passport-back-end.herokuapp.com/api/add_property_to_user', {data})
+    axios.post('http://localhost:5000/api/add_property_to_user', {data})
+    // axios.post('https://housing-passport-back-end.herokuapp.com/api/add_property_to_user', {data})
       .then(function(response) {
-        const receivedData = response.data;
-        console.log(receivedData);
+        console.log(response)
       }
       );
     // router.push('property/' + data[1]);
@@ -89,7 +91,7 @@ export default function PostcodeSearch() {
               <div href={'/property/' + item[1]} className={styles.single} key={item}> 
                 {item[0]}
                 <Button type='submit' size='small' variant='text' onClick={(e) => onClick(item, e)}> 
-                  Claim Property 
+                  Claim Property
                 </Button>
               </div>
             );
@@ -100,6 +102,13 @@ export default function PostcodeSearch() {
     </form>
   );
 }
+
+export async function getServerSideProps(context) {
+    const session = await getSession(context)
+    return {
+      props: { session }
+    }
+  }
 
 
 // // const [value, setValue] = useState('');
