@@ -13,7 +13,7 @@ export default function Home() {
         <Head>
           <title> Housing Passport | Home </title>
         </Head>
-        <h1>Welcome {session.user.name} the {session.accessToken}!</h1>
+        <h1>Welcome {session.user.name} the {session.user.role}!</h1>
         <a href='/api/auth/signout'>
         Logout
         </a>
