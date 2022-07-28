@@ -7,10 +7,15 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^1.9.1",
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
+    "@mui/material": "^5.9.2",
     "axios": "^0.27.2",
+    "mongodb": "^4.8.1",
     "next": "latest",
     "next-auth": "^4.10.2",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-hook-form": "^7.33.1"
   }
 }
