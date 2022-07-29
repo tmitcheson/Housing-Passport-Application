@@ -86,15 +86,15 @@ def retrieve_addresses():
     cursor = passports.passports.find({"POSTCODE": postcode}).sort('ADDRESS1', pymongo.ASCENDING)
     print(type(cursor))
     list_of_addresses = {}
-    try:
-        del cursor['_id']
-    except:
-        print("house not found")
+    # try:
+    #     del cursor['_id']
+    # except:
+    #     print("house not found")
     for record in cursor:
         lmk_key = record['LMK_KEY']
         address1 = record['ADDRESS1']
         list_of_addresses[address1] = lmk_key
-    print(list_of_addresses)
+    # print(list_of_addresses)
     return list_of_addresses
 
 @app.route("/api/get_a_doc", methods=["POST"])
