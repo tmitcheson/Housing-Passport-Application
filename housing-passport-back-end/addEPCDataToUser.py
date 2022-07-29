@@ -23,7 +23,7 @@ def addEPCDataToUser(epc_data, email):
     try:
         client['db-name'].users.update_one(
             {"email": email},
-            {"$set": {"property": epc_data}}
+            {"$set": {"properties": epc_data}}
         )
         return True
     except Exception as e:

@@ -77,7 +77,7 @@ export default function BasicTabs(props) {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    const newData = []
+    const newData = [];
     props = props['props']
     // console.log(props)
 
