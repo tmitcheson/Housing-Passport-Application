@@ -20,6 +20,7 @@ export default function PostcodeSearch() {
   const onSubmit = data => {
     setSubmitted(true);
     setAdded(false);
+    setFailed(false);
     console.log('request heree' + data);
     console.log('ehrer : ' + JSON.stringify(data));
 
@@ -54,7 +55,6 @@ export default function PostcodeSearch() {
         if(response.data === 'True'){
             setAdded(true);
             setSubmitted(false);
-
         }
       }
       );
