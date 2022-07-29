@@ -12,7 +12,6 @@ const Navigation = () => {
       </div>
       <Link href='/'><a> Home </a></Link>
       <Link href='/myProperties'><a>My Properties</a></Link>
-      <Link href='/search'><a> Search </a></Link>
       <Link href='/postcodeSearch'><a> Postcode Search </a></Link>
       {status === 'authenticated' &&
                 <Link href='/api/auth/signout'> Log out </Link>}
