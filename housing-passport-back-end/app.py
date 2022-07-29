@@ -46,10 +46,7 @@ def retrieve_doc():
     lmk_key = data['lmk_key']
     email = data['email']
 
-    print("lmk: " + lmk_key)
     epc_data = findDataFromLMK(lmk_key)
-    print("epc_data: " + json.dumps(epc_data))
-
     success = addEPCDataToUser(epc_data, email)
 
     if(success == True):
