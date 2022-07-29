@@ -12,6 +12,7 @@ export default function PostcodeSearch() {
 
   const [isSubmitted, setSubmitted] = useState(false);
   const [isAdded, setAdded] = useState(false);
+  const [isFailed, setFailed] = useState(false);
   const [listOfAddresses, setListOfAddresses] = useState([]);
   const { data: session, status } = useSession();
 
@@ -46,8 +47,15 @@ export default function PostcodeSearch() {
     axios.post('https://housing-passport-back-end.herokuapp.com/api/add_property_to_user', {data})
       .then(function(response) {
         console.log(response)
-        setAdded(true);
-        setSubmitted(false);
+        if(response.data === 'False'){
+            setFailed(true);
+            setSubmitted(false);
+        }
+        if(response.data === 'True'){
+            setAdded(true);
+            setSubmitted(false);
+
+        }
       }
       );
   };
@@ -93,6 +101,8 @@ export default function PostcodeSearch() {
             <Link href="/myProperties"> View my properties </Link>
         </>
         }
+        {isFailed &&
+        <h1> Something went wrong! Try again </h1>}
     </form>
   );
 }

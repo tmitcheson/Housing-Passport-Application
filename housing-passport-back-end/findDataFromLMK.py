@@ -16,5 +16,6 @@ def findDataFromLMK(lmk_key):
         del returner['_id']
     except:
         print("not got an id")
+    print("not in this function 1")
 
     return returner

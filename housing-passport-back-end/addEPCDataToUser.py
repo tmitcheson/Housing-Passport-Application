@@ -18,6 +18,8 @@ def addEPCDataToUser(epc_data, email):
     # del returner['_id']
     # property_count = returner
 
+    print("not in this function 2")
+
     try:
         client['db-name'].users.update_one(
             {"email": email},
