@@ -1,35 +1,26 @@
 import axios from 'axios';
 import React from 'react';
-// // import Home from '.';
-
-// // import { NameForm } from '../classes/nameForm'
-// // import { LmkKeyForm } from '../classes/lmkKeyForm'
 
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import { useSession, getSession } from 'next-auth/react';
 import Button from '@mui/material/Button';
 import styles from '../styles/List.module.css';
-// import { MongoClient } from 'mongodb';
+import Link from 'next/link';
 
 export default function PostcodeSearch() {
 
   const [isSubmitted, setSubmitted] = useState(false);
+  const [isAdded, setAdded] = useState(false);
   const [listOfAddresses, setListOfAddresses] = useState([]);
   const { data: session, status } = useSession();
 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const onSubmit = data => {
     setSubmitted(true);
+    setAdded(false);
     console.log('request heree' + data);
     console.log('ehrer : ' + JSON.stringify(data));
-    // console.log("whatever: " + makeEpcApiCall(data));
-    // let list_of_addresses = makeEpcApiCall(data)
-    // const config = {
-    //   headers: {
-    //     'Content-Type': 'application/json' }
-    // };
 
     // axios.post('http://localhost:5000/api/get_list_of_addresses', {data})
     axios.post('https://housing-passport-back-end.herokuapp.com/api/get_list_of_addresses', {data})
@@ -45,10 +36,6 @@ export default function PostcodeSearch() {
       });
   };
 
-//   console.log(status);
-
-  const router = useRouter();
-
   const onClick = data => {
     console.log(data);
     data = '{"lmk_key":"' + data[1] + '", "email": "' + session.user.email + '"}';
@@ -59,9 +46,10 @@ export default function PostcodeSearch() {
     axios.post('https://housing-passport-back-end.herokuapp.com/api/add_property_to_user', {data})
       .then(function(response) {
         console.log(response)
+        setAdded(true);
+        setSubmitted(false);
       }
       );
-    // router.push('property/' + data[1]);
   };
 
 
@@ -99,6 +87,12 @@ export default function PostcodeSearch() {
         </div>
       </div>
       }
+      {isAdded &&
+        <>
+            <h1> Property added ! </h1>
+            <Link href="/myProperties"> View my properties </Link>
+        </>
+        }
     </form>
   );
 }
@@ -111,23 +105,3 @@ export async function getServerSideProps(context) {
   }
 
 
-// // const [value, setValue] = useState('');
-
-// remember any return value must be wrapped in a single JSX element
-// const PostcodeSearch = (props) => {
-//     console.log(props);
-//     return (
-//         <><h1>
-//             <NameForm />
-//         </h1>
-//         <h2>
-//             whaup
-//         </h2>
-//         <h3>
-//             <LmkKeyForm/>
-//         </h3></>
-//     );
-// }
-
-// export default PostcodeSearch;
-    

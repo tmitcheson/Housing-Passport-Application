@@ -9,8 +9,8 @@ const myProperties = () => {
     const data = session.user.email
     const [epcData, setEpcData] = useState([]);
 
-    axios.post('http://localhost:5000/api/get_my_property', {data})
-    // axios.post('https://housing-passport-back-end.herokuapp.com/api/get_my_property', {data})
+    // axios.post('http://localhost:5000/api/get_my_property', {data})
+    axios.post('https://housing-passport-back-end.herokuapp.com/api/get_my_property', {data})
         .then(function(response){
             const receivedData = response.data
             setEpcData(receivedData);

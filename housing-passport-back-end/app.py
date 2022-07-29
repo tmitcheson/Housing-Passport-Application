@@ -6,6 +6,7 @@ import json
 
 from findDataFromLMK import findDataFromLMK
 from addEPCDataToUser import addEPCDataToUser
+from getMyProperty import getMyProperty
 
 app = Flask(__name__)
 
@@ -140,6 +141,19 @@ def add_property_to_user():
     #     print("Unable to connect to the server.")
 
     # users = client.users
+
+@app.route("/api/get_my_property", methods=["POST"])
+def get_my_property():
+    data = request.data
+    data = data.decode('utf-8')
+    data = json.loads(data)
+    email = data['data']
+    
+    print("this here is what we're at: " + email)
+
+    epc_data = getMyProperty(email)
+
+    return epc_data
 
 
 @app.route("/api/private", methods=["GET"])
