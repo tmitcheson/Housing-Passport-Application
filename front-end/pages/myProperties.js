@@ -1,6 +1,7 @@
 import { getSession, useSession } from "next-auth/react";
 import axios from "axios";
 import BasicTabs from '../components/EpcTabs';
+import SelectProperty from '../components/SelectProperty'
 import { useState } from 'react';
 
 const myProperties = () => {
@@ -17,11 +18,15 @@ const myProperties = () => {
         }
     )
 
-    return ( <>{epcData && 
+    return ( 
+    <>
+        <SelectProperty props= {epcData} />
+        {epcData && 
             <BasicTabs props={epcData}/>}
+        <div> Are you an Octopus energy customer with a smart meter ?  </div>
     </>);
 }
- 
+
 export default myProperties
 
 export async function getServerSideProps(context) {
