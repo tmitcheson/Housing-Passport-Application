@@ -164,7 +164,7 @@ def get_my_property():
 
 
 @app.route("/api/private", methods=["GET"])
-@require_auth(None)
+# @require_auth(None)
 def private():
     print("hllo")
     response = "Hello from a private endpoint! You need to be authenticated to see this."
