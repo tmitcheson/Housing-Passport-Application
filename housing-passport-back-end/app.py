@@ -8,15 +8,15 @@ from findDataFromLMK import findDataFromLMK
 from addEPCDataToUser import addEPCDataToUser
 from getMyProperty import getMyProperty
 
-from authlib.integrations.flask_oauth2 import ResourceProtector
-from validator import Auth0JWTBearerTokenValidator
+# from authlib.integrations.flask_oauth2 import ResourceProtector
+# from validator import Auth0JWTBearerTokenValidator
 
-require_auth = ResourceProtector()
-validator = Auth0JWTBearerTokenValidator(
-    "dev-5g0j9i2z.us.auth0.com",
-    "https://housing-passport-backend.com/"
-)
-require_auth.register_token_validator(validator)
+# require_auth = ResourceProtector()
+# validator = Auth0JWTBearerTokenValidator(
+#     "dev-5g0j9i2z.us.auth0.com",
+#     "https://housing-passport-backend.com/"
+# )
+# require_auth.register_token_validator(validator)
 
 app = Flask(__name__)
 
