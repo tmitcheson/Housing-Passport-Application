@@ -66,7 +66,7 @@ const myProperties = () => {
 
     return ( 
     <>
-        {/* <SelectProperty props= {epcData} /> */}
+        <SelectProperty props= {epcData} />
         {!session &&
             <div> Sign in to view your properties </div>}
         {session && 
