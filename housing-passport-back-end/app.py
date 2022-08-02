@@ -40,7 +40,8 @@ def retrieve_doc():
     print(data)
     data = data.decode('utf-8')
     data = data.replace("\\", "")
-    print("and again" + data)
+    print("and again") 
+    print(data)
     data = json.loads(data)
     data = data['data']
     lmk_key = data['lmk_key']
@@ -155,7 +156,28 @@ def get_my_property():
 @app.route("/api/get_list_of_tradespeople", methods=["POST"])
 def get_list_of_tradespeople():
 
-    return "hi"
+    conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
+    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+
+    try:
+        client.server_info()
+        print("Connected...")
+    except Exception as e:
+        print(e)
+        print("Unable to connect to the server.")
+
+    try:
+        users = client['db-name'].users
+        cursor = users.find({"user_metadata.role": "tradesperson"})
+    except:
+        print(e)
+
+    tradespeople = {}
+    for entry in cursor:
+        clientID = entry['client_id']
+        tradespeople[clientID] = entry['email']
+
+    return tradespeople
 
 
 @app.route("/api/private", methods=["GET"])

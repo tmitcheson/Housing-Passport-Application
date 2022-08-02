@@ -17,6 +17,7 @@ export default function PostcodeSearch() {
   const { data: session, status } = useSession();
 
   const { register, handleSubmit, formState: { errors } } = useForm();
+
   const onSubmit = data => {
     setSubmitted(true);
     setAdded(false);
@@ -39,7 +40,6 @@ export default function PostcodeSearch() {
   };
 
   const onSignedInClick = data => {
-    console.log(data);
     data = '{"lmk_key":"' + data[1] + '", "email": "' + session.user.email + '"}';
     console.log(data)
     data = JSON.parse(data);
