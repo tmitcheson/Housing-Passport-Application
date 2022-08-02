@@ -13,7 +13,7 @@ const Navigation = () => {
                     <h5> Signed in as {session.user.email}</h5>}
       </div>
       <Link href='/'><a> Home </a></Link>
-      <Link href='/myProperties'><a>My Properties ({session.user.role})</a></Link>
+      <Link href='/myProperties'><a>My Properties</a></Link>
       <Link href='/postcodeSearch'><a> Postcode Search </a></Link>
       {status === 'authenticated' &&
                 <Link href='/api/auth/signout'> Log out </Link>}
