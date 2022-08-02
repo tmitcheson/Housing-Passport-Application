@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import request, make_response
+from flask import request, make_response, Flask
 from flask_cors import CORS
 import pymongo
 import json
@@ -8,15 +8,15 @@ from findDataFromLMK import findDataFromLMK
 from addEPCDataToUser import addEPCDataToUser
 from getMyProperty import getMyProperty
 
-# from authlib.integrations.flask_oauth2 import ResourceProtector
-# from validator import Auth0JWTBearerTokenValidator
+from authlib.integrations.flask_oauth2 import ResourceProtector
+from validator import Auth0JWTBearerTokenValidator
 
-# require_auth = ResourceProtector()
-# validator = Auth0JWTBearerTokenValidator(
-#     "dev-5g0j9i2z.us.auth0.com",
-#     "https://housing-passport-backend.com/"
-# )
-# require_auth.register_token_validator(validator)
+require_auth = ResourceProtector()
+validator = Auth0JWTBearerTokenValidator(
+    "dev-5g0j9i2z.us.auth0.com",
+    "https://housing-passport-backend.com"
+)
+require_auth.register_token_validator(validator)
 
 app = Flask(__name__)
 
@@ -162,9 +162,14 @@ def get_my_property():
 
     return epc_data
 
+@app.route("/api/get_list_of_tradespeople", methods=["POST"])
+def get_list_of_tradespeople():
+
+    return "hi"
+
 
 @app.route("/api/private", methods=["GET"])
-# @require_auth(None)
+@require_auth(None)
 def private():
     print("hllo")
     response = "Hello from a private endpoint! You need to be authenticated to see this."

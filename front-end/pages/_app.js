@@ -3,20 +3,23 @@ import React from 'react';
 import Layout from '../components/Layout';
 // import { withFronteggApp } from '@frontegg/nextjs';
 import { SessionProvider, useSession } from 'next-auth/react';
+import { Auth0Provider } from '@auth0/auth0-react';
 
 export default function App({ Component, pageProps}) {
   return (
-    <SessionProvider session={pageProps.session}>
-      <Layout>
-      {Component.auth ? (
-        <Auth>
+    <Auth0Provider>
+      <SessionProvider session={pageProps.session}>
+        <Layout>
+        {Component.auth ? (
+          <Auth>
+            <Component {...pageProps}/>
+          </Auth>
+        ) : (
           <Component {...pageProps}/>
-        </Auth>
-      ) : (
-        <Component {...pageProps}/>
-      )}
-      </Layout>
-    </SessionProvider>
+        )}
+        </Layout>
+      </SessionProvider>
+    </Auth0Provider>
   );
 }
 
