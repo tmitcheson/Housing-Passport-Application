@@ -4,7 +4,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { Button } from '@mui/material';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 
 function TabPanel(props) {
@@ -41,7 +43,6 @@ function a11yProps(index) {
 }
 
 export default function BasicTabs(chosenProperty) {
-
   const overviewOptions = ['ADDRESS', 'BUILDING_REFERENCE_NUMBER', 'BUILT_FORM', 'CONSTITUENCY_LABEL',
                   'CONSTRUCTION_AGE_BAND', 'COUNTY', 'CURRENT_ENERGY_EFFICIENCY', 'CURRENT_ENERGY_RATING',
                   'INSPECTION_DATE', 'LMK_KEY', 'LOCAL_AUTHORITY_LABEL', 'NUMBER_HABITABLE_ROOMS',
@@ -61,7 +62,7 @@ export default function BasicTabs(chosenProperty) {
   const emissionsOptions = ['CO2_EMISSIONS_CURRENT', 'CO2_EMISSIONS_POTENTIAL', 'CO2_EMISSIONS_CURR_PER_FLOOR_AREA'];
   const consumptionOptions = ['ENERGY_CONSUMPTION_CURRENT', 'ENERGY_CONSUMPTION_POTENTIAL',
                       'POTENTIAL_ENERGY_EFFICIENCY', 'POTENTIAL_ENERGY_RATING']
-
+  
   const [value, setValue] = React.useState(0);
   const [epcData, setEpcData] = useState([]);
   const [overview, setOverview] = useState([]);
@@ -119,6 +120,20 @@ export default function BasicTabs(chosenProperty) {
     }
   };
 
+  useEffect(() => {
+    // Update the document title using the browser API
+    setOverview(newOverview);
+    setHeating(newHeating);
+    setLighting(newLighting);
+    setWater(newWater);
+    setWindows(newWindows);
+    setRoof(newRoof);
+    setFloor(newFloor);
+    setWalls(newWalls);
+    setEmissions(newEmissions);
+    setConsumption(newConsumption);
+  } ,[chosenProperty]);
+
   
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -135,17 +150,15 @@ export default function BasicTabs(chosenProperty) {
     setWalls(newWalls);
     setEmissions(newEmissions);
     setConsumption(newConsumption);
-    
 
     console.log("new overview: " + newOverview)
 
     // this makes an array of 2-value arrays (essentially key-value pairs) so
     // that we can render them in react
-
-    for (const i in chosenPropertyTabs) {
-      newData.push([i, chosenPropertyTabs[i]]);
-    }
-    setEpcData(newData);
+    // for (const i in chosenPropertyTabs) {
+    //   newData.push([i, chosenPropertyTabs[i]]);
+    // }
+    // setEpcData(newData);
     // console.log(epcData)
   };
 
