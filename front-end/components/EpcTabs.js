@@ -40,7 +40,7 @@ function a11yProps(index) {
   };
 }
 
-export default function BasicTabs(props) {
+export default function BasicTabs(chosenProperty) {
 
   const overviewOptions = ['ADDRESS', 'BUILDING_REFERENCE_NUMBER', 'BUILT_FORM', 'CONSTITUENCY_LABEL',
                   'CONSTRUCTION_AGE_BAND', 'COUNTY', 'CURRENT_ENERGY_EFFICIENCY', 'CURRENT_ENERGY_RATING',
@@ -75,50 +75,56 @@ export default function BasicTabs(props) {
   const [emissions, setEmissions] = useState([]);
   const [consumption, setConsumption] = useState([]);
 
+  console.log("here m now: " + JSON.stringify(chosenProperty))
+  console.log("and again: " + JSON.stringify(chosenProperty['chosenProperty'][1][0]))
+  console.log("and again: " + typeof(chosenProperty['chosenProperty'][1][0]))
+
+  const chosenPropertyTabs = chosenProperty['chosenProperty'][1][0]
+
+  const newOverview = [];
+  const newHeating = [];
+  const newLighting = [];
+  const newWater = [];
+  const newWindows = [];
+  const newRoof = [];
+  const newFloor = [];
+  const newWalls = [];
+  const newEmissions = [];
+  const newConsumption = [];
+  const other = [];
+
+
+  for(const i in chosenPropertyTabs){
+    if (overviewOptions.includes(i)) {
+      newOverview.push([i, chosenPropertyTabs[i]]);
+    } else if (heatingOptions.includes(i)){
+      newHeating.push([i, chosenPropertyTabs[i]]);
+    } else if (lightingOptions.includes(i)){
+      newLighting.push([i, chosenPropertyTabs[i]]);
+    } else if (waterOptions.includes(i)){
+      newWater.push([i, chosenPropertyTabs[i]]);
+    } else if (windowsOptions.includes(i)){
+      newWindows.push([i, chosenPropertyTabs[i]]);
+    } else if (roofOptions.includes(i)){
+      newRoof.push([i, chosenPropertyTabs[i]]);
+    } else if (floorOptions.includes(i)){
+      newFloor.push([i, chosenPropertyTabs[i]]);
+    } else if (wallsOptions.includes(i)){
+      newWalls.push([i, chosenPropertyTabs[i]]);
+    } else if (emissionsOptions.includes(i)){
+      newEmissions.push([i, chosenPropertyTabs[i]]);
+    } else if (consumptionOptions.includes(i)){
+      newConsumption.push([i, chosenPropertyTabs[i]]);
+    } else { other.push([i, chosenPropertyTabs[i]]);
+    }
+  };
+
+  
   const handleChange = (event, newValue) => {
     setValue(newValue);
     const newData = [];
-    props = props['props']
-    // console.log(props)
-
-    const newOverview = [];
-    const newHeating = [];
-    const newLighting = [];
-    const newWater = [];
-    const newWindows = [];
-    const newRoof = [];
-    const newFloor = [];
-    const newWalls = [];
-    const newEmissions = [];
-    const newConsumption = [];
-    const other = [];
-
-
-    for(const i in props){
-      if (overviewOptions.includes(i)) {
-        newOverview.push([i, props[i]]);
-      } else if (heatingOptions.includes(i)){
-        newHeating.push([i, props[i]]);
-      } else if (lightingOptions.includes(i)){
-        newLighting.push([i, props[i]]);
-      } else if (waterOptions.includes(i)){
-        newWater.push([i, props[i]]);
-      } else if (windowsOptions.includes(i)){
-        newWindows.push([i, props[i]]);
-      } else if (roofOptions.includes(i)){
-        newRoof.push([i, props[i]]);
-      } else if (floorOptions.includes(i)){
-        newFloor.push([i, props[i]]);
-      } else if (wallsOptions.includes(i)){
-        newWalls.push([i, props[i]]);
-      } else if (emissionsOptions.includes(i)){
-        newEmissions.push([i, props[i]]);
-      } else if (consumptionOptions.includes(i)){
-        newConsumption.push([i, props[i]]);
-      } else { other.push([i, props[i]]);
-      }
-    };
-
+    // console.log(chosenPropertyTabs)
+    
     setOverview(newOverview);
     setHeating(newHeating);
     setLighting(newLighting);
@@ -129,14 +135,15 @@ export default function BasicTabs(props) {
     setWalls(newWalls);
     setEmissions(newEmissions);
     setConsumption(newConsumption);
+    
 
     console.log("new overview: " + newOverview)
 
     // this makes an array of 2-value arrays (essentially key-value pairs) so
     // that we can render them in react
 
-    for (const i in props) {
-      newData.push([i, props[i]]);
+    for (const i in chosenPropertyTabs) {
+      newData.push([i, chosenPropertyTabs[i]]);
     }
     setEpcData(newData);
     // console.log(epcData)

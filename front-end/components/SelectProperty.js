@@ -4,30 +4,46 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { Button } from '@mui/material';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import styles from '../styles/List.module.css'
 
-export default function SelectProperty() {
+
+export default function SelectProperty({ properties, chosenProperty, onSubmit, onSubmit2 }) {
   const [age, setAge] = React.useState('');
+  const [ myProperties, setMyProperties ] = useState([]);
+  const [ isSubmitted, setSubmitted ] = useState(true);
+  const { data: session, status } = useSession();
+
+  console.log("here" + properties)
 
   const handleChange = (event) => {
     setAge(event.target.value);
+    onSubmit(event.target.value);
+    onSubmit2();
   };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
+    <>
+    <><Box sx={{ minWidth: 120 }}>
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+        <InputLabel id="demo-simple-select-label">My Properties</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={age}
-          label="Age"
+          value={chosenProperty}
+          label="property"
           onChange={handleChange}
         >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          {properties.map(item => (
+            <MenuItem value={item}>{item[0]}</MenuItem>
+          ))
+        }
         </Select>
       </FormControl>
-    </Box>
+    </Box></>
+    </>
   );
 }
