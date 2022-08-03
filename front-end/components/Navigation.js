@@ -10,7 +10,10 @@ const Navigation = () => {
         {/* <h1> Housing Passport Application </h1> */}
         <img src='/Logo2.png'/>
         {status === 'authenticated' &&
-                    <h5> Signed in as {session.user.email}</h5>}
+        <>
+                    <h5> Signed in as {session.user.email}</h5>
+                    <h5> You have the permissions of a {session.user.role} </h5>
+        </>}
       </div>
       <Link href='/'><a> Home </a></Link>
       <Link href='/myProperties'><a>My Properties</a></Link>

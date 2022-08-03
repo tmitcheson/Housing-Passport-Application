@@ -5,6 +5,7 @@ import SelectProperty from '../components/SelectProperty'
 import { useState } from 'react';
 import { Button } from "@mui/material";
 import styles from '../styles/List.module.css'
+import { useEffect } from "react";
 
 const myProperties = () => {
     const [ isFirstSubmit, setFirstSubmit ] = useState(false);
@@ -20,8 +21,7 @@ const myProperties = () => {
 
     const {data: session, status } = useSession();
 
-    const retrieveProperties = () => {
-
+    useEffect(() => {
         if(session.user.role === 'homeowner'){
             const payload = session.user.email;
             axios.post('http://localhost:5000/api/retrieve_my_properties', {payload})
@@ -31,7 +31,7 @@ const myProperties = () => {
                     // console.log("receieveddaa" + JSON.stringify(receivedData));
                     const newProperties = [];
                     for(const i in receivedData){
-                      newProperties.push([i, receivedData[i]]);
+                        newProperties.push([i, receivedData[i]]);
                     }
                     console.log(newProperties)
                     setEpcData(newProperties);
@@ -39,8 +39,7 @@ const myProperties = () => {
                 }
                 )
             }
-
-      }
+    })
 
     const onClick = () => {
         axios.post('http://localhost:5000/api/get_list_of_tradespeople')
@@ -86,14 +85,15 @@ const myProperties = () => {
             <div> Sign in to view your properties </div>}
         {session && 
             <>
-            <Button type='submit' size='small' variant='text' onClick={() => retrieveProperties()}> Retrieve properties </Button>
             {isFirstSubmit &&
                 <>
+                <div> Welcome to your properties page. </div>
                 <SelectProperty properties={epcData} chosenProperty='' 
                                 onSubmit={(property) => setChosenProperty(property)}
                                 onSubmit2={() => setSecondSubmit(true)}/>
                 {isSecondSubmit &&
-                <><BasicTabs chosenProperty={chosenProperty}/>
+                <>
+                <BasicTabs chosenProperty={chosenProperty}/>
                 <div> Time to act on the recommendations? </div>
                 <Button type='submit' size='small' variant='text' onClick={(e) => onClick(e)}>
                     Find a tradesperson

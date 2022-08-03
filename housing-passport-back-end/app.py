@@ -187,8 +187,6 @@ def retrieve_my_properties():
     data = json.loads(data)
     email = data['payload']
 
-    print("here we are: " + email)
-
     conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
     client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
 
