@@ -7,7 +7,6 @@ import Select from '@mui/material/Select';
 import { Button } from '@mui/material';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
 import styles from '../styles/List.module.css'
 
 
