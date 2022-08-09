@@ -85,15 +85,15 @@ const myProperties = () => {
             <div> Sign in to view your properties </div>}
         {session && 
             <>
-            {isFirstSubmit &&
-                <>
-                <div> Welcome to your properties page. </div>
+                <h2> Welcome to your properties page </h2>
+                <h3> Browse your properties' EPC data here: </h3>
                 <SelectProperty properties={epcData} chosenProperty='' 
                                 onSubmit={(property) => setChosenProperty(property)}
                                 onSubmit2={() => setSecondSubmit(true)}/>
                 {isSecondSubmit &&
                 <>
                 <BasicTabs chosenProperty={chosenProperty}/>
+                <hr/>
                 <div> Time to act on the recommendations? </div>
                 <Button type='submit' size='small' variant='text' onClick={(e) => onClick(e)}>
                     Find a tradesperson
@@ -112,14 +112,18 @@ const myProperties = () => {
                     <div> Permissions extended </div>}
                 {isFailed &&
                     <div> Something went wrong </div>}
+                <hr/>
             
             </>
-            }
-            </>
-    }</>
-}
-</>)
-};
+    }
+    <hr/>
+    <h3> Act upon the recommendations here: (still working on) </h3>
+    <hr/>
+    <h3> Examine your smart meter data here: </h3>
+    </>
+        }</>
+)
+    };
 
 export default myProperties
 
