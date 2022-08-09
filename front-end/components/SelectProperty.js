@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -12,7 +12,7 @@ import styles from '../styles/List.module.css'
 
 
 export default function SelectProperty({ properties, chosenProperty, onSubmit, onSubmit2 }) {
-  const [age, setAge] = React.useState('');
+  const [age, setAge] = useState('');
   const [ myProperties, setMyProperties ] = useState([]);
   const [ isSubmitted, setSubmitted ] = useState(true);
   const { data: session, status } = useSession();

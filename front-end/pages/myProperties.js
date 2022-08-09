@@ -1,4 +1,4 @@
-import { getSession, useSession } from "next-auth/react";
+import { useSession, getSession } from "next-auth/react";
 import axios from "axios";
 import BasicTabs from '../components/EpcTabs';
 import SelectProperty from '../components/SelectProperty'
