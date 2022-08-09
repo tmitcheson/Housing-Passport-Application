@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Button } from "@mui/material";
 import styles from '../styles/List.module.css'
 import { useEffect } from "react";
+import SmartVsPrice from "../components/SmartVsPrice";
 
 const myProperties = () => {
     const [ isFirstSubmit, setFirstSubmit ] = useState(false);
@@ -91,28 +92,28 @@ const myProperties = () => {
                                 onSubmit={(property) => setChosenProperty(property)}
                                 onSubmit2={() => setSecondSubmit(true)}/>
                 {isSecondSubmit &&
-                <>
-                <BasicTabs chosenProperty={chosenProperty}/>
-                <hr/>
-                <div> Time to act on the recommendations? </div>
-                <Button type='submit' size='small' variant='text' onClick={(e) => onClick(e)}>
-                    Find a tradesperson
-                </Button>
-                {isSubmitted &&
-                    <h1> Extend permissions for {chosenProperty[0]} to ... </h1>}
-                {isSubmitted &&
-                    listOfTradespeople.map(item => {
-                        return( 
-                            <div className={styles.single} key={item}>
-                                {item[1]}
-                                <Button type='submit' size='small' variant="text" onClick={(e) => onTradeClick(e, epcData['LMK_KEY'], item[1])}> Extend permissions </Button>
-                            </div>)
-                    })}
-                {isAdded &&
-                    <div> Permissions extended </div>}
-                {isFailed &&
-                    <div> Something went wrong </div>}
-                <hr/>
+                    <>
+                    <BasicTabs chosenProperty={chosenProperty}/>
+                    <hr/>
+                    <div> Time to act on the recommendations? </div>
+                    <Button type='submit' size='small' variant='text' onClick={(e) => onClick(e)}>
+                        Find a tradesperson
+                    </Button>
+                    {isSubmitted &&
+                        <h1> Extend permissions for {chosenProperty[0]} to ... </h1>}
+                    {isSubmitted &&
+                        listOfTradespeople.map(item => {
+                            return( 
+                                <div className={styles.single} key={item}>
+                                    {item[1]}
+                                    <Button type='submit' size='small' variant="text" onClick={(e) => onTradeClick(e, epcData['LMK_KEY'], item[1])}> Extend permissions </Button>
+                                </div>)
+                        })}
+                    {isAdded &&
+                        <div> Permissions extended </div>}
+                    {isFailed &&
+                        <div> Something went wrong </div>}
+                    <hr/>
             
             </>
     }
@@ -120,6 +121,11 @@ const myProperties = () => {
     <h3> Act upon the recommendations here: (still working on) </h3>
     <hr/>
     <h3> Examine your smart meter data here: </h3>
+    <h4> 
+        For data security reasons we will never ask you to store your sensitive
+        Octopus API key on this site.
+    </h4>
+    <SmartVsPrice/> 
     </>
         }</>
 )
