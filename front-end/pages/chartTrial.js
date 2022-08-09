@@ -27,6 +27,13 @@ const chartTrial = () => {
     const [ authKey, setAuthKey ] = useState('')
     const { register, handleSubmit, formState: { errors } } = useForm();
     
+    // slightly hacky way around but got no other ideas
+    const removeDate = (dateString) => {
+        if(dateString.length > 6){
+            dateString = dateString.slice(11, 16)
+        } 
+        return dateString;
+    }
     
     const onSubmit = accountData => {
         console.log("try here: " + JSON.stringify(accountData))
@@ -39,12 +46,19 @@ const chartTrial = () => {
         const serial_number = "Z18N333768"
         const auth_key = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9"
 
-        const period_from = "2022-02-20T00:00:00Z"
-        const period_to = "2022-02-21T00:00:00Z"
+        
+        let monthAgo = new Date();
+        // monthAgo.setHours(0,0,0,0);
+        monthAgo.setTime(monthAgo.getTime() - (1000 * 60 * 60 * 24 * 30))
+        console.log(monthAgo.toISOString())
+        let now = new Date()
 
-        let to = new Date(period_to)
-        to.setTime(to.getTime() + (30*60*1000))
-        const price_period_to = to.toISOString();
+        const period_from = monthAgo.toISOString()
+        const period_to = now.toISOString()
+
+        let price_period_to = new Date(period_to)
+        // price_period_to.setTime(price_period_to.getTime() + (30*60*1000))
+        price_period_to = price_period_to.toISOString();
 
         const params = {"page_size": 25000, "period_from": period_from, "period_to": period_to}
 
@@ -53,29 +67,60 @@ const chartTrial = () => {
             params:params
         }
         ).then(function (response){
-            console.log(response.data.results);
             const df = new dfd.DataFrame(response.data.results)
+            
             df.sortValues("interval_start", {ascending:true, inplace:true})
-            console.log(df["interval_start"].values)
-            setGraphLabels(df["interval_start"].values)
-            setGraphValues(df["consumption"].values)
-            setBigDf(df)
-            console.log("first:")
-            console.log(df)
-            setSubmitted(true)
-            });
 
-        axios.get("https://api.octopus.energy/v1/products/AGILE-18-02-21/electricity-tariffs/E-1R-AGILE-18-02-21-C/standard-unit-rates/?period_from=" + period_from + "&period_to=" + price_period_to)
+            if(accountData["timeframe"] === "Day"){
+                setGraphLabels(df["interval_start"].values)
+                setGraphValues(df["consumption"].values)
+            } else if (accountData["timeframe"] === "month"){
+                let new_df = df.applyMap(removeDate)
+                let group_df = new_df.groupby(["interval_start"])  
+                let hourly_dict = group_df["colDict"]
+                let averagesTimes = []
+    
+                for(const [key, value] of Object.entries(hourly_dict)){
+                    const sum = value["consumption"].reduce((a, b) => a + b, 0);
+                    const avg = (sum/value["consumption"].length) || 0;
+                    averagesTimes.push([key, avg])
+                }
+    
+                const hourly_df = new dfd.DataFrame(averagesTimes, {columns:["time", "avg_consumption"]})
+                hourly_df.sortValues("time", {ascending:true, inplace:true})
+                // console.log(hourly_df)
+                setGraphLabels(hourly_df["time"].values)
+                setGraphValues(hourly_df["avg_consumption"].values)
+            }            
+            setSubmitted(true)
+        });
+
+        axios.get("https://api.octopus.energy/v1/products/AGILE-18-02-21/electricity-tariffs/E-1R-AGILE-18-02-21-C/standard-unit-rates/?page_size=25000&period_from=" + period_from + "&period_to=" + price_period_to)
         .then(function(response){
             console.log("prices: " + response.data.results[0])
             const df = new dfd.DataFrame(response.data.results)
             df.sortValues("valid_from", {ascending:true, inplace:true})
 
-            console.log("seconda: ")
-            console.log(df)
-            setPriceValues(df["value_inc_vat"].values)
-            // console.log("prices: " + response.data)
-        })
+            let new_df = df.applyMap(removeDate)
+            let group_df = new_df.groupby(["valid_from"])  
+            let hourly_dict = group_df["colDict"]
+            let averagesPrices = []
+
+            for(const [key, value] of Object.entries(hourly_dict)){
+                const sum = value["value_inc_vat"].reduce((a, b) => a + b, 0);
+                const avg = (sum/value["value_inc_vat"].length) || 0;
+                averagesPrices.push([key, avg])
+            }
+
+            const hourly_price_df = new dfd.DataFrame(averagesPrices, {columns:["time", "price"]})
+            hourly_price_df.sortValues("time", {ascending:true, inplace:true})
+
+            // console.log("seconda: ")
+            console.log(hourly_price_df)
+            setPriceValues(hourly_price_df["price"].values)
+            console.log("prices: " + response.data)
+        }
+        )
         }
 
 
