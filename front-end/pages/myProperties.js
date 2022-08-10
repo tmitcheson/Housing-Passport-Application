@@ -56,9 +56,9 @@ const myProperties = () => {
             }
     }, [])
 
-    useEffect(() => {
-        console.log(epcData[0][1]['LMK_KEY'])
-    }, [epcData])
+    // useEffect(() => {
+    //     console.log(epcData[0][1]['LMK_KEY'])
+    // }, [epcData])
 
     const onFormSubmit = accountData => {
 
