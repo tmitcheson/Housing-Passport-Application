@@ -126,7 +126,17 @@ const SmartVsPrice = ({mpn, serialNumber, authKey}) => {
 
     // const mixedChart = new Chart(ctx, )
     
-    return <Bar data={data} width={100} height={40} options={options}/>  
+    return (
+        <>
+    <h4> Here is a graph of your consumption profile. It takes your consumption
+        records for a specific time (currently 20th Feb before the price hikes)
+        and compares it against the Octopus Agile (variable) tariff for the day.
+        In doing so you can compare your consumption habits to the general market
+        demand and potentially decide if a variable tariff is right for you
+    </h4>
+    <Bar data={data} width={100} height={40} options={options}/>  
+    </>
+    )
     }
  
 export default SmartVsPrice;

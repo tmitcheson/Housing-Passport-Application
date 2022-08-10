@@ -52,7 +52,9 @@ const myProperties = () => {
     })
 
     const onFormSubmit = accountData => {
-        
+
+        console.log(accountData)
+
         // const mpn = accountData['mpn']
         // const serialNumber = accountData["serialNumber"]
         // const authKey = accountData["authKey"]
@@ -149,7 +151,9 @@ const myProperties = () => {
     <h3> Examine your smart meter data here: </h3>
     <h4> 
         For data security reasons we will never ask you to store your sensitive
-        Octopus API key on this site.
+        Octopus API key on this site. This means each time you log in the site
+        will not remember any of the following information and it will need to
+        be submitted again
     </h4>
     <form 
         onSubmit={handleSubmit(onFormSubmit)}>      
@@ -163,22 +167,22 @@ const myProperties = () => {
                     // {...register('mpn', { required: true })}
                     />
                 <p></p>
-                <label htmlFor='serial_number'>
-                            serial_number:{'   '}
+                <label htmlFor='serialNumber'>
+                            serialNumber:{'   '}
                 </label>
                 <input
-                    id='serial_number'
-                    aria-invalid={errors.serial_number ? 'true' : 'false'}
-                    {...register('serial_number')}
+                    id='serialNumber'
+                    aria-invalid={errors.serialNumber ? 'true' : 'false'}
+                    {...register('serialNumber')}
                     />
                 <p></p>
-                <label htmlFor='auth_key'>
-                            auth_key:{'   '}
+                <label htmlFor='authKey'>
+                            authKey:{'   '}
                 </label>
                 <input
-                    id='auth_key'
-                    aria-invalid={errors.auth_key ? 'true' : 'false'}
-                    {...register('auth_key')}
+                    id='authKey'
+                    aria-invalid={errors.authKey ? 'true' : 'false'}
+                    {...register('authKey')}
                     />
                 <p></p>
                 <select {...register('timeframe', { required: true })}> 
