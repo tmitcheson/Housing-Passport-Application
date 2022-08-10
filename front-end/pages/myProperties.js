@@ -7,10 +7,11 @@ import { Button } from "@mui/material";
 import styles from '../styles/List.module.css'
 import { useEffect } from "react";
 import SmartVsPrice from "../components/SmartVsPrice";
+import { useForm } from 'react-hook-form';
 
 const myProperties = () => {
     const [ isFirstSubmit, setFirstSubmit ] = useState(false);
-    const [ isSecondSubmit, setSecondSubmit ] = useState(false);
+    const [ isSelectSubmit, setSelectSubmit ] = useState(false);
     const [ listOfTradespeople, setListOfTradespeople ] = useState([]);
     const [ isSubmitted, setSubmitted ] = useState(false);
     const [ epcData, setEpcData] = useState([]);
@@ -20,7 +21,15 @@ const myProperties = () => {
     const [ isTradesperson, setTradesperson ] = useState(false);
     const [ chosenProperty, setChosenProperty ] = useState([]);
 
+    const [ mpn, setMpn ] = useState('')
+    const [ serialNumber, setSerialNumber ] = useState('')
+    const [ authKey, setAuthKey ] = useState('')
+    const [ isFormSubmit, setFormSubmit ] = useState(false)
+
     const {data: session, status } = useSession();
+
+    const { register, handleSubmit, formState: { errors } } = useForm();
+
 
     useEffect(() => {
         if(session.user.role === 'homeowner'){
@@ -42,7 +51,24 @@ const myProperties = () => {
             }
     })
 
-    const onClick = () => {
+    const onFormSubmit = accountData => {
+        
+        // const mpn = accountData['mpn']
+        // const serialNumber = accountData["serialNumber"]
+        // const authKey = accountData["authKey"]
+
+        const mpn = "1200038779673"
+        const serialNumber = "Z18N333768"
+        const authKey = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9"
+
+        setMpn(mpn)
+        setSerialNumber(serialNumber)
+        setAuthKey(authKey)
+
+        setFormSubmit(true)
+    }
+
+    const onRetrieveTradesClick = () => {
         axios.post('http://localhost:5000/api/get_list_of_tradespeople')
         // axios.post('https://housing-passport-back-end.herokuapp.com/api/get_my_property')
         .then(function(response){
@@ -58,7 +84,7 @@ const myProperties = () => {
         })
     }
 
-    const onTradeClick = (e, lmk_key, email) => {
+    const onExtendTradeClick = (e, lmk_key, email) => {
         console.log(lmk_key)
         console.log(email)
         let data = '{"lmk_key":"' + lmk_key + '", "email":"' + email + '"}';
@@ -90,13 +116,13 @@ const myProperties = () => {
                 <h3> Browse your properties' EPC data here: </h3>
                 <SelectProperty properties={epcData} chosenProperty='' 
                                 onSubmit={(property) => setChosenProperty(property)}
-                                onSubmit2={() => setSecondSubmit(true)}/>
-                {isSecondSubmit &&
+                                onSubmit2={() => setSelectSubmit(true)}/>
+                {isSelectSubmit &&
                     <>
                     <BasicTabs chosenProperty={chosenProperty}/>
                     <hr/>
                     <div> Time to act on the recommendations? </div>
-                    <Button type='submit' size='small' variant='text' onClick={(e) => onClick(e)}>
+                    <Button type='submit' size='small' variant='text' onClick={(e) => onRetrieveTradesClick(e)}>
                         Find a tradesperson
                     </Button>
                     {isSubmitted &&
@@ -106,7 +132,7 @@ const myProperties = () => {
                             return( 
                                 <div className={styles.single} key={item}>
                                     {item[1]}
-                                    <Button type='submit' size='small' variant="text" onClick={(e) => onTradeClick(e, epcData['LMK_KEY'], item[1])}> Extend permissions </Button>
+                                    <Button type='submit' size='small' variant="text" onClick={(e) => onExtendTradeClick(e, epcData['LMK_KEY'], item[1])}> Extend permissions </Button>
                                 </div>)
                         })}
                     {isAdded &&
@@ -125,9 +151,52 @@ const myProperties = () => {
         For data security reasons we will never ask you to store your sensitive
         Octopus API key on this site.
     </h4>
-    <SmartVsPrice/> 
+    <form 
+        onSubmit={handleSubmit(onFormSubmit)}>      
+                <label htmlFor='mpn'>
+                            mpn:{'   '}
+                </label>
+                <input
+                    id='mpn'
+                    aria-invalid={errors.mpn ? 'true' : 'false'}
+                    {...register('mpn')}
+                    // {...register('mpn', { required: true })}
+                    />
+                <p></p>
+                <label htmlFor='serial_number'>
+                            serial_number:{'   '}
+                </label>
+                <input
+                    id='serial_number'
+                    aria-invalid={errors.serial_number ? 'true' : 'false'}
+                    {...register('serial_number')}
+                    />
+                <p></p>
+                <label htmlFor='auth_key'>
+                            auth_key:{'   '}
+                </label>
+                <input
+                    id='auth_key'
+                    aria-invalid={errors.auth_key ? 'true' : 'false'}
+                    {...register('auth_key')}
+                    />
+                <p></p>
+                <select {...register('timeframe', { required: true })}> 
+                    <option defaultValue="day"> Day </option>
+                    <option value="week"> Week </option>
+                    <option value="month"> Month </option>
+                    <option value="year"> Year </option>
+                </select>
+                {'   '}
+                {/* <input type="submit" /> */}
+                <Button type ='submit' variant='contained'>Submit</Button>
+                </form>
+    {/* // <SmartVsPrice/> */}
+    {isFormSubmit &&
+    <SmartVsPrice mpn={mpn} serialNumber={serialNumber} authKey={authKey}/> 
+    }
     </>
-        }</>
+    }</>
 )
     };
 

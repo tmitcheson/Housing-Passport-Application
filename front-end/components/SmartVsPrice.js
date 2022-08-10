@@ -8,29 +8,19 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-const SmartVsPrice = () => {
+const SmartVsPrice = ({mpn, serialNumber, authKey}) => {
 
     const [ isSubmitted, setSubmitted] = useState(false)
     const [ graphLabels, setGraphLabels ] = useState([])
     const [ graphValues, setGraphValues ] = useState([])
     const [ priceValues, setPriceValues ] = useState([])
     const [ bigDf, setBigDf] = useState({})
-    const [ mpn, setMpn ] = useState('')
-    const [ serialNumber, setSerialNumber ] = useState('')
-    const [ authKey, setAuthKey ] = useState('')
+    // const [ mpn, setMpn ] = useState('')
+    // const [ serialNumber, setserialNumber ] = useState('')
+    // const [ authKey, setAuthKey ] = useState('')
     const { register, handleSubmit, formState: { errors } } = useForm();
     
-    
-    const onSubmit = accountData => {
-        console.log("try here: " + JSON.stringify(accountData))
-        
-        // const mpn = accountData['mpn']
-        // const serial_number = accountData["serial_number"]
-        // const auth_key = accountData["auth_key"]
-
-        const mpn = "1200038779673"
-        const serial_number = "Z18N333768"
-        const auth_key = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9"
+    useEffect(() => {
 
         const period_from = "2022-02-20T00:00:00Z"
         const period_to = "2022-02-21T00:00:00Z"
@@ -41,8 +31,8 @@ const SmartVsPrice = () => {
 
         const params = {"page_size": 25000, "period_from": period_from, "period_to": period_to}
 
-        axios.get("https://api.octopus.energy/v1/electricity-meter-points/" + mpn + "/meters/" + serial_number + "/consumption/",
-        { auth: { username: auth_key},
+        axios.get("https://api.octopus.energy/v1/electricity-meter-points/" + mpn + "/meters/" + serialNumber + "/consumption/",
+        { auth: { username: authKey},
             params:params
         }
         ).then(function (response){
@@ -69,9 +59,9 @@ const SmartVsPrice = () => {
             setPriceValues(df["value_inc_vat"].values)
             // console.log("prices: " + response.data)
         })
-        }
 
-
+    }, [mpn, serialNumber, authKey])
+    
     const data = {
         labels : graphLabels,
         datasets : [
@@ -136,54 +126,7 @@ const SmartVsPrice = () => {
 
     // const mixedChart = new Chart(ctx, )
     
-    return ( 
-        <> 
-        <form 
-        onSubmit={handleSubmit(onSubmit)}>      
-                <label htmlFor='mpn'>
-                            mpn:{'   '}
-                </label>
-                <input
-                    id='mpn'
-                    aria-invalid={errors.mpn ? 'true' : 'false'}
-                    {...register('mpn')}
-                    // {...register('mpn', { required: true })}
-                    />
-                {/* <input type="submit" /> */}
-                <p></p>
-                <label htmlFor='serial_number'>
-                            serial_number:{'   '}
-                </label>
-                <input
-                    id='serial_number'
-                    aria-invalid={errors.serial_number ? 'true' : 'false'}
-                    {...register('serial_number')}
-                    />
-                <p></p>
-                <label htmlFor='auth_key'>
-                            auth_key:{'   '}
-                </label>
-                <input
-                    id='auth_key'
-                    aria-invalid={errors.auth_key ? 'true' : 'false'}
-                    {...register('auth_key')}
-                    />
-                <p></p>
-                <select {...register('timeframe', { required: true })}> 
-                    <option defaultValue="day"> Day </option>
-                    <option value="week"> Week </option>
-                    <option value="month"> Month </option>
-                    <option value="year"> Year </option>
-                </select>
-                {'   '}
-                {/* <input type="submit" /> */}
-                <Button type ='submit' variant='contained'>Submit</Button>
-                </form>
-                {isSubmitted &&
-                <Bar data={data} width={100} height={40} options={options}/>
-                }
-                </>
-                )   
-            }
+    return <Bar data={data} width={100} height={40} options={options}/>  
+    }
  
 export default SmartVsPrice;
