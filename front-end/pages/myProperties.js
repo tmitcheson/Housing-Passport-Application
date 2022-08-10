@@ -13,7 +13,7 @@ const myProperties = () => {
     const [ isSecondSubmit, setSecondSubmit ] = useState(false);
     const [ listOfTradespeople, setListOfTradespeople ] = useState([]);
     const [ isSubmitted, setSubmitted ] = useState(false);
-    const [epcData, setEpcData] = useState([]);
+    const [ epcData, setEpcData] = useState([]);
     const [ isFailed, setFailed ] = useState(false);
     const [ isAdded, setAdded ] = useState(false);
     const [ myProperties, setMyProperties] = useState([]);
@@ -34,7 +34,7 @@ const myProperties = () => {
                     for(const i in receivedData){
                         newProperties.push([i, receivedData[i]]);
                     }
-                    console.log(newProperties)
+                    // console.log(newProperties)
                     setEpcData(newProperties);
                     setFirstSubmit(true);
                 }

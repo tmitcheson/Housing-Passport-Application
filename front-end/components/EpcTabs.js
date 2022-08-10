@@ -22,7 +22,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -75,10 +75,6 @@ export default function BasicTabs(chosenProperty) {
   const [walls, setWalls] = useState([]);
   const [emissions, setEmissions] = useState([]);
   const [consumption, setConsumption] = useState([]);
-
-  console.log("here m now: " + JSON.stringify(chosenProperty))
-  console.log("and again: " + JSON.stringify(chosenProperty['chosenProperty'][1][0]))
-  console.log("and again: " + typeof(chosenProperty['chosenProperty'][1][0]))
 
   const chosenPropertyTabs = chosenProperty['chosenProperty'][1][0]
 
@@ -137,29 +133,6 @@ export default function BasicTabs(chosenProperty) {
   
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    const newData = [];
-    // console.log(chosenPropertyTabs)
-    
-    setOverview(newOverview);
-    setHeating(newHeating);
-    setLighting(newLighting);
-    setWater(newWater);
-    setWindows(newWindows);
-    setRoof(newRoof);
-    setFloor(newFloor);
-    setWalls(newWalls);
-    setEmissions(newEmissions);
-    setConsumption(newConsumption);
-
-    console.log("new overview: " + newOverview)
-
-    // this makes an array of 2-value arrays (essentially key-value pairs) so
-    // that we can render them in react
-    // for (const i in chosenPropertyTabs) {
-    //   newData.push([i, chosenPropertyTabs[i]]);
-    // }
-    // setEpcData(newData);
-    // console.log(epcData)
   };
 
   return (
@@ -180,92 +153,92 @@ export default function BasicTabs(chosenProperty) {
       </Box>
       <TabPanel value={value} index={0}>
       <div className='epcData'>
-        <ul>
-            {overview.map(item => {
-              return <li key={item}> {item[0]}: {item[1]}</li>;
+        <table> 
+          {overview.map(item => {
+            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
             })}
-        </ul>
+        </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={1}>
       <div className='epcData'>
-        <ul>
-            {heating.map(item => {
-              return <li key={item}> {item[0]}: {item[1]}</li>;
+        <table> 
+          {heating.map(item => {
+            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
             })}
-        </ul>
+        </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={2}>
       <div className='epcData'>
-        <ul>
-            {lighting.map(item => {
-              return <li key={item}> {item[0]}: {item[1]}</li>;
+        <table> 
+          {lighting.map(item => {
+            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
             })}
-        </ul>
+        </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={3}>
       <div className='epcData'>
-        <ul>
-            {water.map(item => {
-              return <li key={item}> {item[0]}: {item[1]}</li>;
+        <table> 
+          {water.map(item => {
+            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
             })}
-        </ul>
+        </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={4}>
       <div className='epcData'>
-        <ul>
-            {windows.map(item => {
-              return <li key={item}> {item[0]}: {item[1]}</li>;
+        <table> 
+          {windows.map(item => {
+            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
             })}
-        </ul>
+        </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={5}>
       <div className='epcData'>
-        <ul>
-            {roof.map(item => {
-              return <li key={item}> {item[0]}: {item[1]}</li>;
+        <table> 
+          {roof.map(item => {
+            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
             })}
-        </ul>
+        </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={6}>
       <div className='epcData'>
-        <ul>
-            {floor.map(item => {
-              return <li key={item}> {item[0]}: {item[1]}</li>;
+        <table> 
+          {floor.map(item => {
+            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
             })}
-        </ul>
+        </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={7}>
       <div className='epcData'>
-        <ul>
-            {walls.map(item => {
-              return <li key={item}> {item[0]}: {item[1]}</li>;
+        <table> 
+          {walls.map(item => {
+            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
             })}
-        </ul>
+        </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={8}>
       <div className='epcData'>
-        <ul>
-            {emissions.map(item => {
-              return <li key={item}> {item[0]}: {item[1]}</li>;
+        <table> 
+          {emissions.map(item => {
+            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
             })}
-        </ul>
+        </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={9}>
       <div className='epcData'>
-        <ul>
-            {consumption.map(item => {
-              return <li key={item}> {item[0]}: {item[1]}</li>;
+        <table> 
+          {consumption.map(item => {
+            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
             })}
-        </ul>
+        </table>
       </div>
       </TabPanel>
     </Box>

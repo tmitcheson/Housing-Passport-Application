@@ -8,11 +8,6 @@ import { useSession } from 'next-auth/react';
 
 export default function SelectProperty({ properties, chosenProperty, onSubmit, onSubmit2 }) {
   const [age, setAge] = useState('');
-  const [ myProperties, setMyProperties ] = useState([]);
-  const [ isSubmitted, setSubmitted ] = useState(true);
-  const { data: session, status } = useSession();
-
-  console.log("here" + properties)
 
   const handleChange = (event) => {
     setAge(event.target.value);
