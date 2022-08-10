@@ -153,91 +153,111 @@ export default function BasicTabs(chosenProperty) {
       </Box>
       <TabPanel value={value} index={0}>
       <div className='epcData'>
-        <table> 
-          {overview.map(item => {
-            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
-            })}
+        <table>
+          <tbody> 
+            {overview.map(item => {
+              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              })}
+          </tbody>
         </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={1}>
       <div className='epcData'>
-        <table> 
-          {heating.map(item => {
-            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
-            })}
+        <table>
+          <tbody> 
+            {heating.map(item => {
+              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              })}
+          </tbody>
         </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={2}>
       <div className='epcData'>
-        <table> 
-          {lighting.map(item => {
-            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
-            })}
+        <table>
+          <tbody> 
+            {lighting.map(item => {
+              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              })}
+          </tbody>
         </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={3}>
       <div className='epcData'>
-        <table> 
-          {water.map(item => {
-            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
-            })}
+        <table>
+          <tbody> 
+            {water.map(item => {
+              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              })}
+          </tbody>
         </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={4}>
       <div className='epcData'>
-        <table> 
-          {windows.map(item => {
-            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
-            })}
+        <table>
+          <tbody> 
+            {windows.map(item => {
+              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              })}
+          </tbody>
         </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={5}>
       <div className='epcData'>
-        <table> 
-          {roof.map(item => {
-            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
-            })}
+        <table>
+          <tbody> 
+            {roof.map(item => {
+              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              })}
+          </tbody>
         </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={6}>
       <div className='epcData'>
-        <table> 
-          {floor.map(item => {
-            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
-            })}
+        <table>
+          <tbody> 
+            {floor.map(item => {
+              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              })}
+          </tbody>
         </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={7}>
       <div className='epcData'>
-        <table> 
-          {walls.map(item => {
-            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
-            })}
+        <table>
+          <tbody> 
+            {walls.map(item => {
+              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              })}
+          </tbody>
         </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={8}>
       <div className='epcData'>
-        <table> 
-          {emissions.map(item => {
-            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
-            })}
+        <table>
+          <tbody> 
+            {emissions.map(item => {
+              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              })}
+          </tbody>
         </table>
       </div>
       </TabPanel>
       <TabPanel value={value} index={9}>
       <div className='epcData'>
-        <table> 
-          {consumption.map(item => {
-            return <tr> <td key={item}> {item[0]}</td> <td> {item[1]}</td> </tr>
-            })}
+        <table>
+          <tbody> 
+            {consumption.map(item => {
+              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              })}
+          </tbody>
         </table>
       </div>
       </TabPanel>

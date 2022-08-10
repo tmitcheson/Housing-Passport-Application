@@ -4,7 +4,6 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { useSession } from 'next-auth/react';
 
 export default function SelectProperty({ properties, chosenProperty, onSubmit, onSubmit2 }) {
   const [age, setAge] = useState('');

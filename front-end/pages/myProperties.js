@@ -1,20 +1,22 @@
 import { useSession, getSession } from "next-auth/react";
+import { useState } from 'react';
+import { Button } from "@mui/material";
+import { useEffect } from "react";
+import { useForm } from 'react-hook-form';
+
 import axios from "axios";
 import BasicTabs from '../components/EpcTabs';
 import SelectProperty from '../components/SelectProperty'
-import { useState } from 'react';
-import { Button } from "@mui/material";
 import styles from '../styles/List.module.css'
-import { useEffect } from "react";
 import SmartVsPrice from "../components/SmartVsPrice";
-import { useForm } from 'react-hook-form';
 
 const myProperties = () => {
     const [ isFirstSubmit, setFirstSubmit ] = useState(false);
     const [ isSelectSubmit, setSelectSubmit ] = useState(false);
     const [ listOfTradespeople, setListOfTradespeople ] = useState([]);
-    const [ isSubmitted, setSubmitted ] = useState(false);
+    const [ isTradeSubmit, setTradeSubmit ] = useState(false);
     const [ epcData, setEpcData] = useState([]);
+    const [ recommendations, setRecommendations ] = ([]);
     const [ isFailed, setFailed ] = useState(false);
     const [ isAdded, setAdded ] = useState(false);
     const [ myProperties, setMyProperties] = useState([]);
@@ -43,13 +45,20 @@ const myProperties = () => {
                     for(const i in receivedData){
                         newProperties.push([i, receivedData[i]]);
                     }
-                    // console.log(newProperties)
+                    console.log(newProperties)
                     setEpcData(newProperties);
                     setFirstSubmit(true);
                 }
-                )
+                ).catch(function(error){
+                    console.log("initial oops")
+                    console.log(error)
+                })
             }
-    })
+    }, [])
+
+    useEffect(() => {
+        console.log(epcData[0][1]['LMK_KEY'])
+    }, [epcData])
 
     const onFormSubmit = accountData => {
 
@@ -82,7 +91,7 @@ const myProperties = () => {
                 newTrades.push([i, receivedTradespeople[i]]);
             }
             setListOfTradespeople(newTrades);
-            setSubmitted(true);
+            setTradeSubmit(true);
         })
     }
 
@@ -98,11 +107,11 @@ const myProperties = () => {
             console.log(response)
             if(response.data === 'False'){
                 setFailed(true);
-                setSubmitted(false);
+                setTradeSubmit(false);
             }
             if(response.data === 'True'){
                 setAdded(true);
-                setSubmitted(false);
+                setTradeSubmit(false);
             }
         }
         );
@@ -123,13 +132,14 @@ const myProperties = () => {
                     <>
                     <BasicTabs chosenProperty={chosenProperty}/>
                     <hr/>
+                    <h5> Recommendations for {chosenProperty[0]} </h5>
                     <div> Time to act on the recommendations? </div>
                     <Button type='submit' size='small' variant='text' onClick={(e) => onRetrieveTradesClick(e)}>
                         Find a tradesperson
                     </Button>
-                    {isSubmitted &&
+                    {isTradeSubmit &&
                         <h1> Extend permissions for {chosenProperty[0]} to ... </h1>}
-                    {isSubmitted &&
+                    {isTradeSubmit &&
                         listOfTradespeople.map(item => {
                             return( 
                                 <div className={styles.single} key={item}>
