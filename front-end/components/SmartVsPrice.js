@@ -19,6 +19,13 @@ const SmartVsPrice = ({mpn, serialNumber, authKey}) => {
     // const [ serialNumber, setserialNumber ] = useState('')
     // const [ authKey, setAuthKey ] = useState('')
     const { register, handleSubmit, formState: { errors } } = useForm();
+
+    const removeDate = (dateString) => {
+        if(dateString.length > 6){
+            dateString = dateString.slice(11, 16)
+        } 
+        return dateString;
+    }
     
     useEffect(() => {
 
@@ -37,9 +44,10 @@ const SmartVsPrice = ({mpn, serialNumber, authKey}) => {
         }
         ).then(function (response){
             console.log(response.data.results);
-            const df = new dfd.DataFrame(response.data.results)
+            let df = new dfd.DataFrame(response.data.results)
             df.sortValues("interval_start", {ascending:true, inplace:true})
             console.log(df["interval_start"].values)
+            df = df.applyMap(removeDate) 
             setGraphLabels(df["interval_start"].values)
             setGraphValues(df["consumption"].values)
             setBigDf(df)

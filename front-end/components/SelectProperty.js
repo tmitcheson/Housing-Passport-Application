@@ -16,7 +16,7 @@ export default function SelectProperty({ properties, chosenProperty, onSubmit, o
 
   return (
     <>
-    <><Box sx={{ minWidth: 120 }}>
+    <Box sx={{ minWidth: 120 }}>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">My Properties</InputLabel>
         <Select
@@ -24,15 +24,14 @@ export default function SelectProperty({ properties, chosenProperty, onSubmit, o
           id="demo-simple-select"
           value={chosenProperty}
           label="property"
-          onChange={handleChange}
-        >
+          onChange={handleChange}>
           {properties.map(item => (
             <MenuItem key={item[0]} value={item}>{item[0]}</MenuItem>
           ))
         }
         </Select>
       </FormControl>
-    </Box></>
+    </Box>
     </>
   );
 }

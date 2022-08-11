@@ -193,7 +193,7 @@ const chartTrial = () => {
         <form 
         onSubmit={handleSubmit(onSubmit)}>      
                 <label htmlFor='mpn'>
-                            mpn: 
+                            mprn: 
                 </label>
                 <input
                     id='mpn'

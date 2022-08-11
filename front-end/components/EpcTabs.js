@@ -2,11 +2,11 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { Button } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 
 function TabPanel(props) {
@@ -42,10 +42,10 @@ function a11yProps(index) {
   };
 }
 
-export default function BasicTabs(chosenProperty) {
+const BasicTabs = ({chosenProperty}) => {
   const overviewOptions = ['ADDRESS', 'BUILDING_REFERENCE_NUMBER', 'BUILT_FORM', 'CONSTITUENCY_LABEL',
-                  'CONSTRUCTION_AGE_BAND', 'COUNTY', 'CURRENT_ENERGY_EFFICIENCY', 'CURRENT_ENERGY_RATING',
-                  'INSPECTION_DATE', 'LMK_KEY', 'LOCAL_AUTHORITY_LABEL', 'NUMBER_HABITABLE_ROOMS',
+  'CONSTRUCTION_AGE_BAND', 'COUNTY', 'CURRENT_ENERGY_EFFICIENCY', 'CURRENT_ENERGY_RATING',
+  'INSPECTION_DATE', 'LMK_KEY', 'LOCAL_AUTHORITY_LABEL', 'NUMBER_HABITABLE_ROOMS',
                   'PROPERTY_TYPE', 'TENURE', 'TOTAL_FLOOR_AREA', ]
   const heatingOptions = ['HEATING_COST_CURRENT', 'HEATING_COST_POTENTIAL', 'MAINHEAT_DESCRIPTION',
                     'MAINHEAT_ENV_EFF', 'MAINHEAT_ENERGY_EFF', 'MAIN_FUEL'];
@@ -75,8 +75,9 @@ export default function BasicTabs(chosenProperty) {
   const [walls, setWalls] = useState([]);
   const [emissions, setEmissions] = useState([]);
   const [consumption, setConsumption] = useState([]);
-
-  const chosenPropertyTabs = chosenProperty['chosenProperty'][1][0]
+  const router = useRouter()
+  
+  const chosenPropertyTabs = chosenProperty[1][0]
 
   const newOverview = [];
   const newHeating = [];
@@ -156,7 +157,13 @@ export default function BasicTabs(chosenProperty) {
         <table>
           <tbody> 
             {overview.map(item => {
-              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              return (
+                <tr key={item}>
+                  <td> {item[0]}</td>
+                  <td> {item[1]}</td>
+                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
+                </tr>
+                )
               })}
           </tbody>
         </table>
@@ -167,7 +174,13 @@ export default function BasicTabs(chosenProperty) {
         <table>
           <tbody> 
             {heating.map(item => {
-              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              return (
+                <tr key={item}>
+                  <td> {item[0]}</td>
+                  <td> {item[1]}</td>
+                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
+                </tr>
+                )
               })}
           </tbody>
         </table>
@@ -178,7 +191,13 @@ export default function BasicTabs(chosenProperty) {
         <table>
           <tbody> 
             {lighting.map(item => {
-              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              return (
+                <tr key={item}>
+                  <td> {item[0]}</td>
+                  <td> {item[1]}</td>
+                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
+                </tr>
+                )
               })}
           </tbody>
         </table>
@@ -189,7 +208,13 @@ export default function BasicTabs(chosenProperty) {
         <table>
           <tbody> 
             {water.map(item => {
-              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              return (
+                <tr key={item}>
+                  <td> {item[0]}</td>
+                  <td> {item[1]}</td>
+                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
+                </tr>
+                )
               })}
           </tbody>
         </table>
@@ -200,7 +225,13 @@ export default function BasicTabs(chosenProperty) {
         <table>
           <tbody> 
             {windows.map(item => {
-              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              return (
+                <tr key={item}>
+                  <td> {item[0]}</td>
+                  <td> {item[1]}</td>
+                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
+                </tr>
+                )
               })}
           </tbody>
         </table>
@@ -211,7 +242,13 @@ export default function BasicTabs(chosenProperty) {
         <table>
           <tbody> 
             {roof.map(item => {
-              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              return (
+                <tr key={item}>
+                  <td> {item[0]}</td>
+                  <td> {item[1]}</td>
+                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
+                </tr>
+                )
               })}
           </tbody>
         </table>
@@ -222,7 +259,13 @@ export default function BasicTabs(chosenProperty) {
         <table>
           <tbody> 
             {floor.map(item => {
-              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              return (
+                <tr key={item}>
+                  <td> {item[0]}</td>
+                  <td> {item[1]}</td>
+                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
+                </tr>
+                )
               })}
           </tbody>
         </table>
@@ -233,7 +276,13 @@ export default function BasicTabs(chosenProperty) {
         <table>
           <tbody> 
             {walls.map(item => {
-              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              return (
+                <tr key={item}>
+                  <td> {item[0]}</td>
+                  <td> {item[1]}</td>
+                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
+                </tr>
+                )
               })}
           </tbody>
         </table>
@@ -244,7 +293,13 @@ export default function BasicTabs(chosenProperty) {
         <table>
           <tbody> 
             {emissions.map(item => {
-              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              return (
+                <tr key={item}>
+                  <td> {item[0]}</td>
+                  <td> {item[1]}</td>
+                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
+                </tr>
+                )
               })}
           </tbody>
         </table>
@@ -255,7 +310,13 @@ export default function BasicTabs(chosenProperty) {
         <table>
           <tbody> 
             {consumption.map(item => {
-              return <tr key={item}><td> {item[0]}</td><td> {item[1]}</td></tr>
+              return (
+                <tr key={item}>
+                  <td> {item[0]}</td>
+                  <td> {item[1]}</td>
+                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
+                </tr>
+                )
               })}
           </tbody>
         </table>
@@ -264,3 +325,6 @@ export default function BasicTabs(chosenProperty) {
     </Box>
   );
 }
+
+
+export default BasicTabs

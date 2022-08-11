@@ -32,7 +32,6 @@ const myProperties = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
-
     useEffect(() => {
         if(session.user.role === 'homeowner'){
             const payload = session.user.email;
@@ -45,7 +44,7 @@ const myProperties = () => {
                     for(const i in receivedData){
                         newProperties.push([i, receivedData[i]]);
                     }
-                    console.log(newProperties)
+                    // console.log(newProperties)
                     setEpcData(newProperties);
                     setFirstSubmit(true);
                 }
@@ -55,10 +54,6 @@ const myProperties = () => {
                 })
             }
     }, [])
-
-    // useEffect(() => {
-    //     console.log(epcData[0][1]['LMK_KEY'])
-    // }, [epcData])
 
     const onFormSubmit = accountData => {
 
@@ -123,7 +118,7 @@ const myProperties = () => {
             <div> Sign in to view your properties </div>}
         {session && 
             <>
-                <h2> Welcome to your properties page </h2>
+                <h2> Welcome to yourproperties page </h2>
                 <h3> Browse your properties' EPC data here: </h3>
                 <SelectProperty properties={epcData} chosenProperty='' 
                                 onSubmit={(property) => setChosenProperty(property)}
