@@ -21,7 +21,7 @@ export default function Home() {
       </>
     );
   }
-  return (<a href='/api/auth/signin'>
+  return (<Link href='/api/auth/signin'>
     <h1>Login</h1>
-  </a>);
+  </Link>);
 }

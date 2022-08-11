@@ -150,7 +150,7 @@ const MyProperties = () => {
         {session && 
             <>
                 <h2> Welcome to your properties page </h2>
-                <h3> Browse your properties' EPC data here: </h3>
+                <h3> Browse your property EPC data here: </h3>
                 <SelectProperty properties={myProperties} chosenProperty=''
                                 onSubmit={(property) => setChosenProperty(property)}
                                 onSubmit2={() => setSelectSubmit(true)}/>
