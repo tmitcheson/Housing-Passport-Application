@@ -16,7 +16,8 @@ const myProperties = () => {
     const [ isSelectSubmit, setSelectSubmit ] = useState(false);
     const [ listOfTradespeople, setListOfTradespeople ] = useState([]);
     const [ isTradeSubmit, setTradeSubmit ] = useState(false);
-    const [ recommendations, setRecommendations ] = ([]);
+    const [ recommendations, setRecommendations ] = useState([]);
+    const [ isRecomSubmit, setRecomSubmit ] = useState(false);
     const [ isFailed, setFailed ] = useState(false);
     const [ isAdded, setAdded ] = useState(false);
     const [ myProperties, setMyProperties] = useState([]);
@@ -64,17 +65,23 @@ const myProperties = () => {
 
         let config = {
             headers: {
-              "Access-Control-Allow-Origin": '*',
+                "Authorization" : "Basic dGJtaXRjaGVzb25AZ21haWwuY29tOjQ5NmRkMDcxZjhjOWY5NTM0YTNiYmM1ZDYyYmE4YjlkMWRlMmFmMzY=",
+                "Accept" : "application/json"
             }
           }
 
         axios.get("https://epc.opendatacommunities.org/api/v1/domestic/recommendations/" + chosenProperty[1][0]['LMK_KEY'], config)
         .then(function(response){
-            console.log(response.data)
+            const recommendationsFull = response.data['rows']
+            let recommendationsTemp = []
+            console.log(recommendationsFull)
+            for (const i in recommendationsFull){
+                recommendationsTemp.push([recommendationsFull[i]["improvement-id-text"], recommendationsFull[i]['indicative-cost']])
+            }
+            console.log(recommendationsTemp)
+            setRecommendations(recommendationsTemp)
+            setRecomSubmit(true)
         })
-
-        console.log(chosenProperty[1][0]['LMK_KEY'])
-        console.log(chosenProperty)
         }
     }, [chosenProperty]);
 
@@ -142,7 +149,7 @@ const myProperties = () => {
             <div> Sign in to view your properties </div>}
         {session && 
             <>
-                <h2> Welcome to yourproperties page </h2>
+                <h2> Welcome to your properties page </h2>
                 <h3> Browse your properties' EPC data here: </h3>
                 <SelectProperty properties={myProperties} chosenProperty=''
                                 onSubmit={(property) => setChosenProperty(property)}
@@ -152,12 +159,25 @@ const myProperties = () => {
                     <BasicTabs chosenProperty={chosenProperty}/>
                     <hr/>
                     <h5> Recommendations for {chosenProperty[0]} </h5>
-                    <div> Time to act on the recommendations? </div>
+                    {isRecomSubmit &&
+                        <table>
+                            <tbody> 
+                                {recommendations.map(item => {
+                                    return (
+                                        <tr key={item}>
+                                            <td> {item[0]}</td>
+                                            <td> {item[1]}</td>
+                                        </tr>
+                                        )
+                                })}
+                            </tbody>
+                        </table>}
+                    <h4> Time to act on the recommendations? </h4>
                     <Button type='submit' size='small' variant='text' onClick={(e) => onRetrieveTradesClick(e)}>
                         Find a tradesperson
                     </Button>
                     {isTradeSubmit &&
-                        <h1> Extend permissions for {chosenProperty[0]} to ... </h1>}
+                        <h4> Extend permissions for {chosenProperty[0]} to ... </h4>}
                     {isTradeSubmit &&
                         listOfTradespeople.map(item => {
                             return( 
@@ -174,8 +194,6 @@ const myProperties = () => {
             
             </>
     }
-    <hr/>
-    <h3> Act upon the recommendations here: (still working on) </h3>
     <hr/>
     <h3> Examine your smart meter data here: </h3>
     <h4> 
