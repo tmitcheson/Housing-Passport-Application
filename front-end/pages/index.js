@@ -2,6 +2,7 @@
 import Head from 'next/head';
 import { useSession } from 'next-auth/react';
 import { getSession } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -14,9 +15,9 @@ export default function Home() {
           <title> Housing Passport | Home </title>
         </Head>
         <h1>Welcome {session.user.name} the {session.user.role}!</h1>
-        <a href='/api/auth/signout'>
+        <Link href='/api/auth/signout'>
         Logout
-        </a>
+        </Link>
       </>
     );
   }

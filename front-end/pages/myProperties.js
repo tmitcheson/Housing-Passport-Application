@@ -11,7 +11,7 @@ import SelectProperty from '../components/SelectProperty'
 import styles from '../styles/List.module.css'
 import SmartVsPrice from "../components/SmartVsPrice";
 
-const myProperties = () => {
+const MyProperties = () => {
     const [ isFirstSubmit, setFirstSubmit ] = useState(false);
     const [ isSelectSubmit, setSelectSubmit ] = useState(false);
     const [ listOfTradespeople, setListOfTradespeople ] = useState([]);
@@ -251,7 +251,7 @@ const myProperties = () => {
 )
     };
 
-export default myProperties
+export default MyProperties
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)

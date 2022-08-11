@@ -15,7 +15,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-const chartTrial = () => {
+const ChartTrial = () => {
 
     const [ isSubmitted, setSubmitted] = useState(false)
     const [ graphLabels, setGraphLabels ] = useState([])
@@ -235,4 +235,4 @@ const chartTrial = () => {
                 )   
             }
             
-            export default chartTrial;
+            export default ChartTrial;
