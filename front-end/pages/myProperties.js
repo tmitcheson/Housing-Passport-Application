@@ -1,4 +1,5 @@
 import { useSession, getSession } from "next-auth/react";
+import { useLayoutEffect, useRef } from "react";
 import { useState } from 'react';
 import { Button } from "@mui/material";
 import { useEffect } from "react";
@@ -15,7 +16,6 @@ const myProperties = () => {
     const [ isSelectSubmit, setSelectSubmit ] = useState(false);
     const [ listOfTradespeople, setListOfTradespeople ] = useState([]);
     const [ isTradeSubmit, setTradeSubmit ] = useState(false);
-    const [ epcData, setEpcData] = useState([]);
     const [ recommendations, setRecommendations ] = ([]);
     const [ isFailed, setFailed ] = useState(false);
     const [ isAdded, setAdded ] = useState(false);
@@ -45,7 +45,7 @@ const myProperties = () => {
                         newProperties.push([i, receivedData[i]]);
                     }
                     // console.log(newProperties)
-                    setEpcData(newProperties);
+                    setMyProperties(newProperties);
                     setFirstSubmit(true);
                 }
                 ).catch(function(error){
@@ -54,6 +54,30 @@ const myProperties = () => {
                 })
             }
     }, [])
+
+    const firstUpdate = useRef(true);
+    useLayoutEffect(() => {
+        if (firstUpdate.current) {
+        firstUpdate.current = false;
+        } else {
+        // do things after first render
+
+        let config = {
+            headers: {
+              "Access-Control-Allow-Origin": '*',
+            }
+          }
+
+        axios.get("https://epc.opendatacommunities.org/api/v1/domestic/recommendations/" + chosenProperty[1][0]['LMK_KEY'], config)
+        .then(function(response){
+            console.log(response.data)
+        })
+
+        console.log(chosenProperty[1][0]['LMK_KEY'])
+        console.log(chosenProperty)
+        }
+    }, [chosenProperty]);
+
 
     const onFormSubmit = accountData => {
 
@@ -120,7 +144,7 @@ const myProperties = () => {
             <>
                 <h2> Welcome to yourproperties page </h2>
                 <h3> Browse your properties' EPC data here: </h3>
-                <SelectProperty properties={epcData} chosenProperty='' 
+                <SelectProperty properties={myProperties} chosenProperty=''
                                 onSubmit={(property) => setChosenProperty(property)}
                                 onSubmit2={() => setSelectSubmit(true)}/>
                 {isSelectSubmit &&

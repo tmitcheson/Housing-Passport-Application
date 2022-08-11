@@ -28,7 +28,7 @@ export default function SelectProperty({ properties, chosenProperty, onSubmit, o
           {properties.map(item => (
             <MenuItem key={item[0]} value={item}>{item[0]}</MenuItem>
           ))
-        }
+          }
         </Select>
       </FormControl>
     </Box>
