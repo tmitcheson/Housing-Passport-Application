@@ -1,13 +1,12 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
-import InfoIcon from '@mui/icons-material/Info';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-
+import * as React from "react";
+import PropTypes from "prop-types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import InfoIcon from "@mui/icons-material/Info";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -20,11 +19,7 @@ function TabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -38,31 +33,83 @@ TabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
-const BasicTabs = ({chosenProperty}) => {
-  const overviewOptions = ['ADDRESS', 'BUILDING_REFERENCE_NUMBER', 'BUILT_FORM', 'CONSTITUENCY_LABEL',
-  'CONSTRUCTION_AGE_BAND', 'COUNTY', 'CURRENT_ENERGY_EFFICIENCY', 'CURRENT_ENERGY_RATING',
-  'INSPECTION_DATE', 'LMK_KEY', 'LOCAL_AUTHORITY_LABEL', 'NUMBER_HABITABLE_ROOMS',
-                  'PROPERTY_TYPE', 'TENURE', 'TOTAL_FLOOR_AREA', ]
-  const heatingOptions = ['HEATING_COST_CURRENT', 'HEATING_COST_POTENTIAL', 'MAINHEAT_DESCRIPTION',
-                    'MAINHEAT_ENV_EFF', 'MAINHEAT_ENERGY_EFF', 'MAIN_FUEL'];
-  const lightingOptions =['LIGHTING_DESCRIPTION', 'LIGHTING_COST_CURRENT', 'LIGHTING_COST_POTENTIAL', 
-                  'LIGHTING_ENERGY_EFF', 'LIGHTING_ENV_EFF', 'LOW_ENERGY_FIXED_LIGHT_COUNT',
-                  'LOW_ENERGY_LIGHTING'];
-  const waterOptions =['HOTWATER_DESCRIPTION', 'HOT_WATER_COST_CURRENT', 'HOT_WATER_COST_POTENTIAL', 
-                'HOT_WATER_ENERGY_EFF', 'HOT_WATER_ENV_EFF'];
-  const windowsOptions = ['GLAZED_AREA', 'GLAZED_TYPE', 'WINDOWS_DESCRIPTION', 'WINDOWS_ENERGY_EFF', 
-                  'WINDOWS_ENV_EFF'];
-  const roofOptions = ['ROOF_DESCRIPTION', 'ROOF_ENERGY_EFF', 'ROOF_ENV_EFF'];
-  const floorOptions =['FLOOR_DESCRIPTION', 'FLOOR_ENERGY_EFF', 'FLOOR_ENV_EFF', 'FLOOR HEIGHT'];
-  const wallsOptions =['WALLS_DESCRIPTION', 'WALLS_ENERGY_EFF', 'WALLS_ENV_EFF'];
-  const emissionsOptions = ['CO2_EMISSIONS_CURRENT', 'CO2_EMISSIONS_POTENTIAL', 'CO2_EMISSIONS_CURR_PER_FLOOR_AREA'];
-  const consumptionOptions = ['ENERGY_CONSUMPTION_CURRENT', 'ENERGY_CONSUMPTION_POTENTIAL',
-                      'POTENTIAL_ENERGY_EFFICIENCY', 'POTENTIAL_ENERGY_RATING']
-  
+const BasicTabs = ({ chosenProperty }) => {
+  const overviewOptions = [
+    "ADDRESS",
+    "BUILDING_REFERENCE_NUMBER",
+    "BUILT_FORM",
+    "CONSTITUENCY_LABEL",
+    "CONSTRUCTION_AGE_BAND",
+    "COUNTY",
+    "CURRENT_ENERGY_EFFICIENCY",
+    "CURRENT_ENERGY_RATING",
+    "INSPECTION_DATE",
+    "LMK_KEY",
+    "LOCAL_AUTHORITY_LABEL",
+    "NUMBER_HABITABLE_ROOMS",
+    "PROPERTY_TYPE",
+    "TENURE",
+    "TOTAL_FLOOR_AREA",
+  ];
+  const heatingOptions = [
+    "HEATING_COST_CURRENT",
+    "HEATING_COST_POTENTIAL",
+    "MAINHEAT_DESCRIPTION",
+    "MAINHEAT_ENV_EFF",
+    "MAINHEAT_ENERGY_EFF",
+    "MAIN_FUEL",
+  ];
+  const lightingOptions = [
+    "LIGHTING_DESCRIPTION",
+    "LIGHTING_COST_CURRENT",
+    "LIGHTING_COST_POTENTIAL",
+    "LIGHTING_ENERGY_EFF",
+    "LIGHTING_ENV_EFF",
+    "LOW_ENERGY_FIXED_LIGHT_COUNT",
+    "LOW_ENERGY_LIGHTING",
+  ];
+  const waterOptions = [
+    "HOTWATER_DESCRIPTION",
+    "HOT_WATER_COST_CURRENT",
+    "HOT_WATER_COST_POTENTIAL",
+    "HOT_WATER_ENERGY_EFF",
+    "HOT_WATER_ENV_EFF",
+  ];
+  const windowsOptions = [
+    "GLAZED_AREA",
+    "GLAZED_TYPE",
+    "WINDOWS_DESCRIPTION",
+    "WINDOWS_ENERGY_EFF",
+    "WINDOWS_ENV_EFF",
+  ];
+  const roofOptions = ["ROOF_DESCRIPTION", "ROOF_ENERGY_EFF", "ROOF_ENV_EFF"];
+  const floorOptions = [
+    "FLOOR_DESCRIPTION",
+    "FLOOR_ENERGY_EFF",
+    "FLOOR_ENV_EFF",
+    "FLOOR HEIGHT",
+  ];
+  const wallsOptions = [
+    "WALLS_DESCRIPTION",
+    "WALLS_ENERGY_EFF",
+    "WALLS_ENV_EFF",
+  ];
+  const emissionsOptions = [
+    "CO2_EMISSIONS_CURRENT",
+    "CO2_EMISSIONS_POTENTIAL",
+    "CO2_EMISSIONS_CURR_PER_FLOOR_AREA",
+  ];
+  const consumptionOptions = [
+    "ENERGY_CONSUMPTION_CURRENT",
+    "ENERGY_CONSUMPTION_POTENTIAL",
+    "POTENTIAL_ENERGY_EFFICIENCY",
+    "POTENTIAL_ENERGY_RATING",
+  ];
+
   const [value, setValue] = React.useState(0);
   const [epcData, setEpcData] = useState([]);
   const [overview, setOverview] = useState([]);
@@ -75,9 +122,9 @@ const BasicTabs = ({chosenProperty}) => {
   const [walls, setWalls] = useState([]);
   const [emissions, setEmissions] = useState([]);
   const [consumption, setConsumption] = useState([]);
-  const router = useRouter()
-  
-  const chosenPropertyTabs = chosenProperty[1][0]
+  const router = useRouter();
+
+  const chosenPropertyTabs = chosenProperty[1][0];
 
   const newOverview = [];
   const newHeating = [];
@@ -91,31 +138,31 @@ const BasicTabs = ({chosenProperty}) => {
   const newConsumption = [];
   const other = [];
 
-
-  for(const i in chosenPropertyTabs){
+  for (const i in chosenPropertyTabs) {
     if (overviewOptions.includes(i)) {
       newOverview.push([i, chosenPropertyTabs[i]]);
-    } else if (heatingOptions.includes(i)){
+    } else if (heatingOptions.includes(i)) {
       newHeating.push([i, chosenPropertyTabs[i]]);
-    } else if (lightingOptions.includes(i)){
+    } else if (lightingOptions.includes(i)) {
       newLighting.push([i, chosenPropertyTabs[i]]);
-    } else if (waterOptions.includes(i)){
+    } else if (waterOptions.includes(i)) {
       newWater.push([i, chosenPropertyTabs[i]]);
-    } else if (windowsOptions.includes(i)){
+    } else if (windowsOptions.includes(i)) {
       newWindows.push([i, chosenPropertyTabs[i]]);
-    } else if (roofOptions.includes(i)){
+    } else if (roofOptions.includes(i)) {
       newRoof.push([i, chosenPropertyTabs[i]]);
-    } else if (floorOptions.includes(i)){
+    } else if (floorOptions.includes(i)) {
       newFloor.push([i, chosenPropertyTabs[i]]);
-    } else if (wallsOptions.includes(i)){
+    } else if (wallsOptions.includes(i)) {
       newWalls.push([i, chosenPropertyTabs[i]]);
-    } else if (emissionsOptions.includes(i)){
+    } else if (emissionsOptions.includes(i)) {
       newEmissions.push([i, chosenPropertyTabs[i]]);
-    } else if (consumptionOptions.includes(i)){
+    } else if (consumptionOptions.includes(i)) {
       newConsumption.push([i, chosenPropertyTabs[i]]);
-    } else { other.push([i, chosenPropertyTabs[i]]);
+    } else {
+      other.push([i, chosenPropertyTabs[i]]);
     }
-  };
+  }
 
   useEffect(() => {
     // Update the document title using the browser API
@@ -129,17 +176,20 @@ const BasicTabs = ({chosenProperty}) => {
     setWalls(newWalls);
     setEmissions(newEmissions);
     setConsumption(newConsumption);
-  } ,[chosenProperty]);
+  }, [chosenProperty]);
 
-  
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="basic tabs example"
+        >
           <Tab label="Overview" {...a11yProps(0)} />
           <Tab label="Heating" {...a11yProps(1)} />
           <Tab label="Lighting" {...a11yProps(2)} />
@@ -153,178 +203,267 @@ const BasicTabs = ({chosenProperty}) => {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-      <div className='epcData'>
-        <table>
-          <tbody> 
-            {overview.map(item => {
-              return (
-                <tr key={item}>
-                  <td> {item[0]}</td>
-                  <td> {item[1]}</td>
-                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
-                </tr>
-                )
+        <div className="epcData">
+          <table>
+            <tbody>
+              {overview.map((item) => {
+                return (
+                  <tr key={item}>
+                    <td> {item[0]}</td>
+                    <td> {item[1]}</td>
+                    <td>
+                      {" "}
+                      <InfoIcon
+                        onClick={(event) =>
+                          (window.location.href =
+                            "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
+                            item[0])
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
       <TabPanel value={value} index={1}>
-      <div className='epcData'>
-        <table>
-          <tbody> 
-            {heating.map(item => {
-              return (
-                <tr key={item}>
-                  <td> {item[0]}</td>
-                  <td> {item[1]}</td>
-                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
-                </tr>
-                )
+        <div className="epcData">
+          <table>
+            <tbody>
+              {heating.map((item) => {
+                return (
+                  <tr key={item}>
+                    <td> {item[0]}</td>
+                    <td> {item[1]}</td>
+                    <td>
+                      {" "}
+                      <InfoIcon
+                        onClick={(event) =>
+                          (window.location.href =
+                            "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
+                            item[0])
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
       <TabPanel value={value} index={2}>
-      <div className='epcData'>
-        <table>
-          <tbody> 
-            {lighting.map(item => {
-              return (
-                <tr key={item}>
-                  <td> {item[0]}</td>
-                  <td> {item[1]}</td>
-                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
-                </tr>
-                )
+        <div className="epcData">
+          <table>
+            <tbody>
+              {lighting.map((item) => {
+                return (
+                  <tr key={item}>
+                    <td> {item[0]}</td>
+                    <td> {item[1]}</td>
+                    <td>
+                      {" "}
+                      <InfoIcon
+                        onClick={(event) =>
+                          (window.location.href =
+                            "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
+                            item[0])
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
       <TabPanel value={value} index={3}>
-      <div className='epcData'>
-        <table>
-          <tbody> 
-            {water.map(item => {
-              return (
-                <tr key={item}>
-                  <td> {item[0]}</td>
-                  <td> {item[1]}</td>
-                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
-                </tr>
-                )
+        <div className="epcData">
+          <table>
+            <tbody>
+              {water.map((item) => {
+                return (
+                  <tr key={item}>
+                    <td> {item[0]}</td>
+                    <td> {item[1]}</td>
+                    <td>
+                      {" "}
+                      <InfoIcon
+                        onClick={(event) =>
+                          (window.location.href =
+                            "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
+                            item[0])
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
       <TabPanel value={value} index={4}>
-      <div className='epcData'>
-        <table>
-          <tbody> 
-            {windows.map(item => {
-              return (
-                <tr key={item}>
-                  <td> {item[0]}</td>
-                  <td> {item[1]}</td>
-                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
-                </tr>
-                )
+        <div className="epcData">
+          <table>
+            <tbody>
+              {windows.map((item) => {
+                return (
+                  <tr key={item}>
+                    <td> {item[0]}</td>
+                    <td> {item[1]}</td>
+                    <td>
+                      {" "}
+                      <InfoIcon
+                        onClick={(event) =>
+                          (window.location.href =
+                            "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
+                            item[0])
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
       <TabPanel value={value} index={5}>
-      <div className='epcData'>
-        <table>
-          <tbody> 
-            {roof.map(item => {
-              return (
-                <tr key={item}>
-                  <td> {item[0]}</td>
-                  <td> {item[1]}</td>
-                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
-                </tr>
-                )
+        <div className="epcData">
+          <table>
+            <tbody>
+              {roof.map((item) => {
+                return (
+                  <tr key={item}>
+                    <td> {item[0]}</td>
+                    <td> {item[1]}</td>
+                    <td>
+                      {" "}
+                      <InfoIcon
+                        onClick={(event) =>
+                          (window.location.href =
+                            "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
+                            item[0])
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
       <TabPanel value={value} index={6}>
-      <div className='epcData'>
-        <table>
-          <tbody> 
-            {floor.map(item => {
-              return (
-                <tr key={item}>
-                  <td> {item[0]}</td>
-                  <td> {item[1]}</td>
-                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
-                </tr>
-                )
+        <div className="epcData">
+          <table>
+            <tbody>
+              {floor.map((item) => {
+                return (
+                  <tr key={item}>
+                    <td> {item[0]}</td>
+                    <td> {item[1]}</td>
+                    <td>
+                      {" "}
+                      <InfoIcon
+                        onClick={(event) =>
+                          (window.location.href =
+                            "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
+                            item[0])
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
       <TabPanel value={value} index={7}>
-      <div className='epcData'>
-        <table>
-          <tbody> 
-            {walls.map(item => {
-              return (
-                <tr key={item}>
-                  <td> {item[0]}</td>
-                  <td> {item[1]}</td>
-                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
-                </tr>
-                )
+        <div className="epcData">
+          <table>
+            <tbody>
+              {walls.map((item) => {
+                return (
+                  <tr key={item}>
+                    <td> {item[0]}</td>
+                    <td> {item[1]}</td>
+                    <td>
+                      {" "}
+                      <InfoIcon
+                        onClick={(event) =>
+                          (window.location.href =
+                            "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
+                            item[0])
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
       <TabPanel value={value} index={8}>
-      <div className='epcData'>
-        <table>
-          <tbody> 
-            {emissions.map(item => {
-              return (
-                <tr key={item}>
-                  <td> {item[0]}</td>
-                  <td> {item[1]}</td>
-                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
-                </tr>
-                )
+        <div className="epcData">
+          <table>
+            <tbody>
+              {emissions.map((item) => {
+                return (
+                  <tr key={item}>
+                    <td> {item[0]}</td>
+                    <td> {item[1]}</td>
+                    <td>
+                      {" "}
+                      <InfoIcon
+                        onClick={(event) =>
+                          (window.location.href =
+                            "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
+                            item[0])
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
       <TabPanel value={value} index={9}>
-      <div className='epcData'>
-        <table>
-          <tbody> 
-            {consumption.map(item => {
-              return (
-                <tr key={item}>
-                  <td> {item[0]}</td>
-                  <td> {item[1]}</td>
-                  <td> <InfoIcon onClick={event => window.location.href="https://epc.opendatacommunities.org/docs/guidance#field_domestic_"+item[0]}/></td>
-                </tr>
-                )
+        <div className="epcData">
+          <table>
+            <tbody>
+              {consumption.map((item) => {
+                return (
+                  <tr key={item}>
+                    <td> {item[0]}</td>
+                    <td> {item[1]}</td>
+                    <td>
+                      {" "}
+                      <InfoIcon
+                        onClick={(event) =>
+                          (window.location.href =
+                            "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
+                            item[0])
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
     </Box>
   );
-}
+};
 
-
-export default BasicTabs
+export default BasicTabs;
