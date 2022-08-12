@@ -12,12 +12,6 @@ def addEPCDataToUser(epc_data, email):
         print(e)
         print("Unable to connect to the server.")
 
-    # MAYBE TRY EXTENDING THE NUMBER OF PROPERTIES YOU CAN HAVE LATER
-    # cursor = client['db-name'].users.find_one({"email":email})
-    # returner = cursor.next()
-    # del returner['_id']
-    # property_count = returner
-
     try:
         client['db-name'].users.update_one(
             {"email":email},

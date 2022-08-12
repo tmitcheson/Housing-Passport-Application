@@ -20,6 +20,7 @@ const MyProperties = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [isRecomSubmit, setRecomSubmit] = useState(false);
   const [isFailed, setFailed] = useState(false);
+  const [deleted, setDeleted] = useState(0);
   const [isAdded, setAdded] = useState(false);
   const [myProperties, setMyProperties] = useState([]);
   const [chosenProperty, setChosenProperty] = useState([]);
@@ -143,6 +144,26 @@ const MyProperties = () => {
     }
   }, [chosenProperty]);
 
+  const onDeleteProperty = (address) => {
+    console.log(address);
+    const email = session.user.email;
+    axios
+      .post("http://localhost:5000/api/delete_property_from_user", {
+        address,
+        email,
+      })
+      // axios.post('https://housing-passport-back-end.herokuapp.com/api/delete_property_from_user', {address})
+      .then(function (response) {
+        if (response.data === "True") {
+          console.log("woo");
+          setDeleted(1);
+        } else if (response.data === "False") {
+          console.log("boo");
+          setDeleted(2);
+        }
+      });
+  };
+
   const onFormSubmit = (accountData) => {
     console.log(accountData);
 
@@ -215,6 +236,32 @@ const MyProperties = () => {
           />
           {isSelectSubmit && (
             <>
+              <h4> Showing results for {chosenProperty[0]}</h4>
+              <div color="error">
+                {" "}
+                Remove {chosenProperty[0]} from your property list?{" "}
+                <Button
+                  type="submit"
+                  size="small"
+                  variant="text"
+                  color="error"
+                  onClick={(e) =>
+                    onDeleteProperty(chosenProperty[1][0]["ADDRESS"])
+                  }
+                >
+                  {" "}
+                  Remove <p></p>
+                </Button>
+              </div>
+              {deleted === 1 && (
+                <div>
+                  {" "}
+                  Delete successful. Please refresh the page to see the update{" "}
+                </div>
+              )}
+              {deleted === 2 && (
+                <div> Delete unsuccessful. Please try again. </div>
+              )}
               <BasicTabs chosenProperty={chosenProperty} />
               <hr />
               <h5> Recommendations for {chosenProperty[0]} </h5>
@@ -264,7 +311,6 @@ const MyProperties = () => {
                 })}
               {isAdded && <div> Permissions extended </div>}
               {isFailed && <div> Something went wrong </div>}
-              <hr />
             </>
           )}
           <hr />

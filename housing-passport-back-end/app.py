@@ -58,6 +58,38 @@ def retrieve_doc():
     # return response
     # return (str(returner))
 
+@app.route("/api/delete_property_from_user", methods=["POST"])
+def delete_property():
+    data = request.data
+    data = data.decode('utf-8')
+    data = json.loads(data)
+
+    address = data["address"]
+    email = data["email"]
+    print(address)
+    print(email)
+
+    conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
+    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+
+    try:
+        client.server_info()
+        print("Connected...")
+    except Exception as e:
+        print(e)
+        print("Unable to connect to the server.")
+
+    try:
+        client['db-name'].users.update_one(
+            {"email":email},
+            {"$unset": {"properties." + address : ""}}
+        )
+        return "True"
+    except Exception as e:
+        print(e)
+        return "False"
+
+
 @app.route("/api/get_list_of_addresses", methods=["POST"])
 def retrieve_addresses():
     # return str(request.args)
