@@ -43,3 +43,20 @@ footer {
   color: #4979ff;
   text-decoration: underline;
 }
+table {
+  border-spacing: 1; 
+  border-collapse: collapse; 
+  background: #f2f2f2;
+  border-radius:6px;
+  overflow:hidden;
+  max-width:960px; 
+  width:100%;
+  margin:0 auto;
+  position:relative;
+}
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+tr:hover{background-color: #87CB76;}

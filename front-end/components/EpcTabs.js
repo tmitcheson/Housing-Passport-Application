@@ -209,7 +209,7 @@ const BasicTabs = ({ chosenProperty }) => {
               {overview.map((item) => {
                 return (
                   <tr key={item}>
-                    <td> {item[0]}</td>
+                    <td> {item[0].replaceAll('_', ' ')}</td>
                     <td> {item[1]}</td>
                     <td>
                       {" "}
@@ -235,7 +235,7 @@ const BasicTabs = ({ chosenProperty }) => {
               {heating.map((item) => {
                 return (
                   <tr key={item}>
-                    <td> {item[0]}</td>
+                    <td> {item[0].replaceAll('_', ' ')}</td>
                     <td> {item[1]}</td>
                     <td>
                       {" "}
@@ -261,7 +261,7 @@ const BasicTabs = ({ chosenProperty }) => {
               {lighting.map((item) => {
                 return (
                   <tr key={item}>
-                    <td> {item[0]}</td>
+                    <td> {item[0].replaceAll('_', ' ')}</td>
                     <td> {item[1]}</td>
                     <td>
                       {" "}
@@ -287,7 +287,7 @@ const BasicTabs = ({ chosenProperty }) => {
               {water.map((item) => {
                 return (
                   <tr key={item}>
-                    <td> {item[0]}</td>
+                    <td> {item[0].replaceAll('_', ' ')}</td>
                     <td> {item[1]}</td>
                     <td>
                       {" "}
@@ -313,7 +313,7 @@ const BasicTabs = ({ chosenProperty }) => {
               {windows.map((item) => {
                 return (
                   <tr key={item}>
-                    <td> {item[0]}</td>
+                    <td> {item[0].replaceAll('_', ' ')}</td>
                     <td> {item[1]}</td>
                     <td>
                       {" "}
@@ -339,7 +339,7 @@ const BasicTabs = ({ chosenProperty }) => {
               {roof.map((item) => {
                 return (
                   <tr key={item}>
-                    <td> {item[0]}</td>
+                    <td> {item[0].replaceAll('_', ' ')}</td>
                     <td> {item[1]}</td>
                     <td>
                       {" "}
@@ -365,7 +365,7 @@ const BasicTabs = ({ chosenProperty }) => {
               {floor.map((item) => {
                 return (
                   <tr key={item}>
-                    <td> {item[0]}</td>
+                    <td> {item[0].replaceAll('_', ' ')}</td>
                     <td> {item[1]}</td>
                     <td>
                       {" "}
@@ -391,7 +391,7 @@ const BasicTabs = ({ chosenProperty }) => {
               {walls.map((item) => {
                 return (
                   <tr key={item}>
-                    <td> {item[0]}</td>
+                    <td> {item[0].replaceAll('_', ' ')}</td>
                     <td> {item[1]}</td>
                     <td>
                       {" "}
@@ -417,7 +417,7 @@ const BasicTabs = ({ chosenProperty }) => {
               {emissions.map((item) => {
                 return (
                   <tr key={item}>
-                    <td> {item[0]}</td>
+                    <td> {item[0].replaceAll('_', ' ')}</td>
                     <td> {item[1]}</td>
                     <td>
                       {" "}
@@ -443,7 +443,7 @@ const BasicTabs = ({ chosenProperty }) => {
               {consumption.map((item) => {
                 return (
                   <tr key={item}>
-                    <td> {item[0]}</td>
+                    <td> {item[0].replaceAll('_', ' ')}</td>
                     <td> {item[1]}</td>
                     <td>
                       {" "}

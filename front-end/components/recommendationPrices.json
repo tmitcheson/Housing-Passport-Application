@@ -1,0 +1,76 @@
+{"builtForms" : [
+    "detached",
+    "semi_detached",
+    "mid_terrace_house",
+    "bungalow",
+    "mid_floor_flat"
+  ],
+  
+  "recList" : [
+    "loft_insulation",
+    "cavity_wall_insulation",
+    "floor_insulation",
+    "solid_wall_insulation"
+  ],
+  
+  "InstallationCost" : {
+    "detached": {
+      "solid_wall_insulation": 650,
+      "floor_insulation": 130,
+      "loft_insulation": 680,
+      "cavity_wall_insulation": 2500
+    },
+    "semi_detached": {
+      "solid_wall_insulation": 14000,
+      "floor_insulation": 75,
+      "loft_insulation": 530,
+      "cavity_wall_insulation": 1200
+    },
+    "mid_terrace_house": {
+      "solid_wall_insulation": 245,
+      "floor_insulation": 50,
+      "loft_insulation": 500,
+      "cavity_wall_insulation": 620
+    },
+    "bungalow": {
+      "solid_wall_insulation": 260,
+      "floor_insulation": 115,
+      "loft_insulation": 690,
+      "cavity_wall_insulation": 940
+    },
+    "mid_floor_flat": {
+      "solid_wall_insulation": 195,
+      "cavity_wall_insulation": 410
+    }
+},
+
+  "BillSavings" : {
+    "detached": {
+      "solid_wall_insulation": 650,
+      "floor_insulation": 130,
+      "loft_insulation": 580,
+      "cavity_wall_insulation": 480
+    },
+    "semi_detached": {
+      "solid_wall_insulation": 390,
+      "floor_insulation": 75,
+      "loft_insulation": 255,
+      "cavity_wall_insulation": 285
+    },
+    "mid_terrace_house": {
+      "solid_wall_insulation": 245,
+      "floor_insulation": 50,
+      "loft_insulation": 230,
+      "cavity_wall_insulation": 180
+    },
+    "bungalow": {
+      "solid_wall_insulation": 260,
+      "floor_insulation": 115,
+      "loft_insulation": 365,
+      "cavity_wall_insulation": 195
+    },
+    "mid_floor_flat": {
+      "solid_wall_insulation": 195,
+      "cavity_wall_insulation": 145
+    }
+  }}

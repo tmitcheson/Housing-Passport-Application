@@ -10,9 +10,10 @@ import BasicTabs from "../components/EpcTabs";
 import SelectProperty from "../components/SelectProperty";
 import styles from "../styles/List.module.css";
 import SmartVsPrice from "../components/SmartVsPrice";
+import RecsAndPayback from "../components/RecsAndPaybacks";
+import RecStats from "../components/recommendationPrices.json" assert { type: "json" };
 
 const MyProperties = () => {
-  const [isFirstSubmit, setFirstSubmit] = useState(false);
   const [isSelectSubmit, setSelectSubmit] = useState(false);
   const [listOfTradespeople, setListOfTradespeople] = useState([]);
   const [isTradeSubmit, setTradeSubmit] = useState(false);
@@ -21,7 +22,6 @@ const MyProperties = () => {
   const [isFailed, setFailed] = useState(false);
   const [isAdded, setAdded] = useState(false);
   const [myProperties, setMyProperties] = useState([]);
-  const [isTradesperson, setTradesperson] = useState(false);
   const [chosenProperty, setChosenProperty] = useState([]);
 
   const [mpn, setMpn] = useState("");
@@ -52,7 +52,6 @@ const MyProperties = () => {
           }
           // console.log(newProperties)
           setMyProperties(newProperties);
-          setFirstSubmit(true);
         })
         .catch(function (error) {
           console.log("initial oops");
@@ -67,6 +66,8 @@ const MyProperties = () => {
       firstUpdate.current = false;
     } else {
       // do things after first render
+
+      /* THIS SECTION GETS THE RECOMMENDATIONS FOR THE CHOSEN PROPERTY */
 
       let config = {
         headers: {
@@ -93,6 +94,49 @@ const MyProperties = () => {
             ]);
           }
           console.log(recommendationsTemp);
+
+          /* THIS SECTION ADDS THE PRICES OF PAYBACK PERIODS OF THE RECS */
+
+          for (let i = 0; i < recommendationsTemp.length; i++) {
+            console.log(
+              recommendationsTemp[i][0].toLowerCase().replaceAll(" ", "_")
+            );
+            for (let j = 0; j < RecStats.recList.length; j++) {
+              if (
+                recommendationsTemp[i][0]
+                  .toLowerCase()
+                  .replaceAll(" ", "_")
+                  .includes(RecStats.recList[j])
+              ) {
+                // console.log(recommendationsTemp[i][0])
+                const builtForm = chosenProperty[1][0]["BUILT_FORM"]
+                  .toLowerCase()
+                  .replaceAll("-", "_");
+                // console.log(builtForm)
+                // console.log(recList)
+                const timeBackNow = (
+                  RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
+                  RecStats.BillSavings[builtForm][RecStats.recList[j]]
+                ).toFixed(2);
+                const timeBackLast = (
+                  RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
+                  (RecStats.BillSavings[builtForm][RecStats.recList[j]] * 0.57)
+                ).toFixed(2);
+                const timeBackNext = (
+                  RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
+                  (RecStats.BillSavings[builtForm][RecStats.recList[j]] * 1.81)
+                ).toFixed(2);
+
+                recommendationsTemp[i][2] = timeBackLast + " years";
+                recommendationsTemp[i][3] = timeBackNow + " years";
+                recommendationsTemp[i][4] = timeBackNext + " years";
+                // recommendationsTemp[i][2] = RecStats.InstallationCost[builtForm][RecStats.recList[j]];
+                // recommendationsTemp[i].push(PaybackPrices[builtForm][recList[j]])
+                // console.log(recommendationsTemp[i][2])
+              }
+            }
+          }
+
           setRecommendations(recommendationsTemp);
           setRecomSubmit(true);
         });
@@ -175,20 +219,19 @@ const MyProperties = () => {
               <hr />
               <h5> Recommendations for {chosenProperty[0]} </h5>
               {isRecomSubmit && (
-                <table>
-                  <tbody>
-                    {recommendations.map((item) => {
-                      return (
-                        <tr key={item}>
-                          <td> {item[0]}</td>
-                          <td> {item[1]}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                <RecsAndPayback
+                  recommendations={recommendations}
+                  chosenProperty={chosenProperty}
+                />
               )}
-              <h4> Time to act on the recommendations? </h4>
+              <h4>
+                {" "}
+                Time to act on the recommendations? This one-stop-shop approach
+                means that whenever you decide you are ready to act on these
+                recommendations, you are able to extends permissions to your
+                house to one of these tradespeople who have signed up to our
+                service
+              </h4>
               <Button
                 type="submit"
                 size="small"
