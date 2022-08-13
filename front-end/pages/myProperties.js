@@ -12,6 +12,13 @@ import styles from "../styles/List.module.css";
 import SmartVsPrice from "../components/SmartVsPrice";
 import RecsAndPayback from "../components/RecsAndPaybacks";
 import RecStats from "../components/recommendationPrices.json" assert { type: "json" };
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+
+
+
 
 const MyProperties = () => {
   const [isSelectSubmit, setSelectSubmit] = useState(false);
@@ -24,10 +31,15 @@ const MyProperties = () => {
   const [isAdded, setAdded] = useState(false);
   const [myProperties, setMyProperties] = useState([]);
   const [chosenProperty, setChosenProperty] = useState([]);
+  const [updateGraph, setUpdateGraph] = useState(false);
 
+  const [timePeriod, setTimePeriod] = useState("");
   const [mpn, setMpn] = useState("");
   const [serialNumber, setSerialNumber] = useState("");
   const [authKey, setAuthKey] = useState("");
+  const [date, setDate] = useState("");
+  const [chosenMonth, setChosenMonth] = useState("");
+
   const [isFormSubmit, setFormSubmit] = useState(false);
 
   const { data: session, status } = useSession();
@@ -199,6 +211,11 @@ const MyProperties = () => {
       });
   };
 
+  const onSubmit = async() => {
+      setFormSubmit(true)
+      updateGraph ? setUpdateGraph(false) : setUpdateGraph(true)
+  }
+
   const onExtendTradeClick = (e, lmk_key, email) => {
     console.log(lmk_key);
     console.log(email);
@@ -321,47 +338,89 @@ const MyProperties = () => {
             in the site will not remember any of the following information and
             it will need to be submitted again
           </h4>
-          <form onSubmit={handleSubmit(onFormSubmit)}>
-            <label htmlFor="mpn">mpn:{"   "}</label>
-            <input
-              id="mpn"
-              aria-invalid={errors.mpn ? "true" : "false"}
-              {...register("mpn")}
-              // {...register('mpn', { required: true })}
+          <Box
+        component="form"
+        sx={{
+          "& .MuiTextField-root": { m: 1, width: "25ch" },
+        }}
+        noValidate
+        // autoComplete="off"
+      >
+        <div>
+          <TextField
+            required
+            id="outlined-required"
+            label="MPRN"
+            value={mpn}
+            onChange={(e) => setMpn(e.target.value)}
+          />
+          <TextField
+            required
+            id="outlined-required"
+            label="Serial Number"
+            value={serialNumber}
+            onChange={(e) => setSerialNumber(e.target.value)}
+          />
+          <TextField
+            required
+            id="outlined-required"
+            label="Auth Key"
+            value={authKey}
+            onChange={(e) => setAuthKey(e.target.value)}
+          />
+          <br></br>
+          <br></br>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={timePeriod}
+            label="property"
+            onChange={(e) => {
+              setTimePeriod(e.target.value);
+            }}
+          >
+            <MenuItem key="day" value="day">
+              Day
+            </MenuItem>
+            <MenuItem key="month" value="month">
+              Month
+            </MenuItem>
+          </Select>
+          {timePeriod === "day" && (
+            <TextField
+              required
+              id="outlined-required"
+              label="Date"
+              value={date}
+              placeholder="DD/MM/YYYY"
+              onChange={(e) => setDate(e.target.value)}
             />
-            <p></p>
-            <label htmlFor="serialNumber">serialNumber:{"   "}</label>
-            <input
-              id="serialNumber"
-              aria-invalid={errors.serialNumber ? "true" : "false"}
-              {...register("serialNumber")}
+          )}
+          {timePeriod === "month" && (
+            <TextField
+              required
+              id="outlined-required"
+              label="Month"
+              value={chosenMonth}
+              placeholder="MM/YYYY"
+              onChange={(e) => setChosenMonth(e.target.value)}
             />
-            <p></p>
-            <label htmlFor="authKey">authKey:{"   "}</label>
-            <input
-              id="authKey"
-              aria-invalid={errors.authKey ? "true" : "false"}
-              {...register("authKey")}
-            />
-            <p></p>
-            <select {...register("timeframe", { required: true })}>
-              <option defaultValue="day"> Day </option>
-              <option value="week"> Week </option>
-              <option value="month"> Month </option>
-              <option value="year"> Year </option>
-            </select>
-            {"   "}
-            {/* <input type="submit" /> */}
-            <Button type="submit" variant="contained">
-              Submit
-            </Button>
-          </form>
+          )}
+          <Button variant="contained" onClick={onSubmit}>
+            Submit
+          </Button>
+        </div>
+      </Box>
           {/* // <SmartVsPrice/> */}
           {isFormSubmit && (
             <SmartVsPrice
               mpn={mpn}
               serialNumber={serialNumber}
               authKey={authKey}
+              timePeriod={timePeriod}
+              date={date}
+              chosenMonth={chosenMonth}
+              updateGraph={updateGraph}
             />
           )}
         </>

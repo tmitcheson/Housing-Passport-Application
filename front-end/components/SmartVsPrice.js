@@ -8,7 +8,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-const SmartVsPrice = ({ mpn, serialNumber, authKey }) => {
+const SmartVsPrice = ({ mpn, serialNumber, authKey, timePeriod, date, chosenMonth, updateGraph }) => {
   const [isSubmitted, setSubmitted] = useState(false);
   const [graphLabels, setGraphLabels] = useState([]);
   const [graphValues, setGraphValues] = useState([]);
@@ -31,12 +31,56 @@ const SmartVsPrice = ({ mpn, serialNumber, authKey }) => {
   };
 
   useEffect(() => {
-    const period_from = "2022-02-20T00:00:00Z";
-    const period_to = "2022-02-21T00:00:00Z";
+    let startDate = new Date()
+    let endDate = new Date()
 
-    let to = new Date(period_to);
-    to.setTime(to.getTime() + 30 * 60 * 1000);
-    const price_period_to = to.toISOString();
+    if (timePeriod === "day") {
+
+      const day = parseInt(date.slice(0, 2));
+      const month = parseInt(date.slice(3, 5));
+      const year = parseInt(date.slice(6, 10));
+      console.log(day);
+      console.log(month);
+      console.log(year);
+
+      startDate = new Date(year, month, day);
+      endDate = new Date(year, month, day + 1);
+      console.log(startDate.toISOString());
+      console.log(endDate.toISOString());
+
+    } else if (timePeriod === "month") {
+
+      const month = parseInt(chosenMonth.slice(0, 2));
+      const year = parseInt(chosenMonth.slice(3, 7));
+      console.log(month)
+      console.log(year)
+      
+      const month2 = (month + 1) % 12;
+      Math.abs(month2 - month) !== 1 ? (year += 1) : console.log(month);
+      console.log(year);
+
+      startDate = new Date(year, month);
+      endDate = new Date(year, month2);
+      console.log(startDate.toISOString());
+      console.log(endDate.toISOString());
+    } else {
+        console.log("Huh")
+    }
+
+    const mprn = "1200038779673";
+    const serial_number = "Z18N333768";
+    const auth_key = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9";
+
+    // to find a month's data, we're gonna have to start period from from
+    // first day of month and period to from first day of next month minus 1
+
+    const period_from = startDate.toISOString();
+    const period_to = endDate.toISOString();
+
+    let price_period_to = new Date(period_to);
+    // price_period_to.setTime(price_period_to.getTime() + (30*60*1000))
+    price_period_to = price_period_to.toISOString();
+
 
     const params = {
       page_size: 25000,
@@ -47,29 +91,44 @@ const SmartVsPrice = ({ mpn, serialNumber, authKey }) => {
     axios
       .get(
         "https://api.octopus.energy/v1/electricity-meter-points/" +
-          mpn +
+          mprn +
           "/meters/" +
-          serialNumber +
+          serial_number +
           "/consumption/",
-        { auth: { username: authKey }, params: params }
+        { auth: { username: auth_key }, params: params }
       )
       .then(function (response) {
-        console.log(response.data.results);
-        let df = new dfd.DataFrame(response.data.results);
+        const df = new dfd.DataFrame(response.data.results);
+
         df.sortValues("interval_start", { ascending: true, inplace: true });
-        console.log(df["interval_start"].values);
-        df = df.applyMap(removeDate);
-        setGraphLabels(df["interval_start"].values);
-        setGraphValues(df["consumption"].values);
-        setBigDf(df);
-        console.log("first:");
-        console.log(df);
+
+        // setGraphLabels(df["interval_start"].values);
+        // setGraphValues(df["consumption"].values);
+        let new_df = df.applyMap(removeDate);
+        let group_df = new_df.groupby(["interval_start"]);
+        let hourly_dict = group_df["colDict"];
+        let averagesTimes = [];
+
+        for (const [key, value] of Object.entries(hourly_dict)) {
+          const sum = value["consumption"].reduce((a, b) => a + b, 0);
+          const avg = sum / value["consumption"].length || 0;
+          averagesTimes.push([key, avg]);
+        }
+
+        const hourly_df = new dfd.DataFrame(averagesTimes, {
+          columns: ["time", "avg_consumption"],
+        });
+        hourly_df.sortValues("time", { ascending: true, inplace: true });
+        console.log(hourly_df);
+        setGraphLabels(hourly_df["time"].values);
+        setGraphValues(hourly_df["avg_consumption"].values);
+
         setSubmitted(true);
       });
 
     axios
       .get(
-        "https://api.octopus.energy/v1/products/AGILE-18-02-21/electricity-tariffs/E-1R-AGILE-18-02-21-C/standard-unit-rates/?period_from=" +
+        "https://api.octopus.energy/v1/products/AGILE-18-02-21/electricity-tariffs/E-1R-AGILE-18-02-21-C/standard-unit-rates/?page_size=25000&period_from=" +
           period_from +
           "&period_to=" +
           price_period_to
@@ -79,12 +138,28 @@ const SmartVsPrice = ({ mpn, serialNumber, authKey }) => {
         const df = new dfd.DataFrame(response.data.results);
         df.sortValues("valid_from", { ascending: true, inplace: true });
 
-        console.log("seconda: ");
-        console.log(df);
-        setPriceValues(df["value_inc_vat"].values);
-        // console.log("prices: " + response.data)
+        let new_df = df.applyMap(removeDate);
+        let group_df = new_df.groupby(["valid_from"]);
+        let hourly_dict = group_df["colDict"];
+        let averagesPrices = [];
+
+        for (const [key, value] of Object.entries(hourly_dict)) {
+          const sum = value["value_inc_vat"].reduce((a, b) => a + b, 0);
+          const avg = sum / value["value_inc_vat"].length || 0;
+          averagesPrices.push([key, avg]);
+        }
+
+        const hourly_price_df = new dfd.DataFrame(averagesPrices, {
+          columns: ["time", "price"],
+        });
+        hourly_price_df.sortValues("time", { ascending: true, inplace: true });
+
+        // console.log("seconda: ")
+        console.log(hourly_price_df);
+        setPriceValues(hourly_price_df["price"].values);
+        console.log("prices: " + response.data);
       });
-  }, [mpn, serialNumber, authKey]);
+  }, [updateGraph]);
 
   const data = {
     labels: graphLabels,
