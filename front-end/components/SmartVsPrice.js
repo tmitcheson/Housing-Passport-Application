@@ -8,7 +8,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-const SmartVsPrice = ({ mpn, serialNumber, authKey, timePeriod, date, chosenMonth, updateGraph }) => {
+const SmartVsPrice = ({
+  mpn,
+  serialNumber,
+  authKey,
+  timePeriod,
+  date,
+  chosenMonth,
+  updateGraph,
+}) => {
   const [isSubmitted, setSubmitted] = useState(false);
   const [graphLabels, setGraphLabels] = useState([]);
   const [graphValues, setGraphValues] = useState([]);
@@ -31,11 +39,10 @@ const SmartVsPrice = ({ mpn, serialNumber, authKey, timePeriod, date, chosenMont
   };
 
   useEffect(() => {
-    let startDate = new Date()
-    let endDate = new Date()
+    let startDate = new Date();
+    let endDate = new Date();
 
     if (timePeriod === "day") {
-
       const day = parseInt(date.slice(0, 2));
       const month = parseInt(date.slice(3, 5));
       const year = parseInt(date.slice(6, 10));
@@ -47,14 +54,12 @@ const SmartVsPrice = ({ mpn, serialNumber, authKey, timePeriod, date, chosenMont
       endDate = new Date(year, month, day + 1);
       console.log(startDate.toISOString());
       console.log(endDate.toISOString());
-
     } else if (timePeriod === "month") {
-
       const month = parseInt(chosenMonth.slice(0, 2));
       const year = parseInt(chosenMonth.slice(3, 7));
-      console.log(month)
-      console.log(year)
-      
+      console.log(month);
+      console.log(year);
+
       const month2 = (month + 1) % 12;
       Math.abs(month2 - month) !== 1 ? (year += 1) : console.log(month);
       console.log(year);
@@ -64,7 +69,7 @@ const SmartVsPrice = ({ mpn, serialNumber, authKey, timePeriod, date, chosenMont
       console.log(startDate.toISOString());
       console.log(endDate.toISOString());
     } else {
-        console.log("Huh")
+      console.log("Huh");
     }
 
     const mprn = "1200038779673";
@@ -80,7 +85,6 @@ const SmartVsPrice = ({ mpn, serialNumber, authKey, timePeriod, date, chosenMont
     let price_period_to = new Date(period_to);
     // price_period_to.setTime(price_period_to.getTime() + (30*60*1000))
     price_period_to = price_period_to.toISOString();
-
 
     const params = {
       page_size: 25000,
@@ -230,11 +234,10 @@ const SmartVsPrice = ({ mpn, serialNumber, authKey, timePeriod, date, chosenMont
       <h4>
         {" "}
         Here is a graph of your consumption profile. It takes your consumption
-        records for a specific time (currently 20th Feb before the price hikes)
-        and compares it against the Octopus Agile (variable) tariff for the day.
-        In doing so you can compare your consumption habits to the general
-        market demand and potentially decide if a variable tariff is right for
-        you
+        records for a specific day or month and compares it against the Octopus
+        Agile (variable) tariff for the day. In doing so you can compare your
+        consumption habits to the general market demand and decide if a variable
+        tariff is right for you.
       </h4>
       <Bar data={data} width={100} height={40} options={options} />
     </>

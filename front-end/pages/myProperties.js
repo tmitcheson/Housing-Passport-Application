@@ -11,14 +11,13 @@ import SelectProperty from "../components/SelectProperty";
 import styles from "../styles/List.module.css";
 import SmartVsPrice from "../components/SmartVsPrice";
 import RecsAndPayback from "../components/RecsAndPaybacks";
+import RecsAndCosts from "../components/RecsAndCosts";
 import RecStats from "../components/recommendationPrices.json" assert { type: "json" };
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-
-
-
+import RecsToggle from "../components/RecsToggle";
 
 const MyProperties = () => {
   const [isSelectSubmit, setSelectSubmit] = useState(false);
@@ -32,6 +31,7 @@ const MyProperties = () => {
   const [myProperties, setMyProperties] = useState([]);
   const [chosenProperty, setChosenProperty] = useState([]);
   const [updateGraph, setUpdateGraph] = useState(false);
+  const [paybackOrCosts, setPaybackOrCosts] = useState("costs");
 
   const [timePeriod, setTimePeriod] = useState("");
   const [mpn, setMpn] = useState("");
@@ -176,6 +176,10 @@ const MyProperties = () => {
       });
   };
 
+  const handlePaybackOrCosts = (event, newChoice) => {
+    setPaybackOrCosts(newChoice);
+  };
+
   const onFormSubmit = (accountData) => {
     console.log(accountData);
 
@@ -211,10 +215,10 @@ const MyProperties = () => {
       });
   };
 
-  const onSubmit = async() => {
-      setFormSubmit(true)
-      updateGraph ? setUpdateGraph(false) : setUpdateGraph(true)
-  }
+  const onSubmit = async () => {
+    setFormSubmit(true);
+    updateGraph ? setUpdateGraph(false) : setUpdateGraph(true);
+  };
 
   const onExtendTradeClick = (e, lmk_key, email) => {
     console.log(lmk_key);
@@ -244,7 +248,7 @@ const MyProperties = () => {
       {session && (
         <>
           <h2> Welcome to your properties page </h2>
-          <h3> Browse your property EPC data here: </h3>
+          <h3> Browse your passports here: </h3>
           <SelectProperty
             properties={myProperties}
             chosenProperty=""
@@ -253,7 +257,8 @@ const MyProperties = () => {
           />
           {isSelectSubmit && (
             <>
-              <h4> Showing results for {chosenProperty[0]}</h4>
+              <p></p>
+              <div> Showing the passport for {chosenProperty[0]}</div>
               <div color="error">
                 {" "}
                 Remove {chosenProperty[0]} from your property list?{" "}
@@ -279,14 +284,29 @@ const MyProperties = () => {
               {deleted === 2 && (
                 <div> Delete unsuccessful. Please try again. </div>
               )}
+              <h2> Building Information </h2>
               <BasicTabs chosenProperty={chosenProperty} />
               <hr />
-              <h5> Recommendations for {chosenProperty[0]} </h5>
-              {isRecomSubmit && (
-                <RecsAndPayback
+              <h2>
+                {" "}
+                Recommendations for {chosenProperty[0]}{" "}
+                <RecsToggle
+                  paybackOrCosts={paybackOrCosts}
+                  handlePaybackOrCosts={(paybackOrCosts) =>
+                    setPaybackOrCosts(paybackOrCosts)
+                  }
+                ></RecsToggle>{" "}
+              </h2>
+              {isRecomSubmit && paybackOrCosts === 'costs' && (
+                <RecsAndCosts
                   recommendations={recommendations}
-                  chosenProperty={chosenProperty}
                 />
+              )}
+              {isRecomSubmit && paybackOrCosts === 'payback' && (
+                    <RecsAndPayback
+                    recommendations={recommendations}
+                    chosenProperty={chosenProperty}
+                    />
               )}
               <h4>
                 {" "}
@@ -331,7 +351,7 @@ const MyProperties = () => {
             </>
           )}
           <hr />
-          <h3> Examine your smart meter data here: </h3>
+          <h2> Consumption Habits </h2>
           <h4>
             For data security reasons we will never ask you to store your
             sensitive Octopus API key on this site. This means each time you log
@@ -339,78 +359,78 @@ const MyProperties = () => {
             it will need to be submitted again
           </h4>
           <Box
-        component="form"
-        sx={{
-          "& .MuiTextField-root": { m: 1, width: "25ch" },
-        }}
-        noValidate
-        // autoComplete="off"
-      >
-        <div>
-          <TextField
-            required
-            id="outlined-required"
-            label="MPRN"
-            value={mpn}
-            onChange={(e) => setMpn(e.target.value)}
-          />
-          <TextField
-            required
-            id="outlined-required"
-            label="Serial Number"
-            value={serialNumber}
-            onChange={(e) => setSerialNumber(e.target.value)}
-          />
-          <TextField
-            required
-            id="outlined-required"
-            label="Auth Key"
-            value={authKey}
-            onChange={(e) => setAuthKey(e.target.value)}
-          />
-          <br></br>
-          <br></br>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={timePeriod}
-            label="property"
-            onChange={(e) => {
-              setTimePeriod(e.target.value);
+            component="form"
+            sx={{
+              "& .MuiTextField-root": { m: 1, width: "25ch" },
             }}
+            noValidate
+            // autoComplete="off"
           >
-            <MenuItem key="day" value="day">
-              Day
-            </MenuItem>
-            <MenuItem key="month" value="month">
-              Month
-            </MenuItem>
-          </Select>
-          {timePeriod === "day" && (
-            <TextField
-              required
-              id="outlined-required"
-              label="Date"
-              value={date}
-              placeholder="DD/MM/YYYY"
-              onChange={(e) => setDate(e.target.value)}
-            />
-          )}
-          {timePeriod === "month" && (
-            <TextField
-              required
-              id="outlined-required"
-              label="Month"
-              value={chosenMonth}
-              placeholder="MM/YYYY"
-              onChange={(e) => setChosenMonth(e.target.value)}
-            />
-          )}
-          <Button variant="contained" onClick={onSubmit}>
-            Submit
-          </Button>
-        </div>
-      </Box>
+            <div>
+              <TextField
+                required
+                id="outlined-required"
+                label="MPRN"
+                value={mpn}
+                onChange={(e) => setMpn(e.target.value)}
+              />
+              <TextField
+                required
+                id="outlined-required"
+                label="Serial Number"
+                value={serialNumber}
+                onChange={(e) => setSerialNumber(e.target.value)}
+              />
+              <TextField
+                required
+                id="outlined-required"
+                label="Auth Key"
+                value={authKey}
+                onChange={(e) => setAuthKey(e.target.value)}
+              />
+              <br></br>
+              <br></br>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={timePeriod}
+                label="property"
+                onChange={(e) => {
+                  setTimePeriod(e.target.value);
+                }}
+              >
+                <MenuItem key="day" value="day">
+                  Day
+                </MenuItem>
+                <MenuItem key="month" value="month">
+                  Month
+                </MenuItem>
+              </Select>
+              {timePeriod === "day" && (
+                <TextField
+                  required
+                  id="outlined-required"
+                  label="Date"
+                  value={date}
+                  placeholder="DD/MM/YYYY"
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              )}
+              {timePeriod === "month" && (
+                <TextField
+                  required
+                  id="outlined-required"
+                  label="Month"
+                  value={chosenMonth}
+                  placeholder="MM/YYYY"
+                  onChange={(e) => setChosenMonth(e.target.value)}
+                />
+              )}
+              <Button variant="contained" onClick={onSubmit}>
+                Submit
+              </Button>
+            </div>
+          </Box>
           {/* // <SmartVsPrice/> */}
           {isFormSubmit && (
             <SmartVsPrice
