@@ -21,6 +21,7 @@ const SmartVsPrice = ({
   const [graphLabels, setGraphLabels] = useState([]);
   const [graphValues, setGraphValues] = useState([]);
   const [priceValues, setPriceValues] = useState([]);
+  const [sumConsumption, setSumConsumption] = useState('');
   const [bigDf, setBigDf] = useState({});
   // const [ mpn, setMpn ] = useState('')
   // const [ serialNumber, setserialNumber ] = useState('')
@@ -103,6 +104,10 @@ const SmartVsPrice = ({
       )
       .then(function (response) {
         const df = new dfd.DataFrame(response.data.results);
+
+        const conDf = df['consumption']
+        const sumCon = conDf.sum().toFixed(2)
+        setSumConsumption(sumCon) 
 
         df.sortValues("interval_start", { ascending: true, inplace: true });
 
@@ -240,6 +245,7 @@ const SmartVsPrice = ({
         tariff is right for you.
       </h4>
       <Bar data={data} width={100} height={40} options={options} />
+      <h4> Total Consumption for {timePeriod}: {sumConsumption} kWh</h4>
     </>
   );
 };

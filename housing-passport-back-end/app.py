@@ -7,6 +7,7 @@ import json
 from findDataFromLMK import findDataFromLMK
 from addEPCDataToUser import addEPCDataToUser
 from getMyProperty import getMyProperty
+from smart_meter import consumption_retriever, account_for_missing_values
 
 app = Flask(__name__)
 
@@ -243,6 +244,75 @@ def retrieve_my_properties():
     except Exception as e:
         print(e)
         return e
+
+@app.route("/api/check_accuracy", methods=["POST"])
+def check_accuracy():
+    data = request.data
+    data = data.decode('utf-8')
+    data = json.loads(data)
+    print(data) 
+
+    lmk_key = data['lmk_key']   
+    mpan = data['mpan']   
+    serialElec = data['serialElec']   
+    mprn = data['mprn']   
+    serialGas = data['serialGas']   
+    authKey = data['authKey']   
+    # totalFloorArea = data['totalFloorArea']
+    totalFloorArea = 91
+
+    print(mpan)
+    print(serialElec)
+    print(authKey)
+
+    elec_df = consumption_retriever('electricity',
+                                    mpan,
+                                    serialElec,
+                                    authKey)
+    gas_df = consumption_retriever('gas',
+                                    mprn,
+                                    serialGas,
+                                    authKey)
+
+    print(elec_df)
+    print(gas_df)
+
+    elec_real_consumption, elec_total_slots = account_for_missing_values(elec_df)
+    gas_real_consumption, gas_total_slots = account_for_missing_values(gas_df)
+
+    TIME_SLOTS_PER_YEAR = 365.25 * 48
+
+    print("elec real consumption and total slots:")
+    print(elec_real_consumption)
+    print(elec_total_slots)
+    print("\n")
+
+    elec_real_consumption_per_year = elec_real_consumption * (TIME_SLOTS_PER_YEAR/elec_total_slots)
+    print("elec_real_consumption_per_year:")
+    print(elec_real_consumption_per_year)
+    print("\n")
+    
+    print("gas real consumption and total slots:")
+    print(gas_real_consumption)
+    print(gas_total_slots)
+    print("\n")
+
+    gas_real_consumption_per_year = gas_real_consumption * (TIME_SLOTS_PER_YEAR/gas_total_slots)
+    print("gas_real_consumption_per_year:")
+    print(gas_real_consumption_per_year)
+    print("\n")
+
+    print("total floor area: ")
+    print(totalFloorArea)
+    print("\n")
+
+    print("total consumption per m2:")
+    total_consumption_per_m2 = (elec_real_consumption_per_year + gas_real_consumption_per_year)/totalFloorArea
+    print(total_consumption_per_m2)
+    print("\n")
+
+
+    return "hello"
 
 
 @app.route("/api/private", methods=["GET"])

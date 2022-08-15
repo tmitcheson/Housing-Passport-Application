@@ -18,6 +18,7 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import RecsToggle from "../components/RecsToggle";
+import AccuracyTester from "../components/AccuracyTester";
 
 const MyProperties = () => {
   const [isSelectSubmit, setSelectSubmit] = useState(false);
@@ -32,6 +33,7 @@ const MyProperties = () => {
   const [chosenProperty, setChosenProperty] = useState([]);
   const [updateGraph, setUpdateGraph] = useState(false);
   const [paybackOrCosts, setPaybackOrCosts] = useState("costs");
+  const [accuracySubmit, setAccuracySubmit] = useState(false)
 
   const [timePeriod, setTimePeriod] = useState("");
   const [mpn, setMpn] = useState("");
@@ -39,6 +41,8 @@ const MyProperties = () => {
   const [authKey, setAuthKey] = useState("");
   const [date, setDate] = useState("");
   const [chosenMonth, setChosenMonth] = useState("");
+  const [mprn, setMprn ] = useState("");
+  const [serialGas, setSerialGas] = useState("");
 
   const [isFormSubmit, setFormSubmit] = useState(false);
 
@@ -176,9 +180,9 @@ const MyProperties = () => {
       });
   };
 
-  const handlePaybackOrCosts = (event, newChoice) => {
-    setPaybackOrCosts(newChoice);
-  };
+  const handleAccuracySubmit = () => {
+    accuracySubmit? setAccuracySubmit(false) : setAccuracySubmit(true)
+  }
 
   const onFormSubmit = (accountData) => {
     console.log(accountData);
@@ -297,16 +301,14 @@ const MyProperties = () => {
                   }
                 ></RecsToggle>{" "}
               </h2>
-              {isRecomSubmit && paybackOrCosts === 'costs' && (
-                <RecsAndCosts
-                  recommendations={recommendations}
-                />
+              {isRecomSubmit && paybackOrCosts === "costs" && (
+                <RecsAndCosts recommendations={recommendations} />
               )}
-              {isRecomSubmit && paybackOrCosts === 'payback' && (
-                    <RecsAndPayback
-                    recommendations={recommendations}
-                    chosenProperty={chosenProperty}
-                    />
+              {isRecomSubmit && paybackOrCosts === "payback" && (
+                <RecsAndPayback
+                  recommendations={recommendations}
+                  chosenProperty={chosenProperty}
+                />
               )}
               <h4>
                 {" "}
@@ -442,6 +444,47 @@ const MyProperties = () => {
               chosenMonth={chosenMonth}
               updateGraph={updateGraph}
             />
+          )}
+          {isSelectSubmit && isFormSubmit && (
+            <>
+              <h2> How accurate is your EPC? Test it here: </h2>
+              <Box
+            component="form"
+            sx={{
+              "& .MuiTextField-root": { m: 1, width: "25ch" },
+            }}
+            noValidate
+            autoComplete="off"
+          >
+            <div>
+              <TextField
+                required
+                id="outlined-required"
+                label="MPRN"
+                value={mprn}
+                onChange={(e) => setMprn(e.target.value)}
+              />
+              <TextField
+                required
+                id="outlined-required"
+                label="Gas Serial Number"
+                value={serialGas}
+                onChange={(e) => setSerialGas(e.target.value)}
+              />
+              <Button variant="contained" onClick={handleAccuracySubmit}> Submit </Button>
+              </div>
+              </Box>
+              <AccuracyTester
+                lmk_key={chosenProperty[1][0]["LMK_KEY"]}
+                mpan={mpn}
+                serialElec={serialNumber}
+                mprn={mprn}
+                serialGas={serialGas}
+                authKey={authKey}
+                totalFloorArea={chosenProperty[1][0]["TOTAL_FLOOR_AREA"]}
+                handleAccuracySubmit={accuracySubmit}
+              ></AccuracyTester>
+            </>
           )}
         </>
       )}

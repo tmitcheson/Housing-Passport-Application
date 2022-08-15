@@ -8,15 +8,14 @@ def consumption_retriever(energy_type, mpn, serial_number, auth_api):
     url = "https://api.octopus.energy/v1/" + energy_type + "-meter-points/" + mpn + "/meters/" + serial_number + "/consumption/"
     auth=(auth_api, '')
     # params = {"page_size": 25000}
-    params = {"page_size": 25000, "period_from": "2022-06-26T00:00:00Z", "period_to": "2022-07-26T00:00:00Z"}
+    params = {"page_size": 25000, "period_from": "2021-06-01T00:00:00Z", "period_to": "2022-08-01T00:00:00Z"}
 
     response = requests.get(url, auth=auth, params=params)
     # response = requests.get(url, auth=auth)
-
     response_data = response.json()
     results = response_data['results']
     results_df = pd.DataFrame.from_records(results)
-
+    print(results_df)
     return results_df
 
 
@@ -52,22 +51,23 @@ def account_for_missing_values(df):
     recorded_consumption = df['consumption'].sum()
     actual_consumption = (total_slots/recorded_slots) * recorded_consumption
 
-    return actual_consumption
+    return actual_consumption, total_slots
 
 
-elec_real_consumption = account_for_missing_values(elec_df)
-gas_real_consumption = account_for_missing_values(gas_df)
+# elec_real_consumption = account_for_missing_values(elec_df)
+# gas_real_consumption = account_for_missing_values(gas_df)
 
-print(elec_real_consumption)
-print(gas_real_consumption)
+# print(elec_real_consumption)
+# print(gas_real_consumption)
 
 # total_consumption = (elec_real_consumption + gas_real_consumption)/91
 # print("Total electric and gas for 7 months per m^2: " + str(total_consumption))
 # print("And therefore for 12 months: " + str(total_consumption * (12/7)))
 
 
-url = "https://api.octopus.energy/v1/products/AGILE-18-02-21/electricity-tariffs/E-1R-AGILE-18-02-21-C/standard-unit-rates/?period_from=2022-03-28T00:00Z&period_to=2022-03-29T01:29Z"
-response = requests.get(url)
-response_data = response.json()
-print("prices: ")
-print(response_data)
+# url = "https://api.octopus.energy/v1/products/AGILE-18-02-21/electricity-tariffs/E-1R-AGILE-18-02-21-C/standard-unit-rates/?period_from=2022-03-28T00:00Z&period_to=2022-03-29T01:29Z"
+# response = requests.get(url)
+# response_data = response.json()
+# # print("prices: ")
+# print(response_data)
+
