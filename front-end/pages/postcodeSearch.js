@@ -28,6 +28,19 @@ export default function PostcodeSearch() {
     console.log("request heree" + data);
     console.log("ehrer : " + JSON.stringify(data));
 
+    // CODE FOR ALLOWING MORE POSTCODE VARIATIONS
+    let manipulatedPostcode = data["postcode"].toUpperCase()
+    if(!(manipulatedPostcode.includes(" "))){
+      if(manipulatedPostcode.length === 5){
+        manipulatedPostcode = manipulatedPostcode.slice(0,2) + " " + manipulatedPostcode.slice(2,5)
+      } else if (manipulatedPostcode.length === 6){
+        manipulatedPostcode = manipulatedPostcode.slice(0,3) + " " + manipulatedPostcode.slice(3,6)
+      } else if (manipulatedPostcode.length === 7){
+        manipulatedPostcode = manipulatedPostcode.slice(0,4) + " " + manipulatedPostcode.slice(4,7)
+      }
+      }
+    data = JSON.parse("{\"postcode\":\"" + manipulatedPostcode + "\"}")
+
     axios
       .post("http://localhost:5000/api/get_list_of_addresses", { data })
       // axios.post('https://housing-passport-back-end.herokuapp.com/api/get_list_of_addresses', {data})
@@ -66,65 +79,88 @@ export default function PostcodeSearch() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="postcode">Postcode:</label>
-      <input
-        id="postcode"
-        aria-invalid={errors.postcode ? "true" : "false"}
-        {...register("postcode", { required: true })}
-      />
-      {errors.postcode && <span role="alert">This field is required</span>}
-      {/* <input type="submit" /> */}
-      <Button type="submit" variant="contained">
-        Submit
-      </Button>
-      {isSubmitted && (
-        <div className="listOfAddresses">
-          <div>
-            {" "}
-            Possible Addresses
-            {listOfAddresses.map((item) => {
-              return (
-                <div
-                  href={"/property/" + item[1]}
-                  className={styles.single}
-                  key={item}
-                >
-                  {item[0]}
-                  {session && (
-                    <Button
-                      type="submit"
-                      size="small"
-                      variant="text"
-                      onClick={(e) => onSignedInClick(item, e)}
-                    >
-                      Claim Property
-                    </Button>
-                  )}
-                  {!session && (
-                    <Button
-                      type="submit"
-                      size="small"
-                      variant="text"
-                      onClick={(e) => onSignedOutClick(item, e)}
-                    >
-                      View Property
-                    </Button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+    <>
+      {/* <Box
+        component="form"
+        sx={{
+          "& .MuiTextField-root": { m: 1, width: "25ch" },
+        }}
+        noValidate
+        // autoComplete="off"
+      >
+        <div>
+          <TextField
+            required
+            id="outlined-required"
+            label="Postcode"
+            value={mpn}
+            onChange={(e) => setPostcode(e.target.value)}
+          />
+          <Button variant="contained" onClick={onSubmit}>
+            Submit
+          </Button>
         </div>
-      )}
-      {isAdded && (
-        <>
-          <h1> Property added ! </h1>
-          <Link href="/myProperties"> View my properties </Link>
-        </>
-      )}
-      {isFailed && <h1> Something went wrong! Try again </h1>}
-    </form>
+      </Box> */}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <label htmlFor="postcode">Postcode:</label>
+        <input
+          id="postcode"
+          aria-invalid={errors.postcode ? "true" : "false"}
+          {...register("postcode", { required: true })}
+        />
+        {errors.postcode && <span role="alert">This field is required</span>}
+        {/* <input type="submit" /> */}
+        <Button type="submit" variant="contained">
+          Submit
+        </Button>
+        {isSubmitted && (
+          <div className="listOfAddresses">
+            <div>
+              {" "}
+              Possible Addresses
+              {listOfAddresses.map((item) => {
+                return (
+                  <div
+                    href={"/property/" + item[1]}
+                    className={styles.single}
+                    key={item}
+                  >
+                    {item[0]}
+                    {session && (
+                      <Button
+                        type="submit"
+                        size="small"
+                        variant="text"
+                        onClick={(e) => onSignedInClick(item, e)}
+                      >
+                        Claim Property
+                      </Button>
+                    )}
+                    {!session && (
+                      <Button
+                        type="submit"
+                        size="small"
+                        variant="text"
+                        onClick={(e) => onSignedOutClick(item, e)}
+                      >
+                        View Property
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+        {isAdded && (
+          <>
+            <h1> Property added ! </h1>
+            <Link href="/myProperties"> View my properties </Link>
+          </>
+        )}
+        {isFailed && <h1> Something went wrong! Try again </h1>}
+      </form>
+    </>
   );
 }
 
