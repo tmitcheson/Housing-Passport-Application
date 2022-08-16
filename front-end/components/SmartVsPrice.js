@@ -47,6 +47,8 @@ const SmartVsPrice = ({
       const day = parseInt(date.slice(0, 2));
       const month = parseInt(date.slice(3, 5));
       const year = parseInt(date.slice(6, 10));
+      // js date object is 0-indexed for months but not days  
+      month -= 1
       console.log(day);
       console.log(month);
       console.log(year);
@@ -58,6 +60,8 @@ const SmartVsPrice = ({
     } else if (timePeriod === "month") {
       const month = parseInt(chosenMonth.slice(0, 2));
       const year = parseInt(chosenMonth.slice(3, 7));
+      // js date object is 0-indexed for months but not days  
+      month -= 1
       console.log(month);
       console.log(year);
 
@@ -221,11 +225,13 @@ const SmartVsPrice = ({
     scales: {
       y: {
         type: "linear",
+        labelString: "Energy Consumption (kWh)",
         display: true,
         position: "left",
       },
       y1: {
         type: "linear",
+        labelString: "Price (pence/kWh)",
         display: true,
         position: "right",
       },
@@ -241,8 +247,7 @@ const SmartVsPrice = ({
         Here is a graph of your consumption profile. It takes your consumption
         records for a specific day or month and compares it against the Octopus
         Agile (variable) tariff for the day. In doing so you can compare your
-        consumption habits to the general market demand and decide if a variable
-        tariff is right for you.
+        consumption habits to the general market demand.
       </h4>
       <Bar data={data} width={100} height={40} options={options} />
       <h4> Total Consumption for {timePeriod}: {sumConsumption} kWh</h4>

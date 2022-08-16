@@ -392,6 +392,7 @@ const MyProperties = () => {
               />
               <br></br>
               <br></br>
+              <div class="flexbox-container">
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -431,6 +432,7 @@ const MyProperties = () => {
               <Button variant="contained" onClick={onSubmit}>
                 Submit
               </Button>
+              </div>
             </div>
           </Box>
           {/* // <SmartVsPrice/> */}

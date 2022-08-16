@@ -28,7 +28,7 @@ const AccuracyTester = ({
       });
   }, [handleAccuracySubmit]);
 
-  return <h1> hello </h1>;
+  return <h5> hello </h5>;
 };
 
 export default AccuracyTester;

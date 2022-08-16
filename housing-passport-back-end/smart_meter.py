@@ -36,6 +36,7 @@ gas_df = consumption_retriever('gas',
                                 trial_auth)
 
 def account_for_missing_values(df):
+    print(df.shape)
     end_date = df.iloc[0, df.columns.get_loc('interval_start')]
     start_date = df.iloc[df[df.columns[0]].count() - 1, df.columns.get_loc('interval_start')]
 
@@ -54,8 +55,8 @@ def account_for_missing_values(df):
     return actual_consumption, total_slots
 
 
-# elec_real_consumption = account_for_missing_values(elec_df)
-# gas_real_consumption = account_for_missing_values(gas_df)
+elec_real_consumption, elec_total_slots = account_for_missing_values(elec_df)
+gas_real_consumption, gas_total_slots = account_for_missing_values(gas_df)
 
 # print(elec_real_consumption)
 # print(gas_real_consumption)
