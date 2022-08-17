@@ -1,8 +1,9 @@
 from flask import Flask
-from flask import request, make_response, Flask
+from flask import request, make_response, Flask, jsonify
 from flask_cors import CORS
 import pymongo
 import json
+import numpy as np
 
 from findDataFromLMK import findDataFromLMK
 from addEPCDataToUser import addEPCDataToUser
@@ -83,7 +84,7 @@ def delete_property():
     try:
         client['db-name'].users.update_one(
             {"email":email},
-            {"$unset": {"properties." + address : ""}}
+            {"$pull": {"properties" : {"address":address}}}
         )
         return "True"
     except Exception as e:
@@ -218,7 +219,8 @@ def retrieve_my_properties():
     data = request.data
     data = data.decode('utf-8')
     data = json.loads(data)
-    email = data['payload']
+    print(data)
+    email = data['email']
 
     conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
     client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
@@ -236,7 +238,7 @@ def retrieve_my_properties():
         epc_data = users.find_one({"email": email})
         del epc_data['_id']
         epc_data = epc_data['properties']
-
+        epc_data = jsonify(epc_data)
         print(epc_data)
 
         return epc_data
@@ -244,6 +246,94 @@ def retrieve_my_properties():
     except Exception as e:
         print(e)
         return e
+
+@app.route("/api/update_retrofit_no_share", methods=["POST"])
+def update_retrofit_no_share():
+    data = request.data
+    data = data.decode('utf-8')
+    data = json.loads(data)
+    retrofit = data['retrofit']
+    email = data['email']
+    address = data['address']
+    print(data)
+
+    conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
+    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+
+    try:
+        client.server_info()
+        print("Connected...")
+    except Exception as e:
+        print(e)
+        print("Unable to connect to the server.")
+
+    try:
+        client['db-name'].users.update_one(
+            {"email":email, "properties.address":address },
+            {"$push": {"properties.$.retrofits":retrofit}}
+        )
+        return 'True'
+    except Exception as e:
+        print(e)
+        return 'False'
+
+# THIS IS NOT COMPLETE
+@app.route("/api/update_retrofit_share", methods=["POST"])
+def update_retrofit_share():
+    data = request.data
+    data = data.decode('utf-8')
+    data = json.loads(data)
+
+    conn_str = "mongodb+srv://tm21:TomM7802@housingpassportcluster.wufr0o8.mongodb.net/?retryWrites=true&w=majority"
+    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+
+    try:
+        client.server_info()
+        print("Connected...")
+    except Exception:
+        print("Unable to connect to the server.")
+
+    return "hello"
+
+@app.route("/api/retrieve_my_retrofits", methods=["POST"])
+def retrieve_my_retrofits():
+    data = request.data
+    data = data.decode('utf-8')
+    data = json.loads(data)
+
+    email = data['email']
+    address = data['address']
+    print(data)
+
+    conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
+    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+
+    try:
+        client.server_info()
+        print("Connected...")
+    except Exception as e:
+        print(e)
+        print("Unable to connect to the server.")
+
+    try:
+        profile = client['db-name'].users.find_one({"email":email})
+        properties = profile['properties']
+        for prop in properties:
+            if(prop['address'] == address):
+                try:
+                    retrofits = jsonify(prop['retrofits'])
+                    return retrofits
+                except:
+                    return "no retrofits"
+    except Exception as e:
+        print(e)
+        return e
+
+    return "no retrofits"
+
+
+
+
 
 @app.route("/api/check_accuracy", methods=["POST"])
 def check_accuracy():

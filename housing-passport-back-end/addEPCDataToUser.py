@@ -15,7 +15,8 @@ def addEPCDataToUser(epc_data, email):
     try:
         client['db-name'].users.update_one(
             {"email":email},
-            {"$push": {"properties."+ epc_data['ADDRESS']: epc_data }}
+            # {"$push": {"properties."+ epc_data['ADDRESS']: epc_data }}
+            {"$push": {"properties" : {"address": epc_data['ADDRESS'], "content": epc_data} }}
         )
         return True
     except Exception as e:

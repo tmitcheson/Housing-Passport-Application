@@ -3,7 +3,7 @@ import { useLayoutEffect, useRef } from "react";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 
 import axios from "axios";
 import BasicTabs from "../components/EpcTabs";
@@ -19,6 +19,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import RecsToggle from "../components/RecsToggle";
 import AccuracyTester from "../components/AccuracyTester";
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 const MyProperties = () => {
   const [isSelectSubmit, setSelectSubmit] = useState(false);
@@ -30,10 +31,12 @@ const MyProperties = () => {
   const [deleted, setDeleted] = useState(0);
   const [isAdded, setAdded] = useState(false);
   const [myProperties, setMyProperties] = useState([]);
-  const [chosenProperty, setChosenProperty] = useState([]);
+  const [chosenProperty, setChosenProperty] = useState({});
   const [updateGraph, setUpdateGraph] = useState(false);
   const [paybackOrCosts, setPaybackOrCosts] = useState("costs");
-  const [accuracySubmit, setAccuracySubmit] = useState(false)
+  const [accuracySubmit, setAccuracySubmit] = useState(false);
+  const [doneRetrofits, setDoneRetrofits] = useState([]);
+
 
   const [timePeriod, setTimePeriod] = useState("");
   const [mpn, setMpn] = useState("");
@@ -41,7 +44,7 @@ const MyProperties = () => {
   const [authKey, setAuthKey] = useState("");
   const [date, setDate] = useState("");
   const [chosenMonth, setChosenMonth] = useState("");
-  const [mprn, setMprn ] = useState("");
+  const [mprn, setMprn] = useState("");
   const [serialGas, setSerialGas] = useState("");
 
   const [isFormSubmit, setFormSubmit] = useState(false);
@@ -56,18 +59,29 @@ const MyProperties = () => {
 
   useEffect(() => {
     if (session.user.role === "homeowner") {
-      const payload = session.user.email;
+      const email = session.user.email;
       axios
-        .post("http://localhost:5000/api/retrieve_my_properties", { payload })
+        .post("http://localhost:5000/api/retrieve_my_properties", { email })
         // axios.post('https://housing-passport-back-end.herokuapp.com/api/get_my_property', {data})
         .then(function (response) {
           const receivedData = response.data;
           // console.log("receieveddaa" + JSON.stringify(receivedData));
+          console.log(receivedData);
           const newProperties = [];
           for (const i in receivedData) {
-            newProperties.push([i, receivedData[i]]);
+            // newProperties.push([
+            //   receivedData[i]["address"],
+            //   receivedData[i]["content"],
+            //   receivedData[i]["retrofits"],
+            // ]);
+            newProperties.push({
+              address: receivedData[i]["address"],
+              content: receivedData[i]["content"],
+              retrofits: receivedData[i]["retrofits"],
+            });
           }
-          // console.log(newProperties)
+          // console.log("new properties");
+          // console.log(newProperties);
           setMyProperties(newProperties);
         })
         .catch(function (error) {
@@ -76,6 +90,12 @@ const MyProperties = () => {
         });
     }
   }, []);
+
+  useEffect(() => {
+    console.log("NOWNOWNOWNOWNO");
+
+
+  }, [doneRetrofits]);
 
   const firstUpdate = useRef(true);
   useLayoutEffect(() => {
@@ -97,27 +117,24 @@ const MyProperties = () => {
       axios
         .get(
           "https://epc.opendatacommunities.org/api/v1/domestic/recommendations/" +
-            chosenProperty[1][0]["LMK_KEY"],
+            chosenProperty["content"]["LMK_KEY"],
           config
         )
         .then(function (response) {
           const recommendationsFull = response.data["rows"];
           let recommendationsTemp = [];
-          console.log(recommendationsFull);
+          //   console.log(recommendationsFull);
           for (const i in recommendationsFull) {
             recommendationsTemp.push([
               recommendationsFull[i]["improvement-id-text"],
               recommendationsFull[i]["indicative-cost"],
             ]);
           }
-          console.log(recommendationsTemp);
+          //   console.log(recommendationsTemp);
 
           /* THIS SECTION ADDS THE PRICES OF PAYBACK PERIODS OF THE RECS */
 
           for (let i = 0; i < recommendationsTemp.length; i++) {
-            console.log(
-              recommendationsTemp[i][0].toLowerCase().replaceAll(" ", "_")
-            );
             for (let j = 0; j < RecStats.recList.length; j++) {
               if (
                 recommendationsTemp[i][0]
@@ -126,7 +143,7 @@ const MyProperties = () => {
                   .includes(RecStats.recList[j])
               ) {
                 // console.log(recommendationsTemp[i][0])
-                const builtForm = chosenProperty[1][0]["BUILT_FORM"]
+                const builtForm = chosenProperty["content"]["BUILT_FORM"]
                   .toLowerCase()
                   .replaceAll("-", "_");
                 // console.log(builtForm)
@@ -154,8 +171,37 @@ const MyProperties = () => {
             }
           }
 
-          setRecommendations(recommendationsTemp);
+          // setRecommendations(recommendationsTemp);
+          
+          // console.log("here");
+          // console.log(recommendationsTemp)
+          // // console.log(chosenProperty);
+          const tempRetros = chosenProperty["retrofits"];
+          // setDoneRetrofits(tempRetros);
+          // // console.log(doneRetrofits);
+
+
+
+
+          
+          setRecommendations(recommendationsTemp)
+          setDoneRetrofits(tempRetros)
           setRecomSubmit(true);
+          //   const address = chosenProperty["content"]["ADDRESS"];
+          //   const email = session.user.email;
+          //   axios
+          //     .post("http://localhost:5000/api/retrieve_my_retrofits", {
+          //       email,
+          //       address,
+          //     })
+          //     // axios.post('https://housing-passport-back-end.herokuapp.com/api/retrieve_my_retrofits', {data})
+          //     .then(function (response) {
+          //       console.log("retrofits:");
+          //       console.log(response.data);
+          //       if (response.data !== "no retrofits") {
+          //         setDoneRetrofits(response.data);
+          //       }
+          //     });
         });
     }
   }, [chosenProperty]);
@@ -181,8 +227,8 @@ const MyProperties = () => {
   };
 
   const handleAccuracySubmit = () => {
-    accuracySubmit? setAccuracySubmit(false) : setAccuracySubmit(true)
-  }
+    accuracySubmit ? setAccuracySubmit(false) : setAccuracySubmit(true);
+  };
 
   const onFormSubmit = (accountData) => {
     console.log(accountData);
@@ -262,17 +308,17 @@ const MyProperties = () => {
           {isSelectSubmit && (
             <>
               <p></p>
-              <div> Showing the passport for {chosenProperty[0]}</div>
+              <div> Showing the passport for {chosenProperty["address"]}</div>
               <div color="error">
                 {" "}
-                Remove {chosenProperty[0]} from your property list?{" "}
+                Remove {chosenProperty["address"]} from your property list?{" "}
                 <Button
                   type="submit"
                   size="small"
                   variant="text"
                   color="error"
                   onClick={(e) =>
-                    onDeleteProperty(chosenProperty[1][0]["ADDRESS"])
+                    onDeleteProperty(chosenProperty["content"]["ADDRESS"])
                   }
                 >
                   {" "}
@@ -290,10 +336,20 @@ const MyProperties = () => {
               )}
               <h2> Building Information </h2>
               <BasicTabs chosenProperty={chosenProperty} />
+              <div> Retrofits undertaken: </div>
+              {doneRetrofits &&
+                doneRetrofits.map((item) => {
+                  return (
+                    <div className={styles.single} key={item}>
+                      <CheckBoxIcon sx={{ color: "green" }}></CheckBoxIcon>{"  "}
+                      {item}
+                    </div>
+                  );
+                })}
               <hr />
               <h2>
                 {" "}
-                Recommendations for {chosenProperty[0]}{" "}
+                Recommendations for {chosenProperty["address"]}{" "}
                 <RecsToggle
                   paybackOrCosts={paybackOrCosts}
                   handlePaybackOrCosts={(paybackOrCosts) =>
@@ -302,12 +358,17 @@ const MyProperties = () => {
                 ></RecsToggle>{" "}
               </h2>
               {isRecomSubmit && paybackOrCosts === "costs" && (
-                <RecsAndCosts recommendations={recommendations} />
+                <RecsAndCosts
+                  recommendations={recommendations}
+                  address={chosenProperty["content"]["ADDRESS"]}
+                  doneRetrofits={doneRetrofits}
+                />
               )}
               {isRecomSubmit && paybackOrCosts === "payback" && (
                 <RecsAndPayback
                   recommendations={recommendations}
                   chosenProperty={chosenProperty}
+                  doneRetrofits={doneRetrofits}
                 />
               )}
               <h4>
@@ -327,7 +388,7 @@ const MyProperties = () => {
                 Find a tradesperson
               </Button>
               {isTradeSubmit && (
-                <h4> Extend permissions for {chosenProperty[0]} to ... </h4>
+                <h4> Extend permissions for {chosenProperty["address"]} to ... </h4>
               )}
               {isTradeSubmit &&
                 listOfTradespeople.map((item) => {
@@ -371,21 +432,21 @@ const MyProperties = () => {
             <div>
               <TextField
                 required
-                id="outlined-required"
-                label="MPRN"
+                id="mpan"
+                label="MPAN"
                 value={mpn}
                 onChange={(e) => setMpn(e.target.value)}
               />
               <TextField
                 required
-                id="outlined-required"
+                id="serialElec"
                 label="Serial Number"
                 value={serialNumber}
                 onChange={(e) => setSerialNumber(e.target.value)}
               />
               <TextField
                 required
-                id="outlined-required"
+                id="authKey"
                 label="Auth Key"
                 value={authKey}
                 onChange={(e) => setAuthKey(e.target.value)}
@@ -393,45 +454,45 @@ const MyProperties = () => {
               <br></br>
               <br></br>
               <div class="flexbox-container">
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={timePeriod}
-                label="property"
-                onChange={(e) => {
-                  setTimePeriod(e.target.value);
-                }}
-              >
-                <MenuItem key="day" value="day">
-                  Day
-                </MenuItem>
-                <MenuItem key="month" value="month">
-                  Month
-                </MenuItem>
-              </Select>
-              {timePeriod === "day" && (
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Date"
-                  value={date}
-                  placeholder="DD/MM/YYYY"
-                  onChange={(e) => setDate(e.target.value)}
-                />
-              )}
-              {timePeriod === "month" && (
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Month"
-                  value={chosenMonth}
-                  placeholder="MM/YYYY"
-                  onChange={(e) => setChosenMonth(e.target.value)}
-                />
-              )}
-              <Button variant="contained" onClick={onSubmit}>
-                Submit
-              </Button>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={timePeriod}
+                  label="property"
+                  onChange={(e) => {
+                    setTimePeriod(e.target.value);
+                  }}
+                >
+                  <MenuItem key="day" value="day">
+                    Day
+                  </MenuItem>
+                  <MenuItem key="month" value="month">
+                    Month
+                  </MenuItem>
+                </Select>
+                {timePeriod === "day" && (
+                  <TextField
+                    required
+                    id="date"
+                    label="Date"
+                    value={date}
+                    placeholder="DD/MM/YYYY"
+                    onChange={(e) => setDate(e.target.value)}
+                  />
+                )}
+                {timePeriod === "month" && (
+                  <TextField
+                    required
+                    id="month"
+                    label="Month"
+                    value={chosenMonth}
+                    placeholder="MM/YYYY"
+                    onChange={(e) => setChosenMonth(e.target.value)}
+                  />
+                )}
+                <Button variant="contained" onClick={onSubmit}>
+                  Submit
+                </Button>
               </div>
             </div>
           </Box>
@@ -451,39 +512,42 @@ const MyProperties = () => {
             <>
               <h2> How accurate is your EPC? Test it here: </h2>
               <Box
-            component="form"
-            sx={{
-              "& .MuiTextField-root": { m: 1, width: "25ch" },
-            }}
-            noValidate
-            autoComplete="off"
-          >
-            <div>
-              <TextField
-                required
-                id="outlined-required"
-                label="MPRN"
-                value={mprn}
-                onChange={(e) => setMprn(e.target.value)}
-              />
-              <TextField
-                required
-                id="outlined-required"
-                label="Gas Serial Number"
-                value={serialGas}
-                onChange={(e) => setSerialGas(e.target.value)}
-              />
-              <Button variant="contained" onClick={handleAccuracySubmit}> Submit </Button>
-              </div>
+                component="form"
+                sx={{
+                  "& .MuiTextField-root": { m: 1, width: "25ch" },
+                }}
+                noValidate
+                autoComplete="off"
+              >
+                <div>
+                  <TextField
+                    required
+                    id="mprn"
+                    label="MPRN"
+                    value={mprn}
+                    onChange={(e) => setMprn(e.target.value)}
+                  />
+                  <TextField
+                    required
+                    id="serialGas"
+                    label="Gas Serial Number"
+                    value={serialGas}
+                    onChange={(e) => setSerialGas(e.target.value)}
+                  />
+                  <Button variant="contained" onClick={handleAccuracySubmit}>
+                    {" "}
+                    Submit{" "}
+                  </Button>
+                </div>
               </Box>
               <AccuracyTester
-                lmk_key={chosenProperty[1][0]["LMK_KEY"]}
+                lmk_key={chosenProperty["content"]["LMK_KEY"]}
                 mpan={mpn}
                 serialElec={serialNumber}
                 mprn={mprn}
                 serialGas={serialGas}
                 authKey={authKey}
-                totalFloorArea={chosenProperty[1][0]["TOTAL_FLOOR_AREA"]}
+                totalFloorArea={chosenProperty["content"]["TOTAL_FLOOR_AREA"]}
                 handleAccuracySubmit={accuracySubmit}
               ></AccuracyTester>
             </>

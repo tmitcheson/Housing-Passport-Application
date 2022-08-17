@@ -2,7 +2,7 @@ import * as dfd from "danfojs";
 import Chart from "chart.js/auto";
 
 import { Bar, Line } from "react-chartjs-2";
-import { Button } from "@mui/material";
+import { Button, rgbToHex } from "@mui/material";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -224,14 +224,20 @@ const SmartVsPrice = ({
     },
     scales: {
       y: {
-        type: "linear",
-        labelString: "Energy Consumption (kWh)",
+        // type: "linear",
+        title: {
+          display: true,
+          text: "Energy Consumption (kWh)",
+          color: '#36a2eb'},
         display: true,
         position: "left",
       },
       y1: {
-        type: "linear",
-        labelString: "Price (pence/kWh)",
+        // type: "linear",
+        title: {
+          display: true,
+          text: "Price (pence/kWh)",
+          color: 'rgba(47,97,68,1)'},
         display: true,
         position: "right",
       },

@@ -26,7 +26,7 @@ export default function SelectProperty({ properties, chosenProperty, onSubmit, o
           label="property"
           onChange={handleChange}>
           {properties.map(item => (
-            <MenuItem key={item[0]} value={item}>{item[0]}</MenuItem>
+            <MenuItem key={item["address"]} value={item}>{item["address"]}</MenuItem>
           ))
           }
         </Select>

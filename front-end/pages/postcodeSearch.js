@@ -7,29 +7,24 @@ import { useSession, getSession } from "next-auth/react";
 import Button from "@mui/material/Button";
 import styles from "../styles/List.module.css";
 import Link from "next/link";
+import { Box } from "@mui/system";
+import { TextField } from "@mui/material";
 
 export default function PostcodeSearch() {
   const [isSubmitted, setSubmitted] = useState(false);
   const [isAdded, setAdded] = useState(false);
   const [isFailed, setFailed] = useState(false);
   const [listOfAddresses, setListOfAddresses] = useState([]);
+  const [postcode, setPostcode] = useState("");
   const { data: session, status } = useSession();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
-  const onSubmit = (data) => {
+  const onSubmit = () => {
     setSubmitted(true);
     setAdded(false);
     setFailed(false);
-    console.log("request heree" + data);
-    console.log("ehrer : " + JSON.stringify(data));
 
     // CODE FOR ALLOWING MORE POSTCODE VARIATIONS
-    let manipulatedPostcode = data["postcode"].toUpperCase()
+    let manipulatedPostcode = postcode.toUpperCase()
     if(!(manipulatedPostcode.includes(" "))){
       if(manipulatedPostcode.length === 5){
         manipulatedPostcode = manipulatedPostcode.slice(0,2) + " " + manipulatedPostcode.slice(2,5)
@@ -39,7 +34,7 @@ export default function PostcodeSearch() {
         manipulatedPostcode = manipulatedPostcode.slice(0,4) + " " + manipulatedPostcode.slice(4,7)
       }
       }
-    data = JSON.parse("{\"postcode\":\"" + manipulatedPostcode + "\"}")
+    const data = JSON.parse("{\"postcode\":\"" + manipulatedPostcode + "\"}")
 
     axios
       .post("http://localhost:5000/api/get_list_of_addresses", { data })
@@ -80,7 +75,7 @@ export default function PostcodeSearch() {
 
   return (
     <>
-      {/* <Box
+      <Box
         component="form"
         sx={{
           "& .MuiTextField-root": { m: 1, width: "25ch" },
@@ -91,28 +86,16 @@ export default function PostcodeSearch() {
         <div>
           <TextField
             required
-            id="outlined-required"
+            id="postcode"
             label="Postcode"
-            value={mpn}
+            value={postcode}
             onChange={(e) => setPostcode(e.target.value)}
           />
           <Button variant="contained" onClick={onSubmit}>
             Submit
           </Button>
         </div>
-      </Box> */}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="postcode">Postcode:</label>
-        <input
-          id="postcode"
-          aria-invalid={errors.postcode ? "true" : "false"}
-          {...register("postcode", { required: true })}
-        />
-        {errors.postcode && <span role="alert">This field is required</span>}
-        {/* <input type="submit" /> */}
-        <Button type="submit" variant="contained">
-          Submit
-        </Button>
+      </Box>
         {isSubmitted && (
           <div className="listOfAddresses">
             <div>
@@ -159,7 +142,7 @@ export default function PostcodeSearch() {
           </>
         )}
         {isFailed && <h1> Something went wrong! Try again </h1>}
-      </form>
+      {/* </form> */}
     </>
   );
 }

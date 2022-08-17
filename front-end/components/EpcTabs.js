@@ -55,6 +55,12 @@ const BasicTabs = ({ chosenProperty }) => {
     "TENURE",
     "TOTAL_FLOOR_AREA",
   ];
+  const consumptionOptions = [
+    "ENERGY_CONSUMPTION_CURRENT",
+    "ENERGY_CONSUMPTION_POTENTIAL",
+    "POTENTIAL_ENERGY_EFFICIENCY",
+    "POTENTIAL_ENERGY_RATING",
+  ];
   const heatingOptions = [
     "HEATING_COST_CURRENT",
     "HEATING_COST_POTENTIAL",
@@ -103,16 +109,11 @@ const BasicTabs = ({ chosenProperty }) => {
     "CO2_EMISSIONS_POTENTIAL",
     "CO2_EMISSIONS_CURR_PER_FLOOR_AREA",
   ];
-  const consumptionOptions = [
-    "ENERGY_CONSUMPTION_CURRENT",
-    "ENERGY_CONSUMPTION_POTENTIAL",
-    "POTENTIAL_ENERGY_EFFICIENCY",
-    "POTENTIAL_ENERGY_RATING",
-  ];
 
   const [value, setValue] = React.useState(0);
   const [epcData, setEpcData] = useState([]);
   const [overview, setOverview] = useState([]);
+  const [consumption, setConsumption] = useState([]);
   const [heating, setHeating] = useState([]);
   const [lighting, setLighting] = useState([]);
   const [water, setWater] = useState([]);
@@ -121,12 +122,12 @@ const BasicTabs = ({ chosenProperty }) => {
   const [floor, setFloor] = useState([]);
   const [walls, setWalls] = useState([]);
   const [emissions, setEmissions] = useState([]);
-  const [consumption, setConsumption] = useState([]);
   const router = useRouter();
 
-  const chosenPropertyTabs = chosenProperty[1][0];
+  const chosenPropertyTabs = chosenProperty["content"];
 
   const newOverview = [];
+  const newConsumption = [];
   const newHeating = [];
   const newLighting = [];
   const newWater = [];
@@ -135,12 +136,13 @@ const BasicTabs = ({ chosenProperty }) => {
   const newFloor = [];
   const newWalls = [];
   const newEmissions = [];
-  const newConsumption = [];
   const other = [];
 
   for (const i in chosenPropertyTabs) {
     if (overviewOptions.includes(i)) {
       newOverview.push([i, chosenPropertyTabs[i]]);
+    } else if (consumptionOptions.includes(i)) {
+      newConsumption.push([i, chosenPropertyTabs[i]]);
     } else if (heatingOptions.includes(i)) {
       newHeating.push([i, chosenPropertyTabs[i]]);
     } else if (lightingOptions.includes(i)) {
@@ -157,8 +159,6 @@ const BasicTabs = ({ chosenProperty }) => {
       newWalls.push([i, chosenPropertyTabs[i]]);
     } else if (emissionsOptions.includes(i)) {
       newEmissions.push([i, chosenPropertyTabs[i]]);
-    } else if (consumptionOptions.includes(i)) {
-      newConsumption.push([i, chosenPropertyTabs[i]]);
     } else {
       other.push([i, chosenPropertyTabs[i]]);
     }
@@ -167,6 +167,7 @@ const BasicTabs = ({ chosenProperty }) => {
   useEffect(() => {
     // Update the document title using the browser API
     setOverview(newOverview);
+    setConsumption(newConsumption);
     setHeating(newHeating);
     setLighting(newLighting);
     setWater(newWater);
@@ -175,7 +176,6 @@ const BasicTabs = ({ chosenProperty }) => {
     setFloor(newFloor);
     setWalls(newWalls);
     setEmissions(newEmissions);
-    setConsumption(newConsumption);
   }, [chosenProperty]);
 
   const handleChange = (event, newValue) => {
@@ -191,15 +191,15 @@ const BasicTabs = ({ chosenProperty }) => {
           aria-label="basic tabs example"
         >
           <Tab label="Overview" {...a11yProps(0)} />
-          <Tab label="Heating" {...a11yProps(1)} />
-          <Tab label="Lighting" {...a11yProps(2)} />
-          <Tab label="Water" {...a11yProps(3)} />
-          <Tab label="Windows" {...a11yProps(4)} />
-          <Tab label="Roof" {...a11yProps(5)} />
-          <Tab label="Floor" {...a11yProps(6)} />
-          <Tab label="Walls" {...a11yProps(7)} />
-          <Tab label="Emissions" {...a11yProps(8)} />
-          <Tab label="Consumption" {...a11yProps(9)} />
+          <Tab label="Consumption" {...a11yProps(1)} />
+          <Tab label="Heating" {...a11yProps(2)} />
+          <Tab label="Lighting" {...a11yProps(3)} />
+          <Tab label="Water" {...a11yProps(4)} />
+          <Tab label="Windows" {...a11yProps(5)} />
+          <Tab label="Roof" {...a11yProps(6)} />
+          <Tab label="Floor" {...a11yProps(7)} />
+          <Tab label="Walls" {...a11yProps(8)} />
+          <Tab label="Emissions" {...a11yProps(9)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -232,7 +232,7 @@ const BasicTabs = ({ chosenProperty }) => {
         <div className="epcData">
           <table>
             <tbody>
-              {heating.map((item) => {
+              {consumption.map((item) => {
                 return (
                   <tr key={item}>
                     <td> {item[0].replaceAll('_', ' ')}</td>
@@ -258,7 +258,7 @@ const BasicTabs = ({ chosenProperty }) => {
         <div className="epcData">
           <table>
             <tbody>
-              {lighting.map((item) => {
+              {heating.map((item) => {
                 return (
                   <tr key={item}>
                     <td> {item[0].replaceAll('_', ' ')}</td>
@@ -284,7 +284,7 @@ const BasicTabs = ({ chosenProperty }) => {
         <div className="epcData">
           <table>
             <tbody>
-              {water.map((item) => {
+              {lighting.map((item) => {
                 return (
                   <tr key={item}>
                     <td> {item[0].replaceAll('_', ' ')}</td>
@@ -310,7 +310,7 @@ const BasicTabs = ({ chosenProperty }) => {
         <div className="epcData">
           <table>
             <tbody>
-              {windows.map((item) => {
+              {water.map((item) => {
                 return (
                   <tr key={item}>
                     <td> {item[0].replaceAll('_', ' ')}</td>
@@ -336,7 +336,7 @@ const BasicTabs = ({ chosenProperty }) => {
         <div className="epcData">
           <table>
             <tbody>
-              {roof.map((item) => {
+              {windows.map((item) => {
                 return (
                   <tr key={item}>
                     <td> {item[0].replaceAll('_', ' ')}</td>
@@ -362,7 +362,7 @@ const BasicTabs = ({ chosenProperty }) => {
         <div className="epcData">
           <table>
             <tbody>
-              {floor.map((item) => {
+              {roof.map((item) => {
                 return (
                   <tr key={item}>
                     <td> {item[0].replaceAll('_', ' ')}</td>
@@ -388,7 +388,7 @@ const BasicTabs = ({ chosenProperty }) => {
         <div className="epcData">
           <table>
             <tbody>
-              {walls.map((item) => {
+              {floor.map((item) => {
                 return (
                   <tr key={item}>
                     <td> {item[0].replaceAll('_', ' ')}</td>
@@ -414,7 +414,7 @@ const BasicTabs = ({ chosenProperty }) => {
         <div className="epcData">
           <table>
             <tbody>
-              {emissions.map((item) => {
+              {walls.map((item) => {
                 return (
                   <tr key={item}>
                     <td> {item[0].replaceAll('_', ' ')}</td>
@@ -440,7 +440,7 @@ const BasicTabs = ({ chosenProperty }) => {
         <div className="epcData">
           <table>
             <tbody>
-              {consumption.map((item) => {
+              {emissions.map((item) => {
                 return (
                   <tr key={item}>
                     <td> {item[0].replaceAll('_', ' ')}</td>
