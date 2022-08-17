@@ -130,16 +130,12 @@ def retrieve_addresses():
     return list_of_addresses
 
 @app.route("/api/get_a_doc", methods=["POST"])
-def add_property_to_user():
+def get_a_doc():
     data = request.data
     data = data.decode('utf-8')
     print("this here is what we're at: " + data)
     data = json.loads(data)
-    data = data['data']
     lmk_key = data['lmk_key']
-    email = data['email']
-    print(email)
-    # print(lmk_key)
 
     conn_str = "mongodb+srv://tm21:TomM7802@housingpassportcluster.wufr0o8.mongodb.net/?retryWrites=true&w=majority"
     client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
@@ -150,29 +146,11 @@ def add_property_to_user():
         print("Unable to connect to the server.")
 
     passports = client.business
-    cursor = passports.passports.find({"LMK_KEY": lmk_key})
+    document = passports.passports.find_one({"LMK_KEY": lmk_key})
+    del document['_id']
 
-    return data
-    print("STRINGED" + str(cursor))
-    # returner = cursor.next()
-    # try:
-    #     del returner['_id']
-    # except:
-    #     print("house not found")
-    # # for record in cursor:
-    # #     print(record)
-    # print(returner)
+    return document
 
-    # conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.wufr0o8.mongodb.net/db-name?retryWrites=true&w=majority"
-    # client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
-
-    # try:
-    #     client.server_info()
-    #     print("Connected...")
-    # except Exception:
-    #     print("Unable to connect to the server.")
-
-    # users = client.users
 
 @app.route("/api/get_my_property", methods=["POST"])
 def get_my_property():

@@ -9,6 +9,7 @@ import styles from "../styles/List.module.css";
 import Link from "next/link";
 import { Box } from "@mui/system";
 import { TextField } from "@mui/material";
+import { useRouter } from "next/router";
 
 export default function PostcodeSearch() {
   const [isSubmitted, setSubmitted] = useState(false);
@@ -17,6 +18,9 @@ export default function PostcodeSearch() {
   const [listOfAddresses, setListOfAddresses] = useState([]);
   const [postcode, setPostcode] = useState("");
   const { data: session, status } = useSession();
+
+  const router = useRouter()
+  const{pid} = router.query
 
   const onSubmit = () => {
     setSubmitted(true);
@@ -72,6 +76,10 @@ export default function PostcodeSearch() {
         }
       });
   };
+
+  const onSignedOutClick = (data) => {
+    router.push("property/" + data[1])
+  }
 
   return (
     <>
