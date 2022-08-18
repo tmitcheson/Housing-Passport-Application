@@ -47,6 +47,8 @@ const BasicTabs = ({ chosenProperty }) => {
     "COUNTY",
     "CURRENT_ENERGY_EFFICIENCY",
     "CURRENT_ENERGY_RATING",
+    "POTENTIAL_ENERGY_EFFICIENCY",
+    "POTENTIAL_ENERGY_RATING",
     "INSPECTION_DATE",
     "LMK_KEY",
     "LOCAL_AUTHORITY_LABEL",
@@ -58,8 +60,6 @@ const BasicTabs = ({ chosenProperty }) => {
   const consumptionOptions = [
     "ENERGY_CONSUMPTION_CURRENT",
     "ENERGY_CONSUMPTION_POTENTIAL",
-    "POTENTIAL_ENERGY_EFFICIENCY",
-    "POTENTIAL_ENERGY_RATING",
   ];
   const heatingOptions = [
     "HEATING_COST_CURRENT",

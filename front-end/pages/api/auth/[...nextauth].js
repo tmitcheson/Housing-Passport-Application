@@ -36,7 +36,7 @@ export default NextAuth({
     async jwt({ token, account, user, profile }) {
       if (account) {
         token.accessToken = account.access_token;
-        token.role = profile["https://role_access.com/please"];
+        token.role = profile["https://role_access.com/control"];
       }
       return token;
     },

@@ -19,7 +19,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import RecsToggle from "../components/RecsToggle";
 import AccuracyTester from "../components/AccuracyTester";
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 const MyProperties = () => {
   const [isSelectSubmit, setSelectSubmit] = useState(false);
@@ -31,12 +31,12 @@ const MyProperties = () => {
   const [deleted, setDeleted] = useState(0);
   const [isAdded, setAdded] = useState(false);
   const [myProperties, setMyProperties] = useState([]);
-  const [chosenProperty, setChosenProperty] = useState({});
+  const [chosenProperty, setChosenProperty] = useState();
   const [updateGraph, setUpdateGraph] = useState(false);
   const [paybackOrCosts, setPaybackOrCosts] = useState("costs");
   const [accuracySubmit, setAccuracySubmit] = useState(false);
-  const [doneRetrofits, setDoneRetrofits] = useState([]);
-
+  const [privateRetrofits, setPrivateRetrofits] = useState([]);
+  const [publicRetrofits, setPublicRetrofits] = useState([]);
 
   const [timePeriod, setTimePeriod] = useState("");
   const [mpn, setMpn] = useState("");
@@ -62,27 +62,52 @@ const MyProperties = () => {
       const email = session.user.email;
       axios
         .post("http://localhost:5000/api/retrieve_my_properties", { email })
-        // axios.post('https://housing-passport-back-end.herokuapp.com/api/get_my_property', {data})
+        // axios.post('https://housing-passport-back-end.herokuapp.com/api/retrieve_my_properties', {data})
         .then(function (response) {
           const receivedData = response.data;
-          // console.log("receieveddaa" + JSON.stringify(receivedData));
-          console.log(receivedData);
           const newProperties = [];
           for (const i in receivedData) {
-            // newProperties.push([
-            //   receivedData[i]["address"],
-            //   receivedData[i]["content"],
-            //   receivedData[i]["retrofits"],
-            // ]);
+            let tempPublicRetrofits = receivedData[i]["public_retrofits"];
+            let tempPrivateRetrofits = receivedData[i]["private_retrofits"];
+            let recommendationsTemp = receivedData[i]["recommendations"];
+            let indexesToRemove = [];
+            if (tempPublicRetrofits && recommendationsTemp) {
+              for (let i = 0; i < recommendationsTemp.length; i++) {
+                for (let j = 0; j < tempPublicRetrofits.length; j++) {
+                  if (recommendationsTemp[i][0] === tempPublicRetrofits[j]) {
+                    indexesToRemove.push(i);
+                  }
+                }
+              }
+            } else {
+              console.log("no public retrofits");
+            }
+            console.log("ye:");
+            console.log(recommendationsTemp);
+            console.log(tempPrivateRetrofits);
+            if (tempPrivateRetrofits && recommendationsTemp) {
+              for (let i = 0; i < recommendationsTemp.length; i++) {
+                for (let j = 0; j < tempPrivateRetrofits.length; j++) {
+                  if (recommendationsTemp[i][0] === tempPrivateRetrofits[j]) {
+                    indexesToRemove.push(i);
+                  }
+                }
+              }
+            } else {
+              console.log("no private retrofits");
+            }
+            for (let k = 0; k < indexesToRemove.length; k++) {
+              recommendationsTemp.splice(indexesToRemove[k], 1);
+            }
             newProperties.push({
               address: receivedData[i]["address"],
               content: receivedData[i]["content"],
-              retrofits: receivedData[i]["retrofits"],
+              publicRetrofits: receivedData[i]["public_retrofits"],
+              privateRetrofits: receivedData[i]["private_retrofits"],
+              recommendations: recommendationsTemp,
             });
+            setMyProperties(newProperties);
           }
-          // console.log("new properties");
-          // console.log(newProperties);
-          setMyProperties(newProperties);
         })
         .catch(function (error) {
           console.log("initial oops");
@@ -92,117 +117,56 @@ const MyProperties = () => {
   }, []);
 
   useEffect(() => {
+    console.log(chosenProperty);
     console.log("NOWNOWNOWNOWNO");
-
-
-  }, [doneRetrofits]);
+  }, [chosenProperty]);
 
   const firstUpdate = useRef(true);
   useLayoutEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false;
     } else {
-      // do things after first render
+      // do things after first rende
+      /* THIS SECTION ADDS THE PRICES OF PAYBACK PERIODS OF THE RECS */
 
-      /* THIS SECTION GETS THE RECOMMENDATIONS FOR THE CHOSEN PROPERTY */
+      for (let i = 0; i < chosenProperty["recommendations"].length; i++) {
+        for (let j = 0; j < RecStats.recList.length; j++) {
+          if (
+            chosenProperty["recommendations"][i][0]
+              .toLowerCase()
+              .replaceAll(" ", "_")
+              .includes(RecStats.recList[j])
+          ) {
+            console.log(chosenProperty["recommendations"][i][0]);
+            const builtForm = chosenProperty["content"]["BUILT_FORM"]
+              .toLowerCase()
+              .replaceAll("-", "_");
+            // console.log(builtForm)
+            // console.log(recList)
+            const timeBackNow = (
+              RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
+              RecStats.BillSavings[builtForm][RecStats.recList[j]]
+            ).toFixed(2);
+            const timeBackLast = (
+              RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
+              (RecStats.BillSavings[builtForm][RecStats.recList[j]] * 0.57)
+            ).toFixed(2);
+            const timeBackNext = (
+              RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
+              (RecStats.BillSavings[builtForm][RecStats.recList[j]] * 1.81)
+            ).toFixed(2);
 
-      let config = {
-        headers: {
-          Authorization:
-            "Basic dGJtaXRjaGVzb25AZ21haWwuY29tOjQ5NmRkMDcxZjhjOWY5NTM0YTNiYmM1ZDYyYmE4YjlkMWRlMmFmMzY=",
-          Accept: "application/json",
-        },
-      };
+            chosenProperty["recommendations"][i][2] = timeBackLast + " years";
+            chosenProperty["recommendations"][i][3] = timeBackNow + " years";
+            chosenProperty["recommendations"][i][4] = timeBackNext + " years";
 
-      axios
-        .get(
-          "https://epc.opendatacommunities.org/api/v1/domestic/recommendations/" +
-            chosenProperty["content"]["LMK_KEY"],
-          config
-        )
-        .then(function (response) {
-          const recommendationsFull = response.data["rows"];
-          let recommendationsTemp = [];
-          //   console.log(recommendationsFull);
-          for (const i in recommendationsFull) {
-            recommendationsTemp.push([
-              recommendationsFull[i]["improvement-id-text"],
-              recommendationsFull[i]["indicative-cost"],
-            ]);
+            setRecommendations(chosenProperty["recommendations"]);
+            setPrivateRetrofits(chosenProperty["privateRetrofits"]);
+            setPublicRetrofits(chosenProperty["publicRetrofits"]);
+            setRecomSubmit(true);
           }
-          //   console.log(recommendationsTemp);
-
-          /* THIS SECTION ADDS THE PRICES OF PAYBACK PERIODS OF THE RECS */
-
-          for (let i = 0; i < recommendationsTemp.length; i++) {
-            for (let j = 0; j < RecStats.recList.length; j++) {
-              if (
-                recommendationsTemp[i][0]
-                  .toLowerCase()
-                  .replaceAll(" ", "_")
-                  .includes(RecStats.recList[j])
-              ) {
-                // console.log(recommendationsTemp[i][0])
-                const builtForm = chosenProperty["content"]["BUILT_FORM"]
-                  .toLowerCase()
-                  .replaceAll("-", "_");
-                // console.log(builtForm)
-                // console.log(recList)
-                const timeBackNow = (
-                  RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
-                  RecStats.BillSavings[builtForm][RecStats.recList[j]]
-                ).toFixed(2);
-                const timeBackLast = (
-                  RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
-                  (RecStats.BillSavings[builtForm][RecStats.recList[j]] * 0.57)
-                ).toFixed(2);
-                const timeBackNext = (
-                  RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
-                  (RecStats.BillSavings[builtForm][RecStats.recList[j]] * 1.81)
-                ).toFixed(2);
-
-                recommendationsTemp[i][2] = timeBackLast + " years";
-                recommendationsTemp[i][3] = timeBackNow + " years";
-                recommendationsTemp[i][4] = timeBackNext + " years";
-                // recommendationsTemp[i][2] = RecStats.InstallationCost[builtForm][RecStats.recList[j]];
-                // recommendationsTemp[i].push(PaybackPrices[builtForm][recList[j]])
-                // console.log(recommendationsTemp[i][2])
-              }
-            }
-          }
-
-          // setRecommendations(recommendationsTemp);
-          
-          // console.log("here");
-          // console.log(recommendationsTemp)
-          // // console.log(chosenProperty);
-          const tempRetros = chosenProperty["retrofits"];
-          // setDoneRetrofits(tempRetros);
-          // // console.log(doneRetrofits);
-
-
-
-
-          
-          setRecommendations(recommendationsTemp)
-          setDoneRetrofits(tempRetros)
-          setRecomSubmit(true);
-          //   const address = chosenProperty["content"]["ADDRESS"];
-          //   const email = session.user.email;
-          //   axios
-          //     .post("http://localhost:5000/api/retrieve_my_retrofits", {
-          //       email,
-          //       address,
-          //     })
-          //     // axios.post('https://housing-passport-back-end.herokuapp.com/api/retrieve_my_retrofits', {data})
-          //     .then(function (response) {
-          //       console.log("retrofits:");
-          //       console.log(response.data);
-          //       if (response.data !== "no retrofits") {
-          //         setDoneRetrofits(response.data);
-          //       }
-          //     });
-        });
+        }
+      }
     }
   }, [chosenProperty]);
 
@@ -336,12 +300,25 @@ const MyProperties = () => {
               )}
               <h2> Building Information </h2>
               <BasicTabs chosenProperty={chosenProperty} />
-              <div> Retrofits undertaken: </div>
-              {doneRetrofits &&
-                doneRetrofits.map((item) => {
+              <div> Retrofits undertaken (public): </div>
+              {publicRetrofits &&
+                publicRetrofits.map((item) => {
                   return (
                     <div className={styles.single} key={item}>
-                      <CheckBoxIcon sx={{ color: "green" }}></CheckBoxIcon>{"  "}
+                      <CheckBoxIcon sx={{ color: "green" }}></CheckBoxIcon>
+                      {"  "}
+                      {item}
+                    </div>
+                  );
+                })}
+              <div> Retrofits undertaken (private to you): </div>
+
+              {privateRetrofits &&
+                privateRetrofits.map((item) => {
+                  return (
+                    <div className={styles.single} key={item}>
+                      <CheckBoxIcon sx={{ color: "green" }}></CheckBoxIcon>
+                      {"  "}
                       {item}
                     </div>
                   );
@@ -361,14 +338,13 @@ const MyProperties = () => {
                 <RecsAndCosts
                   recommendations={recommendations}
                   address={chosenProperty["content"]["ADDRESS"]}
-                  doneRetrofits={doneRetrofits}
+                  lmk_key={chosenProperty["content"]["LMK_KEY"]}
                 />
               )}
               {isRecomSubmit && paybackOrCosts === "payback" && (
                 <RecsAndPayback
                   recommendations={recommendations}
                   chosenProperty={chosenProperty}
-                  doneRetrofits={doneRetrofits}
                 />
               )}
               <h4>
@@ -388,7 +364,10 @@ const MyProperties = () => {
                 Find a tradesperson
               </Button>
               {isTradeSubmit && (
-                <h4> Extend permissions for {chosenProperty["address"]} to ... </h4>
+                <h4>
+                  {" "}
+                  Extend permissions for {chosenProperty["address"]} to ...{" "}
+                </h4>
               )}
               {isTradeSubmit &&
                 listOfTradespeople.map((item) => {

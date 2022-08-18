@@ -2,60 +2,32 @@ import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSession, getSession } from "next-auth/react";
 import axios from "axios";
+import { useRouter } from "next/router";
 
-const RecsAndCosts = ({ recommendations, address, doneRetrofits }) => {
+const RecsAndCosts = ({ recommendations, address, lmk_key }) => {
   const [achieved, setAchieved] = useState(false);
   const [done, setDone] = useState();
   const [successfulShare, setSuccessfulShare] = useState();
   const [successfulNoShare, setSuccessfulNoShare] = useState();
   const [recsForCosts, setRecsForCosts] = useState([]);
-  const [retrosForCosts, setRetrosForCosts] = useState([])
+  const [retrosForCosts, setRetrosForCosts] = useState([]);
   const { data: session, status } = useSession();
 
-  // useEffect(() => {
-  //   setRecsForCosts(recommendations)
-  //   setRetrosForCosts(doneRetrofits)
-  //   let indexesToRemove = [];
-  //   console.log("sanitycheck:");
-  //   // console.log(doneRetrofits);
-  //   console.log(recommendationsTemp);
-  //   if (tempRetros) {
-  //     for (let i = 0; i < recommendationsTemp.length; i++) {
-  //       for (let j = 0; j < tempRetros.length; j++) {
-  //         if (recommendationsTemp[i][0] === tempRetros[j]) {
-  //           console.log("matchy:");
-  //           // console.log(recommendationsTemp[i][0]);
-  //           let indexToRemove = recommendationsTemp.indexOf(tempRetros[j])
-  //           recommendationsTemp.splice(indexToRemove, 1);
-  //           // indexesToRemove.push(i);
-  //           // console.log(indexesToRemove);
-  //         }
-  //       }
-  //     }
-  //     for (let k = 0; k < indexesToRemove.length; k++) {
-  //       console.log(indexesToRemove[k])
-  //       console.log(recommendationsTemp)
-  //       recommendationsTemp.splice(indexesToRemove[k], 1);
-  //       console.log(recommendationsTemp)
-  //     }
-  //     // console.log(recommendationsTemp);
-  //   } else {
-  //     console.log("no done retrofits");
-  //   }
-
-  // }, [])
+  const router = useRouter()
 
   const handleAchieved = (index) => {
     setDone(index);
   };
 
-  const handleShare = (retrofit, index) => {
+  const handleShare = (retrofit, cost, index) => {
     const email = session.user.email;
     axios
       .post("http://localhost:5000/api/update_retrofit_share", {
         retrofit,
-        email,
+        cost,
+        lmk_key,
         address,
+        email,
       })
       // axios.post('https://housing-passport-back-end.herokuapp.com/api/update_retrofit_share', {retrofit}))
       .then(function (response) {
@@ -120,7 +92,7 @@ const RecsAndCosts = ({ recommendations, address, doneRetrofits }) => {
                 <td>
                   <Button
                     variant="contained"
-                    onClick={() => handleShare(item[0], index)}
+                    onClick={() => handleShare(item[0], item[1], index)}
                   >
                     {" "}
                     Share Publicly{" "}
@@ -142,7 +114,26 @@ const RecsAndCosts = ({ recommendations, address, doneRetrofits }) => {
                   </Button>
                 </td>
               )}
-              {successfulShare === index && <td> Retrofit added </td>}
+              {successfulNoShare === index && (
+                  <td>
+                    {" "}
+                    Retrofit added. Page will refresh to update in 3 seconds{" "}
+                    {setTimeout(() => {
+                      // this would be equivalent to a 'back': router.go(-1)
+                      router.reload(window.location.pathname);
+                    }, 3000)}
+                  </td>
+              )}
+              {successfulShare === index && (
+                  <td>
+                    {" "}
+                    Retrofit added. Page will refresh to update in 3 seconds{" "}
+                    {setTimeout(() => {
+                      // this would be equivalent to a 'back': router.go(-1)
+                      router.reload(window.location.pathname);
+                    }, 3000)}
+                  </td>
+                )}
             </tr>
           );
         })}

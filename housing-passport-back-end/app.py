@@ -10,6 +10,7 @@ from addEPCDataToUser import addEPCDataToUser
 from getMyProperty import getMyProperty
 from smart_meter import consumption_retriever, account_for_missing_values
 
+
 app = Flask(__name__)
 
 CORS(app)
@@ -248,7 +249,7 @@ def update_retrofit_no_share():
     try:
         client['db-name'].users.update_one(
             {"email":email, "properties.address":address },
-            {"$push": {"properties.$.retrofits":retrofit}}
+            {"$push": {"properties.$.private_retrofits":retrofit}}
         )
         return 'True'
     except Exception as e:
@@ -261,9 +262,17 @@ def update_retrofit_share():
     data = request.data
     data = data.decode('utf-8')
     data = json.loads(data)
+    retrofit = data['retrofit']
+    cost = data['cost']
+    lmk_key = data['lmk_key']
+    address = data['address']
+    email = data['email']
+
+    print(data)
 
     conn_str = "mongodb+srv://tm21:TomM7802@housingpassportcluster.wufr0o8.mongodb.net/?retryWrites=true&w=majority"
     client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+
 
     try:
         client.server_info()
@@ -271,8 +280,36 @@ def update_retrofit_share():
     except Exception:
         print("Unable to connect to the server.")
 
-    return "hello"
+    passports = client.business.passports
+    try:
+        passports.update_one(
+            {"LMK_KEY": lmk_key},
+            {"$push":{"retrofits":[retrofit, cost]}}
+        )
+    except Exception as e:
+        print(e)
+        return 'False'
 
+    conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
+    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+
+    try:
+        client.server_info()
+        print("Connected...")
+    except Exception as e:
+        print(e)
+        print("Unable to connect to the server.")
+
+    try:
+        client['db-name'].users.update_one(
+            {"email":email, "properties.address":address },
+            {"$push": {"properties.$.public_retrofits":retrofit}}
+        )
+        return 'True'
+    except Exception as e:
+        print(e)
+        return 'False'
+ 
 @app.route("/api/retrieve_my_retrofits", methods=["POST"])
 def retrieve_my_retrofits():
     data = request.data
