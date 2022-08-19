@@ -255,7 +255,6 @@ def update_retrofit_no_share():
         print(e)
         return 'False'
 
-# THIS IS NOT COMPLETE
 @app.route("/api/update_retrofit_share", methods=["POST"])
 def update_retrofit_share():
     data = fromRequestToJSON(request)

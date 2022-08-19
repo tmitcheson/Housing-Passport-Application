@@ -121,7 +121,7 @@ export default function PostcodeSearch() {
                     key={item}
                   >
                     {item[0]}
-                    {session && (
+                    {session.user.role === "homeowner" && (
                       <Button
                         type="submit"
                         size="small"
@@ -132,6 +132,16 @@ export default function PostcodeSearch() {
                       </Button>
                     )}
                     {!session && (
+                      <Button
+                        type="submit"
+                        size="small"
+                        variant="text"
+                        onClick={(e) => onSignedOutClick(item, e)}
+                      >
+                        View Property
+                      </Button>
+                    )}
+                    {session.user.role === "tradesperson" && (
                       <Button
                         type="submit"
                         size="small"

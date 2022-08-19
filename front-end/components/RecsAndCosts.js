@@ -119,7 +119,6 @@ const RecsAndCosts = ({ recommendations, address, lmk_key }) => {
                     {" "}
                     Retrofit added. Page will refresh to update in 3 seconds{" "}
                     {setTimeout(() => {
-                      // this would be equivalent to a 'back': router.go(-1)
                       router.reload(window.location.pathname);
                     }, 3000)}
                   </td>
@@ -129,7 +128,6 @@ const RecsAndCosts = ({ recommendations, address, lmk_key }) => {
                     {" "}
                     Retrofit added. Page will refresh to update in 3 seconds{" "}
                     {setTimeout(() => {
-                      // this would be equivalent to a 'back': router.go(-1)
                       router.reload(window.location.pathname);
                     }, 3000)}
                   </td>

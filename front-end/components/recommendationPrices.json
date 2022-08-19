@@ -1,9 +1,8 @@
 {"builtForms" : [
     "detached",
     "semi_detached",
-    "mid_terrace_house",
-    "bungalow",
-    "mid_floor_flat"
+    "mid_terrace",
+    "enclosed"
   ],
   
   "recList" : [
@@ -15,33 +14,31 @@
   
   "InstallationCost" : {
     "detached": {
-      "solid_wall_insulation": 650,
+      "solid_wall_insulation": 13000,
       "floor_insulation": 130,
       "loft_insulation": 680,
       "cavity_wall_insulation": 2500
     },
     "semi_detached": {
-      "solid_wall_insulation": 14000,
+      "solid_wall_insulation": 10000,
       "floor_insulation": 75,
       "loft_insulation": 530,
       "cavity_wall_insulation": 1200
     },
-    "mid_terrace_house": {
-      "solid_wall_insulation": 245,
+    "mid_terrace": {
+      "solid_wall_insulation": 5000,
       "floor_insulation": 50,
       "loft_insulation": 500,
       "cavity_wall_insulation": 620
     },
-    "bungalow": {
-      "solid_wall_insulation": 260,
-      "floor_insulation": 115,
-      "loft_insulation": 690,
-      "cavity_wall_insulation": 940
-    },
-    "mid_floor_flat": {
-      "solid_wall_insulation": 195,
+    "enclosed": {
+      "solid_wall_insulation": 5000,
       "cavity_wall_insulation": 410
-    }
+    },
+    "solid_wall_insulation":10000,
+    "floor_insulation":75,
+    "loft_insulation":530,
+    "cavity_wall_insulation":1500
 },
 
   "BillSavings" : {
@@ -57,20 +54,18 @@
       "loft_insulation": 255,
       "cavity_wall_insulation": 285
     },
-    "mid_terrace_house": {
+    "mid_terrace": {
       "solid_wall_insulation": 245,
       "floor_insulation": 50,
       "loft_insulation": 230,
       "cavity_wall_insulation": 180
-    },
-    "bungalow": {
-      "solid_wall_insulation": 260,
-      "floor_insulation": 115,
-      "loft_insulation": 365,
-      "cavity_wall_insulation": 195
-    },
-    "mid_floor_flat": {
+    },      
+    "enclosed": {
       "solid_wall_insulation": 195,
       "cavity_wall_insulation": 145
-    }
+    },
+    "solid_wall_insulation":500,
+    "floor_insulation":100,
+    "loft_insulation":350,
+    "cavity_wall_insulation":300
   }}
