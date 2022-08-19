@@ -21,7 +21,7 @@ import RecsToggle from "../components/RecsToggle";
 import AccuracyTester from "../components/AccuracyTester";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import Link from "next/link";
-import Head from "next/head"
+import Head from "next/head";
 
 const MyProperties = () => {
   const [isSelectSubmit, setSelectSubmit] = useState(false);
@@ -60,7 +60,7 @@ const MyProperties = () => {
   } = useForm();
 
   useEffect(() => {
-    if(session){
+    if (session) {
       if (session.user.role === "homeowner") {
         const email = session.user.email;
         axios
@@ -262,10 +262,15 @@ const MyProperties = () => {
 
   return (
     <>
-        <Head>
-          <title> Housing Passport | My Properties </title>
-        </Head>
-      {!session && <div> <Link href="api/auth/signin">Sign in</Link> to view your properties </div>}
+      <Head>
+        <title> Housing Passport | My Properties </title>
+      </Head>
+      {!session && (
+        <div>
+          {" "}
+          <Link href="api/auth/signin">Sign in</Link> to view your properties{" "}
+        </div>
+      )}
       {session && (
         <>
           <h2> Welcome to your properties page </h2>
@@ -354,188 +359,194 @@ const MyProperties = () => {
                   chosenProperty={chosenProperty}
                 />
               )}
-              <h4>
-                {" "}
-                Time to act on the recommendations? This one-stop-shop approach
-                means that whenever you decide you are ready to act on these
-                recommendations, you are able to extends permissions to your
-                house to one of these tradespeople who have signed up to our
-                service
-              </h4>
-              <Button
-                type="submit"
-                size="small"
-                variant="text"
-                onClick={(e) => onRetrieveTradesClick(e)}
-              >
-                Find a tradesperson
-              </Button>
-              {isTradeSubmit && (
-                <h4>
-                  {" "}
-                  Extend permissions for {chosenProperty["address"]} to ...{" "}
-                </h4>
-              )}
-              {isTradeSubmit &&
-                listOfTradespeople.map((item) => {
-                  return (
-                    <div className={styles.single} key={item}>
-                      {item[1]}
-                      <Button
-                        type="submit"
-                        size="small"
-                        variant="text"
-                        onClick={(e) =>
-                          onExtendTradeClick(e, epcData["LMK_KEY"], item[1])
-                        }
-                      >
-                        {" "}
-                        Extend permissions{" "}
-                      </Button>
-                    </div>
-                  );
-                })}
-              {isAdded && <div> Permissions extended </div>}
-              {isFailed && <div> Something went wrong </div>}
-            </>
-          )}
-          <hr />
-          <h2> Consumption Habits </h2>
-          <h4>
-            For data security reasons we will never ask you to store your
-            sensitive Octopus API key on this site. This means each time you log
-            in the site will not remember any of the following information and
-            it will need to be submitted again
-          </h4>
-          <Box
-            component="form"
-            sx={{
-              "& .MuiTextField-root": { m: 1, width: "25ch" },
-            }}
-            noValidate
-            // autoComplete="off"
-          >
-            <div>
-              <TextField
-                required
-                id="mpan"
-                label="MPAN"
-                value={mpn}
-                onChange={(e) => setMpn(e.target.value)}
-              />
-              <TextField
-                required
-                id="serialElec"
-                label="Serial Number"
-                value={serialNumber}
-                onChange={(e) => setSerialNumber(e.target.value)}
-              />
-              <TextField
-                required
-                id="authKey"
-                label="Auth Key"
-                value={authKey}
-                onChange={(e) => setAuthKey(e.target.value)}
-              />
-              <br></br>
-              <br></br>
-              <div class="flexbox-container">
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={timePeriod}
-                  label="property"
-                  onChange={(e) => {
-                    setTimePeriod(e.target.value);
-                  }}
-                >
-                  <MenuItem key="day" value="day">
-                    Day
-                  </MenuItem>
-                  <MenuItem key="month" value="month">
-                    Month
-                  </MenuItem>
-                </Select>
-                {timePeriod === "day" && (
-                  <TextField
-                    required
-                    id="date"
-                    label="Date"
-                    value={date}
-                    placeholder="DD/MM/YYYY"
-                    onChange={(e) => setDate(e.target.value)}
-                  />
-                )}
-                {timePeriod === "month" && (
-                  <TextField
-                    required
-                    id="month"
-                    label="Month"
-                    value={chosenMonth}
-                    placeholder="MM/YYYY"
-                    onChange={(e) => setChosenMonth(e.target.value)}
-                  />
-                )}
-                <Button variant="contained" onClick={onSubmit}>
-                  Submit
-                </Button>
-              </div>
-            </div>
-          </Box>
-          {/* // <SmartVsPrice/> */}
-          {isFormSubmit && (
-            <SmartVsPrice
-              mpn={mpn}
-              serialNumber={serialNumber}
-              authKey={authKey}
-              timePeriod={timePeriod}
-              date={date}
-              chosenMonth={chosenMonth}
-              updateGraph={updateGraph}
-            />
-          )}
-          {isSelectSubmit && isFormSubmit && (
-            <>
-              <h2> How accurate is your EPC? Test it here: </h2>
-              <Box
-                component="form"
-                sx={{
-                  "& .MuiTextField-root": { m: 1, width: "25ch" },
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                <div>
-                  <TextField
-                    required
-                    id="mprn"
-                    label="MPRN"
-                    value={mprn}
-                    onChange={(e) => setMprn(e.target.value)}
-                  />
-                  <TextField
-                    required
-                    id="serialGas"
-                    label="Gas Serial Number"
-                    value={serialGas}
-                    onChange={(e) => setSerialGas(e.target.value)}
-                  />
-                  <Button variant="contained" onClick={handleAccuracySubmit}>
+              {session.user.role === "homeowner" && (
+                <>
+                  <h4>
                     {" "}
-                    Submit{" "}
+                    Time to act on the recommendations? This one-stop-shop
+                    approach means that whenever you decide you are ready to act
+                    on these recommendations, you are able to extends
+                    permissions to your house to one of these tradespeople who
+                    have signed up to our service
+                  </h4>
+                  <Button
+                    type="submit"
+                    size="small"
+                    variant="text"
+                    onClick={(e) => onRetrieveTradesClick(e)}
+                  >
+                    Find a tradesperson
                   </Button>
-                </div>
-              </Box>
-              <AccuracyTester
-                lmk_key={chosenProperty["content"]["LMK_KEY"]}
-                mpan={mpn}
-                serialElec={serialNumber}
-                mprn={mprn}
-                serialGas={serialGas}
-                authKey={authKey}
-                totalFloorArea={chosenProperty["content"]["TOTAL_FLOOR_AREA"]}
-                handleAccuracySubmit={accuracySubmit}
-              ></AccuracyTester>
+                  {isTradeSubmit && (
+                    <h4>
+                      {" "}
+                      Extend permissions for {chosenProperty["address"]} to ...{" "}
+                    </h4>
+                  )}
+                  {isTradeSubmit &&
+                    listOfTradespeople.map((item) => {
+                      return (
+                        <div className={styles.single} key={item}>
+                          {item[1]}
+                          <Button
+                            type="submit"
+                            size="small"
+                            variant="text"
+                            onClick={(e) =>
+                              onExtendTradeClick(e, chosenProperty["content"]["LMK_KEY"], item[1])
+                            }
+                          >
+                            {" "}
+                            Extend permissions{" "}
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  {isAdded && <div> Permissions extended </div>}
+                  {isFailed && <div> Something went wrong </div>}
+                  <hr />
+                  <h2> Consumption Habits </h2>
+                  <h4>
+                    For data security reasons we will never ask you to store
+                    your sensitive Octopus API key on this site. This means each
+                    time you log in the site will not remember any of the
+                    following information and it will need to be submitted again
+                  </h4>
+                  <Box
+                    component="form"
+                    sx={{
+                      "& .MuiTextField-root": { m: 1, width: "25ch" },
+                    }}
+                    noValidate
+                    // autoComplete="off"
+                  >
+                    <div>
+                      <TextField
+                        required
+                        id="mpan"
+                        label="MPAN"
+                        value={mpn}
+                        onChange={(e) => setMpn(e.target.value)}
+                      />
+                      <TextField
+                        required
+                        id="serialElec"
+                        label="Serial Number"
+                        value={serialNumber}
+                        onChange={(e) => setSerialNumber(e.target.value)}
+                      />
+                      <TextField
+                        required
+                        id="authKey"
+                        label="Auth Key"
+                        value={authKey}
+                        onChange={(e) => setAuthKey(e.target.value)}
+                      />
+                      <br></br>
+                      <br></br>
+                      <div class="flexbox-container">
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={timePeriod}
+                          label="property"
+                          onChange={(e) => {
+                            setTimePeriod(e.target.value);
+                          }}
+                        >
+                          <MenuItem key="day" value="day">
+                            Day
+                          </MenuItem>
+                          <MenuItem key="month" value="month">
+                            Month
+                          </MenuItem>
+                        </Select>
+                        {timePeriod === "day" && (
+                          <TextField
+                            required
+                            id="date"
+                            label="Date"
+                            value={date}
+                            placeholder="DD/MM/YYYY"
+                            onChange={(e) => setDate(e.target.value)}
+                          />
+                        )}
+                        {timePeriod === "month" && (
+                          <TextField
+                            required
+                            id="month"
+                            label="Month"
+                            value={chosenMonth}
+                            placeholder="MM/YYYY"
+                            onChange={(e) => setChosenMonth(e.target.value)}
+                          />
+                        )}
+                        <Button variant="contained" onClick={onSubmit}>
+                          Submit
+                        </Button>
+                      </div>
+                    </div>
+                  </Box>
+                  {isFormSubmit && (
+                    <>
+                      <SmartVsPrice
+                        mpn={mpn}
+                        serialNumber={serialNumber}
+                        authKey={authKey}
+                        timePeriod={timePeriod}
+                        date={date}
+                        chosenMonth={chosenMonth}
+                        updateGraph={updateGraph}
+                      />
+                      <h2> How accurate is your EPC? Test it here: </h2>
+                      <Box
+                        component="form"
+                        sx={{
+                          "& .MuiTextField-root": { m: 1, width: "25ch" },
+                        }}
+                        noValidate
+                        autoComplete="off"
+                      >
+                        <div>
+                          <TextField
+                            required
+                            id="mprn"
+                            label="MPRN"
+                            value={mprn}
+                            onChange={(e) => setMprn(e.target.value)}
+                          />
+                          <TextField
+                            required
+                            id="serialGas"
+                            label="Gas Serial Number"
+                            value={serialGas}
+                            onChange={(e) => setSerialGas(e.target.value)}
+                          />
+                          <Button
+                            variant="contained"
+                            onClick={handleAccuracySubmit}
+                          >
+                            {" "}
+                            Submit{" "}
+                          </Button>
+                        </div>
+                      </Box>
+                      <AccuracyTester
+                        lmk_key={chosenProperty["content"]["LMK_KEY"]}
+                        mpan={mpn}
+                        serialElec={serialNumber}
+                        mprn={mprn}
+                        serialGas={serialGas}
+                        authKey={authKey}
+                        totalFloorArea={
+                          chosenProperty["content"]["TOTAL_FLOOR_AREA"]
+                        }
+                        handleAccuracySubmit={accuracySubmit}
+                      ></AccuracyTester>
+                    </>
+                  )}
+                </>
+              )}
             </>
           )}
         </>

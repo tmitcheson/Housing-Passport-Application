@@ -41,17 +41,20 @@ const propertyDetails = () => {
           </>
         )}
       </div>
-      {retrofitsPresent &&
-        (<><div> Retrofits undertaken: </div>
-        {retrofits.map((item) => {
-          return (
-            <div className={styles.single} key={item}>
-              <CheckBoxIcon sx={{ color: "green" }}></CheckBoxIcon>
-              {"  "}
-              {item[0]}
-            </div>
-          );
-        })}</>)}
+      {retrofitsPresent && (
+        <>
+          <div> Retrofits undertaken: </div>
+          {retrofits.map((item) => {
+            return (
+              <div className={styles.single} key={item}>
+                <CheckBoxIcon sx={{ color: "green" }}></CheckBoxIcon>
+                {"  "}
+                {item[0]}
+              </div>
+            );
+          })}
+        </>
+      )}
     </>
   );
 };

@@ -13,7 +13,6 @@ export default function Home() {
       <>
         <Head>
           <title> Housing Passport | Home </title>
-          <link rel="hp icon" href="/favicon.ico.png"/>
         </Head>
         <h1>
           Welcome {session.user.name} the {session.user.role}!
