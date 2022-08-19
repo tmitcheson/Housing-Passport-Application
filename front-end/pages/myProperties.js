@@ -20,6 +20,8 @@ import Select from "@mui/material/Select";
 import RecsToggle from "../components/RecsToggle";
 import AccuracyTester from "../components/AccuracyTester";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import Link from "next/link";
+import Head from "next/head"
 
 const MyProperties = () => {
   const [isSelectSubmit, setSelectSubmit] = useState(false);
@@ -58,61 +60,63 @@ const MyProperties = () => {
   } = useForm();
 
   useEffect(() => {
-    if (session.user.role === "homeowner") {
-      const email = session.user.email;
-      axios
-        .post("http://localhost:5000/api/retrieve_my_properties", { email })
-        // axios.post('https://housing-passport-back-end.herokuapp.com/api/retrieve_my_properties', {data})
-        .then(function (response) {
-          const receivedData = response.data;
-          const newProperties = [];
-          for (const i in receivedData) {
-            let tempPublicRetrofits = receivedData[i]["public_retrofits"];
-            let tempPrivateRetrofits = receivedData[i]["private_retrofits"];
-            let recommendationsTemp = receivedData[i]["recommendations"];
-            let indexesToRemove = [];
-            if (tempPublicRetrofits && recommendationsTemp) {
-              for (let i = 0; i < recommendationsTemp.length; i++) {
-                for (let j = 0; j < tempPublicRetrofits.length; j++) {
-                  if (recommendationsTemp[i][0] === tempPublicRetrofits[j]) {
-                    indexesToRemove.push(i);
+    if(session){
+      if (session.user.role === "homeowner") {
+        const email = session.user.email;
+        axios
+          .post("http://localhost:5000/api/retrieve_my_properties", { email })
+          // axios.post('https://housing-passport-back-end.herokuapp.com/api/retrieve_my_properties', {data})
+          .then(function (response) {
+            const receivedData = response.data;
+            const newProperties = [];
+            for (const i in receivedData) {
+              let tempPublicRetrofits = receivedData[i]["public_retrofits"];
+              let tempPrivateRetrofits = receivedData[i]["private_retrofits"];
+              let recommendationsTemp = receivedData[i]["recommendations"];
+              let indexesToRemove = [];
+              if (tempPublicRetrofits && recommendationsTemp) {
+                for (let i = 0; i < recommendationsTemp.length; i++) {
+                  for (let j = 0; j < tempPublicRetrofits.length; j++) {
+                    if (recommendationsTemp[i][0] === tempPublicRetrofits[j]) {
+                      indexesToRemove.push(i);
+                    }
                   }
                 }
+              } else {
+                console.log("no public retrofits");
               }
-            } else {
-              console.log("no public retrofits");
-            }
-            console.log("ye:");
-            console.log(recommendationsTemp);
-            console.log(tempPrivateRetrofits);
-            if (tempPrivateRetrofits && recommendationsTemp) {
-              for (let i = 0; i < recommendationsTemp.length; i++) {
-                for (let j = 0; j < tempPrivateRetrofits.length; j++) {
-                  if (recommendationsTemp[i][0] === tempPrivateRetrofits[j]) {
-                    indexesToRemove.push(i);
+              console.log("ye:");
+              console.log(recommendationsTemp);
+              console.log(tempPrivateRetrofits);
+              if (tempPrivateRetrofits && recommendationsTemp) {
+                for (let i = 0; i < recommendationsTemp.length; i++) {
+                  for (let j = 0; j < tempPrivateRetrofits.length; j++) {
+                    if (recommendationsTemp[i][0] === tempPrivateRetrofits[j]) {
+                      indexesToRemove.push(i);
+                    }
                   }
                 }
+              } else {
+                console.log("no private retrofits");
               }
-            } else {
-              console.log("no private retrofits");
+              for (let k = 0; k < indexesToRemove.length; k++) {
+                recommendationsTemp.splice(indexesToRemove[k], 1);
+              }
+              newProperties.push({
+                address: receivedData[i]["address"],
+                content: receivedData[i]["content"],
+                publicRetrofits: receivedData[i]["public_retrofits"],
+                privateRetrofits: receivedData[i]["private_retrofits"],
+                recommendations: recommendationsTemp,
+              });
+              setMyProperties(newProperties);
             }
-            for (let k = 0; k < indexesToRemove.length; k++) {
-              recommendationsTemp.splice(indexesToRemove[k], 1);
-            }
-            newProperties.push({
-              address: receivedData[i]["address"],
-              content: receivedData[i]["content"],
-              publicRetrofits: receivedData[i]["public_retrofits"],
-              privateRetrofits: receivedData[i]["private_retrofits"],
-              recommendations: recommendationsTemp,
-            });
-            setMyProperties(newProperties);
-          }
-        })
-        .catch(function (error) {
-          console.log("initial oops");
-          console.log(error);
-        });
+          })
+          .catch(function (error) {
+            console.log("initial oops");
+            console.log(error);
+          });
+      }
     }
   }, []);
 
@@ -258,7 +262,10 @@ const MyProperties = () => {
 
   return (
     <>
-      {!session && <div> Sign in to view your properties </div>}
+        <Head>
+          <title> Housing Passport | My Properties </title>
+        </Head>
+      {!session && <div> <Link href="api/auth/signin">Sign in</Link> to view your properties </div>}
       {session && (
         <>
           <h2> Welcome to your properties page </h2>

@@ -1,6 +1,7 @@
 import axios from "axios";
 import React from "react";
 
+import Head from "next/head"
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useSession, getSession } from "next-auth/react";
@@ -83,6 +84,9 @@ export default function PostcodeSearch() {
 
   return (
     <>
+      <Head>
+          <title> Housing Passport | Search </title>
+        </Head>
       <Box
         component="form"
         sx={{
