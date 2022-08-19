@@ -238,15 +238,34 @@ const MyProperties = () => {
     updateGraph ? setUpdateGraph(false) : setUpdateGraph(true);
   };
 
-  const onExtendTradeClick = (e, lmk_key, email) => {
+  const onExtendTradeClick = (e, lmk_key, tradeEmail, homeownerEmail, public_retrofits, private_retrofits) => {
     console.log(lmk_key);
-    console.log(email);
-    let data = '{"lmk_key":"' + lmk_key + '", "email":"' + email + '"}';
-    console.log(data);
-    data = JSON.parse(data);
+    console.log(tradeEmail);
+    console.log(homeownerEmail);
+    let data = {
+      lmk_key: lmk_key,
+      tradeEmail:tradeEmail,
+      homeownerEmail:homeownerEmail,
+      public_retrofits:public_retrofits,
+      private_retrofits:private_retrofits
+    }
+    // let data =
+    //   '{"lmk_key":"' +
+    //   lmk_key +
+    //   '", "tradeEmail":"' +
+    //   tradeEmail +
+    //   '", "homeownerEmail":"' +
+    //   homeownerEmail +
+    //   '", "public_retrofits":"' +
+    //   public_retrofits +
+    //   '", "private_retrofits":"' +
+    //   private_retrofits +
+    //   '"}';
+    // console.log(data);
+    // data = JSON.parse(data);
     axios
-      .post("http://localhost:5000/api/add_property_to_user", { data })
-      // axios.post('https://housing-passport-back-end.herokuapp.com/api/add_property_to_user', {data}))
+      .post("http://localhost:5000/api/extend_permissions_to_tradesperson", { data })
+      // axios.post('https://housing-passport-back-end.herokuapp.com/api/extend_permissions_to_tradesperon', {data}))
       .then(function (response) {
         console.log(response);
         if (response.data === "False") {
@@ -393,7 +412,14 @@ const MyProperties = () => {
                             size="small"
                             variant="text"
                             onClick={(e) =>
-                              onExtendTradeClick(e, chosenProperty["content"]["LMK_KEY"], item[1])
+                              onExtendTradeClick(
+                                e,
+                                chosenProperty["content"]["LMK_KEY"],
+                                item[1],
+                                session.user.email,
+                                publicRetrofits,
+                                privateRetrofits
+                              )
                             }
                           >
                             {" "}

@@ -6,9 +6,16 @@ import json
 import numpy as np
 
 from findDataFromLMK import findDataFromLMK
-from addEPCDataToUser import addEPCDataToUser
 from getMyProperty import getMyProperty
 from smart_meter import consumption_retriever, account_for_missing_values
+from pymongoUtilityFunctions import addTradesPersonToProperty, addEPCDataToUser, addEPCDataToTradesperson, connectToProperties, connectToUsers, checkConnection, getListOfTradesPeopleForProperty
+
+def fromRequestToJSON(request):
+    data = request.data
+    data = data.decode('utf-8')
+    data = data.replace("\\", "")
+    data = json.loads(data)
+    return data
 
 
 app = Flask(__name__)
@@ -35,20 +42,12 @@ def index():
 
 @app.route("/api/add_property_to_user", methods=["POST"])
 def retrieve_doc():
-    # return str(request.args)
-    # response = app.make_response("helloW")
-    # response.headers['Access-Control-Allow-Origin'] = '*'
-    data = request.data
-    print("for starters: ")
-    print(data)
-    data = data.decode('utf-8')
-    data = data.replace("\\", "")
-    print("and again") 
-    print(data)
-    data = json.loads(data)
+    data = fromRequestToJSON(request)
+
     data = data['data']
     lmk_key = data['lmk_key']
     email = data['email']
+    print(data)
 
     epc_data = findDataFromLMK(lmk_key)
     success = addEPCDataToUser(epc_data, email)
@@ -57,30 +56,49 @@ def retrieve_doc():
         return 'True'
     return 'False'
 
-    # response.set_data(str(cursor))
-    # return response
-    # return (str(returner))
+@app.route("/api/extend_permissions_to_tradesperson", methods=["POST"])
+def extend_permissions_to_tradesperson():
+
+    data = fromRequestToJSON(request)
+
+    data = data['data']
+    public_retrofits = []
+    private_retrofits = []
+    lmk_key = data['lmk_key']
+    tradeEmail = data['tradeEmail']
+    homeownerEmail = data['homeownerEmail']
+
+    try:
+        public_retrofits = data['public_retrofits']
+    except Exception as e:
+        print(e)
+    try:
+        private_retrofits = data['private_retrofits']
+    except Exception as e:
+        print(e)
+
+    epc_data = findDataFromLMK(lmk_key)
+
+    client = connectToUsers()
+    checkConnection(client)
+
+    success1 = addTradesPersonToProperty(client, homeownerEmail, tradeEmail, epc_data['ADDRESS'])
+    success2 = addEPCDataToTradesperson(client, epc_data, tradeEmail, public_retrofits, private_retrofits)
+
+    if(success1 and success2):
+        return 'True'
+    return 'False'
 
 @app.route("/api/delete_property_from_user", methods=["POST"])
 def delete_property():
-    data = request.data
-    data = data.decode('utf-8')
-    data = json.loads(data)
+
+    data = fromRequestToJSON(request)
 
     address = data["address"]
     email = data["email"]
-    print(address)
-    print(email)
 
-    conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
-    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
-
-    try:
-        client.server_info()
-        print("Connected...")
-    except Exception as e:
-        print(e)
-        print("Unable to connect to the server.")
+    client = connectToUsers()
+    checkConnection(client)
 
     try:
         client['db-name'].users.update_one(
@@ -95,47 +113,27 @@ def delete_property():
 
 @app.route("/api/get_list_of_addresses", methods=["POST"])
 def retrieve_addresses():
-    # return str(request.args)
-    # response.headers['Access-Control-Allow-Origin'] = '*'
-    # return "<p> Hello list </p>"
-    data = request.data
-    data = data.decode('utf-8')
-    data = json.loads(data)
+    data = fromRequestToJSON(request)
     data = data['data']
     postcode = data['postcode']
-    print(postcode)
 
-    conn_str = "mongodb+srv://tm21:TomM7802@housingpassportcluster.wufr0o8.mongodb.net/?retryWrites=true&w=majority"
-    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
-
-    try:
-        client.server_info()
-        print("Connected...")
-    except Exception:
-        print("Unable to connect to the server.")
+    client = connectToProperties()
+    checkConnection(client)
 
     passports = client.business
 
     cursor = passports.passports.find({"POSTCODE": postcode}).sort('ADDRESS1', pymongo.ASCENDING)
     print(type(cursor))
     list_of_addresses = {}
-    # try:
-    #     del cursor['_id']
-    # except:
-    #     print("house not found")
     for record in cursor:
         lmk_key = record['LMK_KEY']
         address1 = record['ADDRESS1']
         list_of_addresses[address1] = lmk_key
-    # print(list_of_addresses)
     return list_of_addresses
 
 @app.route("/api/get_a_doc", methods=["POST"])
 def get_a_doc():
-    data = request.data
-    data = data.decode('utf-8')
-    print("this here is what we're at: " + data)
-    data = json.loads(data)
+    data = fromRequestToJSON(request)
     lmk_key = data['lmk_key']
 
     conn_str = "mongodb+srv://tm21:TomM7802@housingpassportcluster.wufr0o8.mongodb.net/?retryWrites=true&w=majority"
@@ -155,13 +153,9 @@ def get_a_doc():
 
 @app.route("/api/get_my_property", methods=["POST"])
 def get_my_property():
-    data = request.data
-    data = data.decode('utf-8')
-    data = json.loads(data)
+    data = fromRequestToJSON(request)
     email = data['data']
     
-    print("this here is what we're at: " + email)
-
     epc_data = getMyProperty(email)
 
     return epc_data
@@ -195,9 +189,7 @@ def get_list_of_tradespeople():
 @app.route("/api/retrieve_my_properties", methods=["POST"])
 def retrieve_my_properties():
 
-    data = request.data
-    data = data.decode('utf-8')
-    data = json.loads(data)
+    data = fromRequestToJSON(request)
     print(data)
     email = data['email']
 
@@ -228,24 +220,31 @@ def retrieve_my_properties():
 
 @app.route("/api/update_retrofit_no_share", methods=["POST"])
 def update_retrofit_no_share():
-    data = request.data
-    data = data.decode('utf-8')
-    data = json.loads(data)
+
+    data = fromRequestToJSON(request)
+
     retrofit = data['retrofit']
     email = data['email']
     address = data['address']
-    print(data)
 
-    conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
-    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+    client = connectToUsers()
+    checkConnection(client)
 
-    try:
-        client.server_info()
-        print("Connected...")
-    except Exception as e:
-        print(e)
-        print("Unable to connect to the server.")
+    tradies = getListOfTradesPeopleForProperty(client, email, address)
 
+    ''' THIS WILL UPDATE EACH OF THE DEPENDENT TRADESPEOPLE'S INFO '''
+    if(tradies):
+        for tradesperson in tradies:
+                try:
+                    client['db-name'].users.update_one(
+                        {"email":tradesperson, "properties.address":address },
+                        {"$push": {"properties.$.private_retrofits":retrofit}}
+                    )
+                except Exception as e:
+                    print(e)
+                    return 'False'
+
+    ''' THIS WILL UPDATE THE USER THEMSELVES' INFO '''
     try:
         client['db-name'].users.update_one(
             {"email":email, "properties.address":address },
@@ -259,9 +258,8 @@ def update_retrofit_no_share():
 # THIS IS NOT COMPLETE
 @app.route("/api/update_retrofit_share", methods=["POST"])
 def update_retrofit_share():
-    data = request.data
-    data = data.decode('utf-8')
-    data = json.loads(data)
+    data = fromRequestToJSON(request)
+
     retrofit = data['retrofit']
     cost = data['cost']
     lmk_key = data['lmk_key']
@@ -270,16 +268,10 @@ def update_retrofit_share():
 
     print(data)
 
-    conn_str = "mongodb+srv://tm21:TomM7802@housingpassportcluster.wufr0o8.mongodb.net/?retryWrites=true&w=majority"
-    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+    client = connectToProperties()
+    checkConnection(client)
 
-
-    try:
-        client.server_info()
-        print("Connected...")
-    except Exception:
-        print("Unable to connect to the server.")
-
+    ''' FIRST UPDATE THE PUBLIC DATABASE '''
     passports = client.business.passports
     try:
         passports.update_one(
@@ -290,45 +282,43 @@ def update_retrofit_share():
         print(e)
         return 'False'
 
-    conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
-    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
+    client = connectToUsers()
+    checkConnection(client)
 
-    try:
-        client.server_info()
-        print("Connected...")
-    except Exception as e:
-        print(e)
-        print("Unable to connect to the server.")
-
+    ''' THEN UPDATE THE USER'''
     try:
         client['db-name'].users.update_one(
             {"email":email, "properties.address":address },
             {"$push": {"properties.$.public_retrofits":retrofit}}
         )
-        return 'True'
     except Exception as e:
         print(e)
         return 'False'
+
+    ''' THEN UPDATE THE DEPENDENT TRADESPEOPLE'''
+    tradies = getListOfTradesPeopleForProperty(client, email, address)
+    if(tradies):
+        for tradesperson in tradies:
+            try:
+                client['db-name'].users.update_one(
+                    {"email":tradesperson, "properties.address":address },
+                    {"$push": {"properties.$.public_retrofits":retrofit}}
+                )
+            except Exception as e:
+                print(e)
+                return 'False'
+
+    return 'True'
  
 @app.route("/api/retrieve_my_retrofits", methods=["POST"])
 def retrieve_my_retrofits():
-    data = request.data
-    data = data.decode('utf-8')
-    data = json.loads(data)
+    data = fromRequestToJSON(request)
 
     email = data['email']
     address = data['address']
-    print(data)
 
-    conn_str = "mongodb+srv://tm21:JfOxlkRhEeIN1ZvB@UserStore.rldimmu.mongodb.net/?retryWrites=true&w=majority"
-    client = pymongo.MongoClient(conn_str, serverSelectionTimeoutMS=5000)
-
-    try:
-        client.server_info()
-        print("Connected...")
-    except Exception as e:
-        print(e)
-        print("Unable to connect to the server.")
+    client = connectToUsers()
+    checkConnection(client)
 
     try:
         profile = client['db-name'].users.find_one({"email":email})
@@ -345,8 +335,6 @@ def retrieve_my_retrofits():
         return e
 
     return "no retrofits"
-
-
 
 
 
