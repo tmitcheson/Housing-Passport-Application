@@ -19,6 +19,7 @@ export default NextAuth({
           redirect_uri: "http://localhost:3000/api/auth/callback/auth0",
           // redirect_uri : "https://housing-passport-app.vercel.app/api/auth/callback/auth0",
           // scope : "openid",
+          audience:"https://housing-passport-backend.com",
           state: "xyzABC123",
         },
         // authorization: { url: "https://dev-5g0j9i2z.us.auth0.com/authorize",

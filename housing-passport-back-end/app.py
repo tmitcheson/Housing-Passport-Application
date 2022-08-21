@@ -339,9 +339,7 @@ def retrieve_my_retrofits():
 
 @app.route("/api/check_accuracy", methods=["POST"])
 def check_accuracy():
-    data = request.data
-    data = data.decode('utf-8')
-    data = json.loads(data)
+    data = fromRequestToJSON(request)
     print(data) 
 
     lmk_key = data['lmk_key']   
@@ -350,8 +348,7 @@ def check_accuracy():
     mprn = data['mprn']   
     serialGas = data['serialGas']   
     authKey = data['authKey']   
-    # totalFloorArea = data['totalFloorArea']
-    totalFloorArea = 91
+    totalFloorArea = data['totalFloorArea']
 
     print(mpan)
     print(serialElec)
@@ -403,8 +400,14 @@ def check_accuracy():
     print(total_consumption_per_m2)
     print("\n")
 
+    response_data = '{"annualElec":' + str(elec_real_consumption_per_year) + ',"annualGas":' + str(gas_real_consumption_per_year) + ',"floorArea":' + str(totalFloorArea) + ',"result":' + str(total_consumption_per_m2) + '}'
 
-    return "hello"
+    print(response_data)
+    response_json = json.loads(response_data)
+    print(response_json)
+
+
+    return response_json
 
 
 @app.route("/api/private", methods=["GET"])

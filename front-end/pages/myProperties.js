@@ -3,22 +3,15 @@ import { useLayoutEffect, useRef } from "react";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import { useEffect } from "react";
-import { set, useForm } from "react-hook-form";
 
 import axios from "axios";
 import BasicTabs from "../components/EpcTabs";
 import SelectProperty from "../components/SelectProperty";
 import styles from "../styles/List.module.css";
-import SmartVsPrice from "../components/SmartVsPrice";
 import RecsAndPayback from "../components/RecsAndPaybacks";
 import RecsAndCosts from "../components/RecsAndCosts";
 import RecStats from "../components/recommendationPrices.json" assert { type: "json" };
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import RecsToggle from "../components/RecsToggle";
-import AccuracyTester from "../components/AccuracyTester";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import Link from "next/link";
 import Head from "next/head";
@@ -40,26 +33,9 @@ const MyProperties = () => {
   const [privateRetrofits, setPrivateRetrofits] = useState([]);
   const [publicRetrofits, setPublicRetrofits] = useState([]);
 
-  const [timePeriod, setTimePeriod] = useState("");
-  const [mpn, setMpn] = useState("");
-  const [serialNumber, setSerialNumber] = useState("");
-  const [authKey, setAuthKey] = useState("");
-  const [date, setDate] = useState("");
-  const [chosenMonth, setChosenMonth] = useState("");
-  const [mprn, setMprn] = useState("");
-  const [serialGas, setSerialGas] = useState("");
-
   const[isLoading, setLoading]  = useState(false)
 
-  const [isFormSubmit, setFormSubmit] = useState(false);
-
   const { data: session, status } = useSession();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
   useEffect(() => {
     setLoading(true)
@@ -143,8 +119,6 @@ const MyProperties = () => {
               .toLowerCase()
               .replaceAll("-", "_");
             if (RecStats.builtForms.includes(builtForm)) {
-              // console.log(builtForm)
-              // console.log(recList)
               const timeBackNow = (
                 RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
                 RecStats.BillSavings[builtForm][RecStats.recList[j]]
@@ -211,28 +185,6 @@ const MyProperties = () => {
       });
   };
 
-  const handleAccuracySubmit = () => {
-    accuracySubmit ? setAccuracySubmit(false) : setAccuracySubmit(true);
-  };
-
-  const onFormSubmit = (accountData) => {
-    console.log(accountData);
-
-    // const mpn = accountData['mpn']
-    // const serialNumber = accountData["serialNumber"]
-    // const authKey = accountData["authKey"]
-
-    const mpn = "1200038779673";
-    const serialNumber = "Z18N333768";
-    const authKey = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9";
-
-    setMpn(mpn);
-    setSerialNumber(serialNumber);
-    setAuthKey(authKey);
-
-    setFormSubmit(true);
-  };
-  
   const onRetrieveTradesClick = () => {
     axios
       .post("http://localhost:5000/api/get_list_of_tradespeople")
@@ -248,11 +200,6 @@ const MyProperties = () => {
         setListOfTradespeople(newTrades);
         setTradeSubmit(true);
       });
-  };
-
-  const onSubmit = async () => {
-    setFormSubmit(true);
-    updateGraph ? setUpdateGraph(false) : setUpdateGraph(true);
   };
 
   const onExtendTradeClick = (
@@ -273,20 +220,7 @@ const MyProperties = () => {
       public_retrofits: public_retrofits,
       private_retrofits: private_retrofits,
     };
-    // let data =
-    //   '{"lmk_key":"' +
-    //   lmk_key +
-    //   '", "tradeEmail":"' +
-    //   tradeEmail +
-    //   '", "homeownerEmail":"' +
-    //   homeownerEmail +
-    //   '", "public_retrofits":"' +
-    //   public_retrofits +
-    //   '", "private_retrofits":"' +
-    //   private_retrofits +
-    //   '"}';
-    // console.log(data);
-    // data = JSON.parse(data);
+
     axios
       .post("http://localhost:5000/api/extend_permissions_to_tradesperson", {
         data,
@@ -461,146 +395,6 @@ const MyProperties = () => {
                   {isAdded && <div> Permissions extended </div>}
                   {isFailed && <div> Something went wrong </div>}
                   <hr />
-                  <h2> Consumption Habits </h2>
-                  <h4>
-                    For data security reasons we will never ask you to store
-                    your sensitive Octopus API key on this site. This means each
-                    time you log in the site will not remember any of the
-                    following information and it will need to be submitted again
-                  </h4>
-                  <Box
-                    component="form"
-                    sx={{
-                      "& .MuiTextField-root": { m: 1, width: "25ch" },
-                    }}
-                    noValidate
-                    // autoComplete="off"
-                  >
-                    <div>
-                      <TextField
-                        required
-                        id="mpan"
-                        label="MPAN"
-                        value={mpn}
-                        onChange={(e) => setMpn(e.target.value)}
-                      />
-                      <TextField
-                        required
-                        id="serialElec"
-                        label="Serial Number"
-                        value={serialNumber}
-                        onChange={(e) => setSerialNumber(e.target.value)}
-                      />
-                      <TextField
-                        required
-                        id="authKey"
-                        label="Auth Key"
-                        value={authKey}
-                        onChange={(e) => setAuthKey(e.target.value)}
-                      />
-                      <br></br>
-                      <br></br>
-                      <div class="flexbox-container">
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          value={timePeriod}
-                          label="property"
-                          onChange={(e) => {
-                            setTimePeriod(e.target.value);
-                          }}
-                        >
-                          <MenuItem key="day" value="day">
-                            Day
-                          </MenuItem>
-                          <MenuItem key="month" value="month">
-                            Month
-                          </MenuItem>
-                        </Select>
-                        {timePeriod === "day" && (
-                          <TextField
-                            required
-                            id="date"
-                            label="Date"
-                            value={date}
-                            placeholder="DD/MM/YYYY"
-                            onChange={(e) => setDate(e.target.value)}
-                          />
-                        )}
-                        {timePeriod === "month" && (
-                          <TextField
-                            required
-                            id="month"
-                            label="Month"
-                            value={chosenMonth}
-                            placeholder="MM/YYYY"
-                            onChange={(e) => setChosenMonth(e.target.value)}
-                          />
-                        )}
-                        <Button variant="contained" onClick={onSubmit}>
-                          Submit
-                        </Button>
-                      </div>
-                    </div>
-                  </Box>
-                  {isFormSubmit && (
-                    <>
-                      <SmartVsPrice
-                        mpn={mpn}
-                        serialNumber={serialNumber}
-                        authKey={authKey}
-                        timePeriod={timePeriod}
-                        date={date}
-                        chosenMonth={chosenMonth}
-                        updateGraph={updateGraph}
-                      />
-                      <h2> How accurate is your EPC? Test it here: </h2>
-                      <Box
-                        component="form"
-                        sx={{
-                          "& .MuiTextField-root": { m: 1, width: "25ch" },
-                        }}
-                        noValidate
-                        autoComplete="off"
-                      >
-                        <div>
-                          <TextField
-                            required
-                            id="mprn"
-                            label="MPRN"
-                            value={mprn}
-                            onChange={(e) => setMprn(e.target.value)}
-                          />
-                          <TextField
-                            required
-                            id="serialGas"
-                            label="Gas Serial Number"
-                            value={serialGas}
-                            onChange={(e) => setSerialGas(e.target.value)}
-                          />
-                          <Button
-                            variant="contained"
-                            onClick={handleAccuracySubmit}
-                          >
-                            {" "}
-                            Submit{" "}
-                          </Button>
-                        </div>
-                      </Box>
-                      <AccuracyTester
-                        lmk_key={chosenProperty["content"]["LMK_KEY"]}
-                        mpan={mpn}
-                        serialElec={serialNumber}
-                        mprn={mprn}
-                        serialGas={serialGas}
-                        authKey={authKey}
-                        totalFloorArea={
-                          chosenProperty["content"]["TOTAL_FLOOR_AREA"]
-                        }
-                        handleAccuracySubmit={accuracySubmit}
-                      ></AccuracyTester>
-                    </>
-                  )}
                 </>
               )}
             </>

@@ -24,6 +24,9 @@ const Navigation = () => {
       <Link href="/myProperties">
         <a>My Properties</a>
       </Link>
+      <Link href="/insights">
+        <a> Insights </a>
+      </Link>
       <Link href="/postcodeSearch">
         <a> Postcode Search </a>
       </Link>
