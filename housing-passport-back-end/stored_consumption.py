@@ -1,9 +1,9 @@
 import pandas as pd
 from dateutil import parser
 
-# totalFloorArea = 38
+totalFloorArea = 38
 # totalFloorArea = 163
-totalFloorArea = 98
+# totalFloorArea = 98
 
 def account_for_missing_values(df):
     print(df.shape)
@@ -25,12 +25,12 @@ def account_for_missing_values(df):
 
     return actual_consumption, total_slots
 
-# elec_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/Consumption Data/consumption - Karl Reynolds.csv")
-# gas_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/Consumption Data/consumption gas - Karl Reynolds.csv")
-# elec_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/Consumption Data/electricity-Usage - Richard Goodyear.csv")
-# gas_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/Consumption Data/gas-consumption - Richard Goodyear.csv")
-elec_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/Consumption Data/consumption (20) - Jerry Watson.csv")
-gas_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/Consumption Data/consumption (21) - Jerry Watson.csv")
+elec_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/ConsumptionData/consumption - Karl Reynolds.csv")
+gas_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/ConsumptionData/consumption gas - Karl Reynolds.csv")
+# elec_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/ConsumptionData/electricity-Usage - Richard Goodyear.csv")
+# gas_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/ConsumptionData/gas-consumption - Richard Goodyear.csv")
+# elec_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/ConsumptionData/consumption (20) - Jerry Watson.csv")
+# gas_df = pd.read_csv("/home/tbmitcheson/housing-passport-app/housing-passport-back-end/ConsumptionData/consumption (21) - Jerry Watson.csv")
 
 print(elec_df)
 print(gas_df)

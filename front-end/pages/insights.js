@@ -9,6 +9,7 @@ import BasicTabs from "../components/EpcTabs";
 import SelectProperty from "../components/SelectProperty";
 import styles from "../styles/List.module.css";
 import SmartVsPrice from "../components/SmartVsPrice";
+import ConsumptionComparison from "../components/ConsumptionComparison";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -27,6 +28,7 @@ const Insights = () => {
   const [chosenProperty, setChosenProperty] = useState();
   const [updateGraph, setUpdateGraph] = useState(false);
   const [accuracySubmit, setAccuracySubmit] = useState(false);
+  const [compareSubmit, setCompareSubmit] = useState(false);
 
   const [timePeriod, setTimePeriod] = useState("");
   const [mpn, setMpn] = useState("");
@@ -79,7 +81,11 @@ const Insights = () => {
 
   const handleAccuracySubmit = () => {
     accuracySubmit ? setAccuracySubmit(false) : setAccuracySubmit(true);
-    console.log()
+    console.log();
+  };
+  const handleCompareSubmit = () => {
+    compareSubmit ? setCompareSubmit(false) : setCompareSubmit(true);
+    console.log();
   };
 
   return (
@@ -190,7 +196,7 @@ const Insights = () => {
                     chosenMonth={chosenMonth}
                     updateGraph={updateGraph}
                   />
-                  <h2> How accurate is your EPC? Test it here: </h2>
+                  <h2> Consumption Comparators: </h2>
                   <Box
                     component="form"
                     sx={{
@@ -219,7 +225,14 @@ const Insights = () => {
                         onClick={handleAccuracySubmit}
                       >
                         {" "}
-                        Submit{" "}
+                        Compare to EPC{" "}
+                      </Button>
+                      <Button
+                        variant="contained"
+                        onClick={handleCompareSubmit}
+                      >
+                        {" "}
+                        Compare to Similar Properties{" "}
                       </Button>
                     </div>
                   </Box>
@@ -234,10 +247,19 @@ const Insights = () => {
                       chosenProperty["content"]["TOTAL_FLOOR_AREA"]
                     }
                     energyConsCurrent={
-                        chosenProperty["content"]["ENERGY_CONSUMPTION_CURRENT"]
+                      chosenProperty["content"]["ENERGY_CONSUMPTION_CURRENT"]
                     }
                     handleAccuracySubmit={accuracySubmit}
                   ></AccuracyTester>
+                  <ConsumptionComparison
+                    chosenProperty={chosenProperty}
+                    mpan={mpn}
+                    serialElec={serialNumber}
+                    mprn={mprn}
+                    serialGas={serialGas}
+                    authKey={authKey}
+                    handleCompareSubmit={compareSubmit}
+                  ></ConsumptionComparison>
                 </>
               )}{" "}
             </>

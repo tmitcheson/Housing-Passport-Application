@@ -4,11 +4,13 @@ from flask_cors import CORS
 import pymongo
 import json
 import numpy as np
+import math
 
 from findDataFromLMK import findDataFromLMK
 from getMyProperty import getMyProperty
 from smart_meter import consumption_retriever, account_for_missing_values
 from pymongoUtilityFunctions import addTradesPersonToProperty, addEPCDataToUser, addEPCDataToTradesperson, connectToProperties, connectToUsers, checkConnection, getListOfTradesPeopleForProperty
+from neighboursUtilityFunctions import fromBuiltFormToPropType, fromFloorAreaToBand, fromPostcodeToRegion, fromAgeToAgeBand
 
 def fromRequestToJSON(request):
     data = request.data
@@ -406,9 +408,47 @@ def check_accuracy():
     response_json = json.loads(response_data)
     print(response_json)
 
-
     return response_json
 
+@app.route("/api/compare_property", methods=["POST"])
+def compare_property():
+    data = fromRequestToJSON(request)
+    print(data)
+    builtForm = data['builtForm']
+    age = data['age']
+    postcode = data['postcode']
+    floorArea = data['floorArea']
+
+    propType = fromBuiltFormToPropType(builtForm)
+    ageBand = fromAgeToAgeBand(age)
+    region = fromPostcodeToRegion(postcode)
+    areaBand = fromFloorAreaToBand(area)
+
+    rec_url = "https://findthatpostcode.uk/postcodes/SW11 1PE"
+    resp = requests.get(rec_url)
+
+    def find_values(id, json_repr):
+        results = []
+
+        def _decode_dict(a_dict):
+            try:
+                results.append(a_dict[id])
+            except KeyError:
+                pass
+            return a_dict
+
+    json.loads(json_repr, object_hook=_decode_dict) # Return value ignored.
+    return results
+
+    arrayAnswer = find_values('imd2019', resp.text)
+    imd_decile = arrayAnswer[0]['imd_decile']
+    imd = math.ceiling(imd_decile/2)
+
+    args = [propType, ageBand, areaBand, imd]
+    answer = RadNeighbours(args, region)
+    print(answer)
+
+    return "hello"
 
 @app.route("/api/private", methods=["GET"])
 def private():

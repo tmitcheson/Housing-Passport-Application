@@ -215,9 +215,9 @@ const BasicTabs = ({ chosenProperty }) => {
                       {" "}
                       <InfoIcon
                         onClick={(event) =>
-                          (window.location.href =
+                          (window.open(
                             "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
-                            item[0])
+                            item[0], '_blank'))
                         }
                       />
                     </td>
@@ -241,9 +241,9 @@ const BasicTabs = ({ chosenProperty }) => {
                       {" "}
                       <InfoIcon
                         onClick={(event) =>
-                          (window.location.href =
+                          (window.open(
                             "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
-                            item[0])
+                            item[0], '_blank'))
                         }
                       />
                     </td>
@@ -267,9 +267,9 @@ const BasicTabs = ({ chosenProperty }) => {
                       {" "}
                       <InfoIcon
                         onClick={(event) =>
-                          (window.location.href =
+                          (window.open(
                             "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
-                            item[0])
+                            item[0], '_blank'))
                         }
                       />
                     </td>
@@ -293,9 +293,9 @@ const BasicTabs = ({ chosenProperty }) => {
                       {" "}
                       <InfoIcon
                         onClick={(event) =>
-                          (window.location.href =
+                          (window.open(
                             "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
-                            item[0])
+                            item[0], '_blank'))
                         }
                       />
                     </td>
@@ -319,9 +319,9 @@ const BasicTabs = ({ chosenProperty }) => {
                       {" "}
                       <InfoIcon
                         onClick={(event) =>
-                          (window.location.href =
+                          (window.open(
                             "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
-                            item[0])
+                            item[0], '_blank'))
                         }
                       />
                     </td>
@@ -345,9 +345,9 @@ const BasicTabs = ({ chosenProperty }) => {
                       {" "}
                       <InfoIcon
                         onClick={(event) =>
-                          (window.location.href =
+                          (window.open(
                             "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
-                            item[0])
+                            item[0], '_blank'))
                         }
                       />
                     </td>
@@ -371,9 +371,9 @@ const BasicTabs = ({ chosenProperty }) => {
                       {" "}
                       <InfoIcon
                         onClick={(event) =>
-                          (window.location.href =
+                          (window.open(
                             "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
-                            item[0])
+                            item[0], '_blank'))
                         }
                       />
                     </td>
@@ -397,9 +397,9 @@ const BasicTabs = ({ chosenProperty }) => {
                       {" "}
                       <InfoIcon
                         onClick={(event) =>
-                          (window.location.href =
+                          (window.open(
                             "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
-                            item[0])
+                            item[0], '_blank'))
                         }
                       />
                     </td>
@@ -423,9 +423,9 @@ const BasicTabs = ({ chosenProperty }) => {
                       {" "}
                       <InfoIcon
                         onClick={(event) =>
-                          (window.location.href =
+                          (window.open(
                             "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
-                            item[0])
+                            item[0], '_blank'))
                         }
                       />
                     </td>
@@ -449,9 +449,9 @@ const BasicTabs = ({ chosenProperty }) => {
                       {" "}
                       <InfoIcon
                         onClick={(event) =>
-                          (window.location.href =
+                          (window.open(
                             "https://epc.opendatacommunities.org/docs/guidance#field_domestic_" +
-                            item[0])
+                            item[0], '_blank'))
                         }
                       />
                     </td>

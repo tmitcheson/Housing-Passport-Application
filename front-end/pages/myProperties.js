@@ -157,6 +157,7 @@ const MyProperties = () => {
             setPrivateRetrofits(chosenProperty["privateRetrofits"]);
             setPublicRetrofits(chosenProperty["publicRetrofits"]);
             setRecomSubmit(true);
+            console.log(chosenProperty)
           }
         }
       }

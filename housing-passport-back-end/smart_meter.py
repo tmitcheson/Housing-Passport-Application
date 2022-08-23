@@ -8,7 +8,7 @@ def consumption_retriever(energy_type, mpn, serial_number, auth_api):
     url = "https://api.octopus.energy/v1/" + energy_type + "-meter-points/" + mpn + "/meters/" + serial_number + "/consumption/"
     auth=(auth_api, '')
     # params = {"page_size": 25000}
-    params = {"page_size": 25000, "period_from": "2021-06-01T00:00:00Z", "period_to": "2022-08-01T00:00:00Z"}
+    params = {"page_size": 25000, "period_from": "2021-06-01T00:00:00Z", "period_to": "2022-06-01T00:00:00Z"}
 
     response = requests.get(url, auth=auth, params=params)
     # response = requests.get(url, auth=auth)
@@ -19,21 +19,21 @@ def consumption_retriever(energy_type, mpn, serial_number, auth_api):
     return results_df
 
 
-trial_auth = 'sk_live_F6fSk8HDazIy7wKmWnWA3tD9'
-trial_mpan = '1200038779673'
-trial_serial_elec = 'Z18N333768'
+# trial_auth = 'sk_live_F6fSk8HDazIy7wKmWnWA3tD9'
+# trial_mpan = '1200038779673'
+# trial_serial_elec = 'Z18N333768'
 
-trial_mprn = '511319507'
-trial_serial_gas = 'E6S17789941861'
+# trial_mprn = '511319507'
+# trial_serial_gas = 'E6S17789941861'
 
-elec_df = consumption_retriever('electricity',
-                                trial_mpan,
-                                trial_serial_elec, 
-                                trial_auth)
-gas_df = consumption_retriever('gas', 
-                                trial_mprn, 
-                                trial_serial_gas, 
-                                trial_auth)
+# elec_df = consumption_retriever('electricity',
+#                                 trial_mpan,
+#                                 trial_serial_elec, 
+#                                 trial_auth)
+# gas_df = consumption_retriever('gas', 
+#                                 trial_mprn, 
+#                                 trial_serial_gas, 
+#                                 trial_auth)
 
 def account_for_missing_values(df):
     print(df.shape)
@@ -55,8 +55,8 @@ def account_for_missing_values(df):
     return actual_consumption, total_slots
 
 
-elec_real_consumption, elec_total_slots = account_for_missing_values(elec_df)
-gas_real_consumption, gas_total_slots = account_for_missing_values(gas_df)
+# elec_real_consumption, elec_total_slots = account_for_missing_values(elec_df)
+# gas_real_consumption, gas_total_slots = account_for_missing_values(gas_df)
 
 # print(elec_real_consumption)
 # print(gas_real_consumption)
