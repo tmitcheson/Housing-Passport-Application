@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
+import ConsumptionComparisonCard from './ConsumptionComparisonCard'
 
 const ConsumptionComparison = ({
   chosenProperty,
@@ -48,7 +49,7 @@ const ConsumptionComparison = ({
     });
   }, [handleCompareSubmit]);
 
-  return <h1>hello</h1>;
+  return <ConsumptionComparisonCard/>;
 };
 
 export default ConsumptionComparison;

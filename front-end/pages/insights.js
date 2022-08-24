@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import axios from "axios";
 import BasicTabs from "../components/EpcTabs";
 import SelectProperty from "../components/SelectProperty";
+import Grid from '@mui/material/Grid';
+
 import styles from "../styles/List.module.css";
 import SmartVsPrice from "../components/SmartVsPrice";
 import ConsumptionComparison from "../components/ConsumptionComparison";
@@ -87,6 +89,10 @@ const Insights = () => {
     compareSubmit ? setCompareSubmit(false) : setCompareSubmit(true);
     console.log();
   };
+  const handleComparisonSubmit = () => {
+    handleAccuracySubmit();
+    handleCompareSubmit();
+  }
 
   return (
     <>
@@ -222,20 +228,16 @@ const Insights = () => {
                       />
                       <Button
                         variant="contained"
-                        onClick={handleAccuracySubmit}
+                        onClick={handleComparisonSubmit}
                       >
                         {" "}
-                        Compare to EPC{" "}
+                        Run Comparisons{" "}
                       </Button>
-                      <Button
-                        variant="contained"
-                        onClick={handleCompareSubmit}
-                      >
-                        {" "}
-                        Compare to Similar Properties{" "}
-                      </Button>
+
                     </div>
                   </Box>
+                  <Grid container spacing={2}>
+                    <Grid item>
                   <AccuracyTester
                     lmk_key={chosenProperty["content"]["LMK_KEY"]}
                     mpan={mpn}
@@ -251,6 +253,8 @@ const Insights = () => {
                     }
                     handleAccuracySubmit={accuracySubmit}
                   ></AccuracyTester>
+                  </Grid>
+                  <Grid item>
                   <ConsumptionComparison
                     chosenProperty={chosenProperty}
                     mpan={mpn}
@@ -260,6 +264,8 @@ const Insights = () => {
                     authKey={authKey}
                     handleCompareSubmit={compareSubmit}
                   ></ConsumptionComparison>
+                  </Grid>
+                  </Grid>
                 </>
               )}{" "}
             </>

@@ -1,12 +1,13 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
+import AccuracyTesterCard from "./AccuracyTesterCard";
 
 const AccuracyTester = ({
   lmk_key,
-  mprn,
-  serialElec,
   mpan,
+  serialElec,
+  mprn,
   serialGas,
   authKey,
   totalFloorArea,
@@ -16,8 +17,9 @@ const AccuracyTester = ({
   const [annualElec, setAnnualElec] = useState();
   const [annualGas, setAnnualGas] = useState();
   const [floorArea, setFloorArea] = useState();
-  const [realCEC, setRealCEC] = useState();
+  const [realECC, setRealECC] = useState();
   const [reply, setReply] = useState(false);
+  const [higher, setHigher] = useState("");
 
   useEffect(() => {
     authKey = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9";
@@ -42,19 +44,19 @@ const AccuracyTester = ({
         setAnnualElec(receivedData["annualElec"]);
         setAnnualGas(receivedData["annualGas"]);
         setFloorArea(receivedData["floorArea"]);
-        setRealCEC(receivedData["result"].toFixed(2));
+        setRealECC(receivedData["result"].toFixed(2));
         setReply(true);
+        if(parseFloat(realECC) < parseFloat(energyConsCurrent)){
+          setHigher("estimate")
+        } else if (parseFloat(energyConsCurrent) <= parseFloat(realECC)){
+          setHigher("empiric")
+        }
       });
   }, [handleAccuracySubmit]);
 
   return (
     <>
-      <div>
-        {" "}
-        Based on your real energy consumption, your Current Energy Consumption,
-        as defined in the EPC, should be: {realCEC}{" "}.
-      </div>
-      <div> However it is currently described as: {energyConsCurrent}</div>
+      <AccuracyTesterCard realECC={realECC} energyConsCurrent={energyConsCurrent} higher={higher}/>
     </>
   );
 };

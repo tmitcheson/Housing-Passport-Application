@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 
-import Head from "next/head"
+import Head from "next/head";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useSession, getSession } from "next-auth/react";
@@ -10,6 +10,7 @@ import styles from "../styles/List.module.css";
 import Link from "next/link";
 import { Box } from "@mui/system";
 import { TextField } from "@mui/material";
+import Alert from "@mui/material/Alert";
 import { useRouter } from "next/router";
 
 export default function PostcodeSearch() {
@@ -20,8 +21,8 @@ export default function PostcodeSearch() {
   const [postcode, setPostcode] = useState("");
   const { data: session, status } = useSession();
 
-  const router = useRouter()
-  const{pid} = router.query
+  const router = useRouter();
+  const { pid } = router.query;
 
   const onSubmit = () => {
     setSubmitted(true);
@@ -29,17 +30,26 @@ export default function PostcodeSearch() {
     setFailed(false);
 
     // CODE FOR ALLOWING MORE POSTCODE VARIATIONS
-    let manipulatedPostcode = postcode.toUpperCase()
-    if(!(manipulatedPostcode.includes(" "))){
-      if(manipulatedPostcode.length === 5){
-        manipulatedPostcode = manipulatedPostcode.slice(0,2) + " " + manipulatedPostcode.slice(2,5)
-      } else if (manipulatedPostcode.length === 6){
-        manipulatedPostcode = manipulatedPostcode.slice(0,3) + " " + manipulatedPostcode.slice(3,6)
-      } else if (manipulatedPostcode.length === 7){
-        manipulatedPostcode = manipulatedPostcode.slice(0,4) + " " + manipulatedPostcode.slice(4,7)
+    let manipulatedPostcode = postcode.toUpperCase();
+    if (!manipulatedPostcode.includes(" ")) {
+      if (manipulatedPostcode.length === 5) {
+        manipulatedPostcode =
+          manipulatedPostcode.slice(0, 2) +
+          " " +
+          manipulatedPostcode.slice(2, 5);
+      } else if (manipulatedPostcode.length === 6) {
+        manipulatedPostcode =
+          manipulatedPostcode.slice(0, 3) +
+          " " +
+          manipulatedPostcode.slice(3, 6);
+      } else if (manipulatedPostcode.length === 7) {
+        manipulatedPostcode =
+          manipulatedPostcode.slice(0, 4) +
+          " " +
+          manipulatedPostcode.slice(4, 7);
       }
-      }
-    const data = JSON.parse("{\"postcode\":\"" + manipulatedPostcode + "\"}")
+    }
+    const data = JSON.parse('{"postcode":"' + manipulatedPostcode + '"}');
 
     axios
       .post("http://localhost:5000/api/get_list_of_addresses", { data })
@@ -79,14 +89,14 @@ export default function PostcodeSearch() {
   };
 
   const onSignedOutClick = (data) => {
-    router.push("property/" + data[1])
-  }
+    router.push("property/" + data[1]);
+  };
 
   return (
     <>
       <Head>
-          <title> Housing Passport | Search </title>
-        </Head>
+        <title> Housing Passport | Search </title>
+      </Head>
       <Box
         component="form"
         sx={{
@@ -108,62 +118,65 @@ export default function PostcodeSearch() {
           </Button>
         </div>
       </Box>
-        {isSubmitted && (
-          <div className="listOfAddresses">
-            <div>
-              {" "}
-              Possible Addresses
-              {listOfAddresses.map((item) => {
-                return (
-                  <div
-                    href={"/property/" + item[1]}
-                    className={styles.single}
-                    key={item}
-                  >
-                    {item[0]}
-                    {session.user.role === "homeowner" && (
-                      <Button
-                        type="submit"
-                        size="small"
-                        variant="text"
-                        onClick={(e) => onSignedInClick(item, e)}
-                      >
-                        Claim Property
-                      </Button>
-                    )}
-                    {!session && (
-                      <Button
-                        type="submit"
-                        size="small"
-                        variant="text"
-                        onClick={(e) => onSignedOutClick(item, e)}
-                      >
-                        View Property
-                      </Button>
-                    )}
-                    {session.user.role === "tradesperson" && (
-                      <Button
-                        type="submit"
-                        size="small"
-                        variant="text"
-                        onClick={(e) => onSignedOutClick(item, e)}
-                      >
-                        View Property
-                      </Button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+      {isSubmitted && (
+        <div className="listOfAddresses">
+          <div>
+            {" "}
+            Possible Addresses
+            {listOfAddresses.map((item) => {
+              return (
+                <div
+                  href={"/property/" + item[1]}
+                  className={styles.single}
+                  key={item}
+                >
+                  {item[0]}
+                  {session.user.role === "homeowner" && (
+                    <Button
+                      type="submit"
+                      size="small"
+                      variant="text"
+                      onClick={(e) => onSignedInClick(item, e)}
+                    >
+                      Claim Property
+                    </Button>
+                  )}
+                  {!session && (
+                    <Button
+                      type="submit"
+                      size="small"
+                      variant="text"
+                      onClick={(e) => onSignedOutClick(item, e)}
+                    >
+                      View Property
+                    </Button>
+                  )}
+                  {session.user.role === "tradesperson" && (
+                    <Button
+                      type="submit"
+                      size="small"
+                      variant="text"
+                      onClick={(e) => onSignedOutClick(item, e)}
+                    >
+                      View Property
+                    </Button>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        )}
-        {isAdded && (
-          <>
-            <h1> Property added ! </h1>
-            <Link href="/myProperties"> View my properties </Link>
-          </>
-        )}
-        {isFailed && <h1> Something went wrong! Try again </h1>}
+        </div>
+      )}
+      {isAdded && (
+        <>
+          <Alert severity="success"> Property added! </Alert>
+          <br> </br>
+          <Link href="/myProperties"> View my properties </Link>
+        </>
+      )}
+      {isFailed && (
+        <Alert severity="error"> Something went wrong! Please try again.</Alert>
+      )}
       {/* </form> */}
     </>
   );

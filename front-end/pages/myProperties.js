@@ -13,6 +13,7 @@ import RecsAndCosts from "../components/RecsAndCosts";
 import RecStats from "../components/recommendationPrices.json" assert { type: "json" };
 import RecsToggle from "../components/RecsToggle";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import Alert from "@mui/material/Alert"
 import Link from "next/link";
 import Head from "next/head";
 
@@ -282,13 +283,13 @@ const MyProperties = () => {
                 </Button>
               </div>
               {deleted === 1 && (
-                <div>
+                <Alert severity="success">
                   {" "}
                   Delete successful. Please refresh the page to see the update{" "}
-                </div>
+                </Alert>
               )}
               {deleted === 2 && (
-                <div> Delete unsuccessful. Please try again. </div>
+                <Alert severity="error"> Delete unsuccessful. Please try again. </Alert>
               )}
               <h2> Building Information </h2>
               <BasicTabs chosenProperty={chosenProperty} />
@@ -393,8 +394,8 @@ const MyProperties = () => {
                         </div>
                       );
                     })}
-                  {isAdded && <div> Permissions extended </div>}
-                  {isFailed && <div> Something went wrong </div>}
+                  {isAdded && <Alert severity="success"> Permissions extended</Alert>}
+                  {isFailed && <Alert severity="error"> Something went wrong</Alert>}
                   <hr />
                 </>
               )}
