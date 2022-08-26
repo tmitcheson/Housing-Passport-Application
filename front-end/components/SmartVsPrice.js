@@ -2,7 +2,7 @@ import * as dfd from "danfojs";
 import Chart from "chart.js/auto";
 
 import { Bar, Line } from "react-chartjs-2";
-import { Button, rgbToHex } from "@mui/material";
+import { Alert, Button, rgbToHex } from "@mui/material";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -21,7 +21,10 @@ const SmartVsPrice = ({
   const [graphLabels, setGraphLabels] = useState([]);
   const [graphValues, setGraphValues] = useState([]);
   const [priceValues, setPriceValues] = useState([]);
-  const [sumConsumption, setSumConsumption] = useState('');
+  const [sumConsumption, setSumConsumption] = useState("");
+  const [timeFrameError, setTimeFrameError] = useState(0);
+  const [credentialsError, setCredentialsError] = useState(false);
+  const [futureTimeFrameError, setFutureTimeFrameError] = useState();
   const [bigDf, setBigDf] = useState({});
   // const [ mpn, setMpn ] = useState('')
   // const [ serialNumber, setserialNumber ] = useState('')
@@ -47,8 +50,8 @@ const SmartVsPrice = ({
       const day = parseInt(date.slice(0, 2));
       const month = parseInt(date.slice(3, 5));
       const year = parseInt(date.slice(6, 10));
-      // js date object is 0-indexed for months but not days  
-      month -= 1
+      // js date object is 0-indexed for months but not days
+      month -= 1;
       console.log(day);
       console.log(month);
       console.log(year);
@@ -60,23 +63,25 @@ const SmartVsPrice = ({
     } else if (timePeriod === "month") {
       const month = parseInt(chosenMonth.slice(0, 2));
       const year = parseInt(chosenMonth.slice(3, 7));
-      // js date object is 0-indexed for months but not days  
-      month -= 1
+      // js date object is 0-indexed for months but not days
+      month -= 1;
       console.log(month);
       console.log(year);
 
       const month2 = (month + 1) % 12;
-      Math.abs(month2 - month) !== 1 ? (year += 1) : console.log(month);
+      let year2 = year;
+      Math.abs(month2 - month) !== 1 ? (year2 += 1) : console.log(month);
       console.log(year);
 
       startDate = new Date(year, month);
-      endDate = new Date(year, month2);
+      endDate = new Date(year2, month2);
       console.log(startDate.toISOString());
       console.log(endDate.toISOString());
     } else {
       console.log("Huh");
     }
 
+    // const mprn = "1250038779673";
     const mprn = "1200038779673";
     const serial_number = "Z18N333768";
     const auth_key = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9";
@@ -107,36 +112,48 @@ const SmartVsPrice = ({
         { auth: { username: auth_key }, params: params }
       )
       .then(function (response) {
+        setCredentialsError(false);
         const df = new dfd.DataFrame(response.data.results);
 
-        const conDf = df['consumption']
-        const sumCon = conDf.sum().toFixed(2)
-        setSumConsumption(sumCon) 
+        const conDf = df["consumption"];
+        console.log("this right here:");
+        console.log(conDf);
+        if (conDf) {
+          setTimeFrameError(false);
+          const sumCon = conDf.sum().toFixed(2);
+          setSumConsumption(sumCon);
 
-        df.sortValues("interval_start", { ascending: true, inplace: true });
+          df.sortValues("interval_start", { ascending: true, inplace: true });
 
-        // setGraphLabels(df["interval_start"].values);
-        // setGraphValues(df["consumption"].values);
-        let new_df = df.applyMap(removeDate);
-        let group_df = new_df.groupby(["interval_start"]);
-        let hourly_dict = group_df["colDict"];
-        let averagesTimes = [];
+          // setGraphLabels(df["interval_start"].values);
+          // setGraphValues(df["consumption"].values);
+          let new_df = df.applyMap(removeDate);
+          let group_df = new_df.groupby(["interval_start"]);
+          let hourly_dict = group_df["colDict"];
+          let averagesTimes = [];
 
-        for (const [key, value] of Object.entries(hourly_dict)) {
-          const sum = value["consumption"].reduce((a, b) => a + b, 0);
-          const avg = sum / value["consumption"].length || 0;
-          averagesTimes.push([key, avg]);
+          for (const [key, value] of Object.entries(hourly_dict)) {
+            const sum = value["consumption"].reduce((a, b) => a + b, 0);
+            const avg = sum / value["consumption"].length || 0;
+            averagesTimes.push([key, avg]);
+          }
+
+          const hourly_df = new dfd.DataFrame(averagesTimes, {
+            columns: ["time", "avg_consumption"],
+          });
+          hourly_df.sortValues("time", { ascending: true, inplace: true });
+          console.log(hourly_df);
+          setGraphLabels(hourly_df["time"].values);
+          setGraphValues(hourly_df["avg_consumption"].values);
+
+          setSubmitted(true);
+        } else {
+          setTimeFrameError(true);
         }
-
-        const hourly_df = new dfd.DataFrame(averagesTimes, {
-          columns: ["time", "avg_consumption"],
-        });
-        hourly_df.sortValues("time", { ascending: true, inplace: true });
-        console.log(hourly_df);
-        setGraphLabels(hourly_df["time"].values);
-        setGraphValues(hourly_df["avg_consumption"].values);
-
-        setSubmitted(true);
+      })
+      .catch(function (error) {
+        console.log("nope");
+        setCredentialsError(true);
       });
 
     axios
@@ -149,28 +166,38 @@ const SmartVsPrice = ({
       .then(function (response) {
         console.log("prices: " + response.data.results[0]);
         const df = new dfd.DataFrame(response.data.results);
-        df.sortValues("valid_from", { ascending: true, inplace: true });
+        console.log("no this:   ");
+        console.log(df);
+        if (df["$data"].length !== 0) {
+          setFutureTimeFrameError(false);
+          df.sortValues("valid_from", { ascending: true, inplace: true });
 
-        let new_df = df.applyMap(removeDate);
-        let group_df = new_df.groupby(["valid_from"]);
-        let hourly_dict = group_df["colDict"];
-        let averagesPrices = [];
+          let new_df = df.applyMap(removeDate);
+          let group_df = new_df.groupby(["valid_from"]);
+          let hourly_dict = group_df["colDict"];
+          let averagesPrices = [];
 
-        for (const [key, value] of Object.entries(hourly_dict)) {
-          const sum = value["value_inc_vat"].reduce((a, b) => a + b, 0);
-          const avg = sum / value["value_inc_vat"].length || 0;
-          averagesPrices.push([key, avg]);
+          for (const [key, value] of Object.entries(hourly_dict)) {
+            const sum = value["value_inc_vat"].reduce((a, b) => a + b, 0);
+            const avg = sum / value["value_inc_vat"].length || 0;
+            averagesPrices.push([key, avg]);
+          }
+
+          const hourly_price_df = new dfd.DataFrame(averagesPrices, {
+            columns: ["time", "price"],
+          });
+          hourly_price_df.sortValues("time", {
+            ascending: true,
+            inplace: true,
+          });
+
+          // console.log("seconda: ")
+          console.log(hourly_price_df);
+          setPriceValues(hourly_price_df["price"].values);
+          console.log("prices: " + response.data);
+        } else {
+          setFutureTimeFrameError(true);
         }
-
-        const hourly_price_df = new dfd.DataFrame(averagesPrices, {
-          columns: ["time", "price"],
-        });
-        hourly_price_df.sortValues("time", { ascending: true, inplace: true });
-
-        // console.log("seconda: ")
-        console.log(hourly_price_df);
-        setPriceValues(hourly_price_df["price"].values);
-        console.log("prices: " + response.data);
       });
   }, [updateGraph]);
 
@@ -228,7 +255,8 @@ const SmartVsPrice = ({
         title: {
           display: true,
           text: "Energy Consumption (kWh)",
-          color: '#36a2eb'},
+          color: "#36a2eb",
+        },
         display: true,
         position: "left",
       },
@@ -237,7 +265,8 @@ const SmartVsPrice = ({
         title: {
           display: true,
           text: "Price (pence/kWh)",
-          color: 'rgba(47,97,68,1)'},
+          color: "rgba(47,97,68,1)",
+        },
         display: true,
         position: "right",
       },
@@ -248,15 +277,51 @@ const SmartVsPrice = ({
 
   return (
     <>
-      <h4>
-        {" "}
-        Here is a graph of your consumption profile. It takes your consumption
-        records for a specific day or month and compares it against the Octopus
-        Agile (variable) tariff for the day. In doing so you can compare your
-        consumption habits to the general market demand.
-      </h4>
-      <Bar data={data} width={100} height={40} options={options} />
-      <h4> Total Consumption for {timePeriod}: {sumConsumption} kWh</h4>
+      {timeFrameError && futureTimeFrameError && (
+        <>
+          <br></br>
+          <Alert severity="error">
+            {" "}
+            That date is in the future - be serious !
+          </Alert>
+        </>
+      )}
+      {credentialsError && (
+        <>
+          <br></br>
+          <Alert severity="error">
+            {" "}
+            There's something wrong with your Octopus account details - check
+            them and try again !
+          </Alert>
+        </>
+      )}
+      {timeFrameError && !futureTimeFrameError && (
+        <>
+          <br></br>
+          <Alert severity="error">
+            {" "}
+            We don't have data for that period - try a more recent time !
+          </Alert>
+        </>
+      )}
+      {!timeFrameError && !futureTimeFrameError && !credentialsError && (
+        <>
+          <h4>
+            {" "}
+            Here is a graph of your consumption profile. It takes your
+            consumption records for a specific day or month and compares it
+            against the Octopus Agile (variable) tariff for the day. In doing so
+            you can compare your consumption habits to the general market
+            demand.
+          </h4>
+          <Bar data={data} width={100} height={40} options={options} />
+          <h4>
+            {" "}
+            Total Consumption for {timePeriod}: {sumConsumption} kWh
+          </h4>
+        </>
+      )}
     </>
   );
 };
