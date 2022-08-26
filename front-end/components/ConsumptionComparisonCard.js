@@ -4,10 +4,12 @@ import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
+import CardMedia from "@mui/material/CardMedia";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { ThemeProvider, createTheme } from "@mui/system";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -20,7 +22,14 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-export default function AccuracyTesterCard() {
+export default function AccuracyTesterCard({
+  result,
+  builtForm,
+  age,
+  floorArea,
+  imd,
+  region,
+}) {
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
@@ -28,12 +37,29 @@ export default function AccuracyTesterCard() {
   };
 
   return (
-    <Card sx={{ maxWidth: 460 }}>
+    <Card fontFamily="Nunito" sx={{maxWidth: 460 }}>
+      <CardMedia
+        component="img"
+        height="180"
+        image="/compare.png"
+        alt="compare"
+      />
       <CardHeader title="Consumption Comparison Tester" />
-      <CardContent>
-        <Typography variant="h5">
-          Based on the characterics of your property, properties with a simiar
-          disposition are averaging consumption levels around:
+      <CardContent >
+        <Typography fontFamily="Nunito" variant="body1">
+          Based on the characterics of your property, properties with a similar
+          disposition are averaging consumption levels around:{" "}
+          <span className="special-word">{result}</span> . <br></br>
+          <br></br>
+          Based on a <span className="special-word">{builtForm}</span> property
+          built <span className="special-word">{age}</span> in the{" "}
+          <span className="special-word">{region}</span> region of the country,
+          with a floor area of{" "}
+          <span className="special-word">
+            {floorArea}m{<sup>2</sup>}
+          </span>{" "}
+          residing in an area with an index of multiple deprivation score of{" "}
+          <span className="special-word">{imd}</span>.
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
@@ -42,38 +68,27 @@ export default function AccuracyTesterCard() {
           onClick={handleExpandClick}
           aria-expanded={expanded}
           aria-label="show more"
-        > <Typography variant="body1">How do we calculate this?</Typography>
+        >
+          {" "}
+          <Typography fontFamily="Nunito" variant="body1">How do we calculate this?</Typography>
           <ExpandMoreIcon />
         </ExpandMore>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and
-            set aside for 10 minutes.
+          <Typography fontFamily="Nunito" variant="body2">
+            We take a subset of the characterics of your proprerty, derived from
+            various details on your EPC certificate as well as your real
+            consumption data, then we run that through a Radius Neighbours
+            Regression model, to return the result of what similar properties to
+            yours consume.
           </Typography>
-          <Typography paragraph>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet
-            over medium-high heat. Add chicken, shrimp and chorizo, and cook,
-            stirring occasionally until lightly browned, 6 to 8 minutes.
-            Transfer shrimp to a large plate and set aside, leaving chicken and
-            chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes,
-            onion, salt and pepper, and cook, stirring often until thickened and
-            fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2
-            cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is
-            absorbed, 15 to 18 minutes. Reduce heat to medium-low, add reserved
-            shrimp and mussels, tucking them down into the rice, and cook again
-            without stirring, until mussels have opened and rice is just tender,
-            5 to 7 minutes more. (Discard any mussels that don&apos;t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then
-            serve.
+          <br></br>
+          <Typography fontFamily="Nunito" variant="body2">
+            We do this by using data from the National Energy Efficiency
+            Framework (NEED) which offers anonymised real consumption data from
+            UK properties. With this tool you can see how you compare to similar
+            properties.
           </Typography>
         </CardContent>
       </Collapse>

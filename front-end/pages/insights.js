@@ -1,13 +1,14 @@
 import { useSession, getSession } from "next-auth/react";
 import { useLayoutEffect, useRef } from "react";
 import { useState } from "react";
-import { Button } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { useEffect } from "react";
 
 import axios from "axios";
 import BasicTabs from "../components/EpcTabs";
 import SelectProperty from "../components/SelectProperty";
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
+import { Alert } from "@mui/material";
 
 import styles from "../styles/List.module.css";
 import SmartVsPrice from "../components/SmartVsPrice";
@@ -44,6 +45,8 @@ const Insights = () => {
   const [isLoading, setLoading] = useState(false);
 
   const [isFormSubmit, setFormSubmit] = useState(false);
+
+  const [credentialsError, setCredentialsError] = useState(false);
 
   const { data: session, status } = useSession();
 
@@ -82,17 +85,17 @@ const Insights = () => {
   };
 
   const handleAccuracySubmit = () => {
+    console.log("why");
     accuracySubmit ? setAccuracySubmit(false) : setAccuracySubmit(true);
-    console.log();
   };
   const handleCompareSubmit = () => {
+    console.log("why2");
     compareSubmit ? setCompareSubmit(false) : setCompareSubmit(true);
-    console.log();
   };
   const handleComparisonSubmit = () => {
     handleAccuracySubmit();
     handleCompareSubmit();
-  }
+  };
 
   return (
     <>
@@ -148,7 +151,7 @@ const Insights = () => {
                   />
                   <br></br>
                   <br></br>
-                  <div class="flexbox-container">
+                  <div className="flexbox-container">
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
@@ -211,7 +214,7 @@ const Insights = () => {
                     noValidate
                     autoComplete="off"
                   >
-                    <div>
+                    <Stack direction="row">
                       <TextField
                         required
                         id="mprn"
@@ -233,38 +236,52 @@ const Insights = () => {
                         {" "}
                         Run Comparisons{" "}
                       </Button>
-
-                    </div>
+                    </Stack>
                   </Box>
+                  {credentialsError && (
+                    <Alert severity="error">
+                      {" "}
+                      Something wrong with the login credentials{" "}
+                    </Alert>
+                  )}
+                  <br></br>
                   <Grid container spacing={2}>
                     <Grid item>
-                  <AccuracyTester
-                    lmk_key={chosenProperty["content"]["LMK_KEY"]}
-                    mpan={mpn}
-                    serialElec={serialNumber}
-                    mprn={mprn}
-                    serialGas={serialGas}
-                    authKey={authKey}
-                    totalFloorArea={
-                      chosenProperty["content"]["TOTAL_FLOOR_AREA"]
-                    }
-                    energyConsCurrent={
-                      chosenProperty["content"]["ENERGY_CONSUMPTION_CURRENT"]
-                    }
-                    handleAccuracySubmit={accuracySubmit}
-                  ></AccuracyTester>
-                  </Grid>
-                  <Grid item>
-                  <ConsumptionComparison
-                    chosenProperty={chosenProperty}
-                    mpan={mpn}
-                    serialElec={serialNumber}
-                    mprn={mprn}
-                    serialGas={serialGas}
-                    authKey={authKey}
-                    handleCompareSubmit={compareSubmit}
-                  ></ConsumptionComparison>
-                  </Grid>
+                      <AccuracyTester
+                        lmk_key={chosenProperty["content"]["LMK_KEY"]}
+                        mpan={mpn}
+                        serialElec={serialNumber}
+                        mprn={mprn}
+                        serialGas={serialGas}
+                        authKey={authKey}
+                        totalFloorArea={
+                          chosenProperty["content"]["TOTAL_FLOOR_AREA"]
+                        }
+                        energyConsCurrent={
+                          chosenProperty["content"][
+                            "ENERGY_CONSUMPTION_CURRENT"
+                          ]
+                        }
+                        handleAccuracySubmit={accuracySubmit}
+                        handleCredentialsError={(credentialsError) =>
+                          setCredentialsError(credentialsError)
+                        }
+                      ></AccuracyTester>
+                    </Grid>
+                    <Grid item>
+                      <ConsumptionComparison
+                        chosenProperty={chosenProperty}
+                        mpan={mpn}
+                        serialElec={serialNumber}
+                        mprn={mprn}
+                        serialGas={serialGas}
+                        authKey={authKey}
+                        handleCompareSubmit={compareSubmit}
+                        handleCredentialsError={(credentialsError) =>
+                          setCredentialsError(credentialsError)
+                        }
+                      ></ConsumptionComparison>
+                    </Grid>
                   </Grid>
                 </>
               )}{" "}

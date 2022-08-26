@@ -1,6 +1,6 @@
 import pandas as pd
 import pickle
-import numpy as numpy
+import numpy as np
 from sklearn.neighbors import NearestNeighbors, RadiusNeighborsRegressor 
 
 REGIONS = ["E12000001", "E12000002", "E12000003", "E12000004", "E12000005",
@@ -12,6 +12,7 @@ REGIONS = ["E12000001", "E12000002", "E12000003", "E12000004", "E12000005",
 def RadNeighbours(args, region):
     model = pickle.load(open("RadNeighModels/" + region, 'rb'))
 
+    args = np.array(args).reshape(1,-1)
     result = model.predict(args)
     return result
 

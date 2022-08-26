@@ -5,12 +5,14 @@ import pymongo
 import json
 import numpy as np
 import math
+import requests
 
 from findDataFromLMK import findDataFromLMK
 from getMyProperty import getMyProperty
 from smart_meter import consumption_retriever, account_for_missing_values
 from pymongoUtilityFunctions import addTradesPersonToProperty, addEPCDataToUser, addEPCDataToTradesperson, connectToProperties, connectToUsers, checkConnection, getListOfTradesPeopleForProperty
 from neighboursUtilityFunctions import fromBuiltFormToPropType, fromFloorAreaToBand, fromPostcodeToRegion, fromAgeToAgeBand
+from NEED2 import RadNeighbours
 
 def fromRequestToJSON(request):
     data = request.data
@@ -356,17 +358,24 @@ def check_accuracy():
     print(serialElec)
     print(authKey)
 
-    elec_df = consumption_retriever('electricity',
+    try:
+        elec_df = consumption_retriever('electricity',
                                     mpan,
                                     serialElec,
                                     authKey)
-    gas_df = consumption_retriever('gas',
+    except Exception as e:
+        return e
+    
+    try:
+        gas_df = consumption_retriever('gas',
                                     mprn,
                                     serialGas,
                                     authKey)
+    except Exception as e:
+        return e
 
-    print(elec_df)
-    print(gas_df)
+    # print(elec_df)
+    # print(gas_df)
 
     elec_real_consumption, elec_total_slots = account_for_missing_values(elec_df)
     gas_real_consumption, gas_total_slots = account_for_missing_values(gas_df)
@@ -422,7 +431,7 @@ def compare_property():
     propType = fromBuiltFormToPropType(builtForm)
     ageBand = fromAgeToAgeBand(age)
     region = fromPostcodeToRegion(postcode)
-    areaBand = fromFloorAreaToBand(area)
+    areaBand = fromFloorAreaToBand(floorArea)
 
     rec_url = "https://findthatpostcode.uk/postcodes/SW11 1PE"
     resp = requests.get(rec_url)
@@ -437,18 +446,22 @@ def compare_property():
                 pass
             return a_dict
 
-    json.loads(json_repr, object_hook=_decode_dict) # Return value ignored.
-    return results
+        json.loads(json_repr, object_hook=_decode_dict) # Return value ignored.
+        return results
 
     arrayAnswer = find_values('imd2019', resp.text)
     imd_decile = arrayAnswer[0]['imd_decile']
-    imd = math.ceiling(imd_decile/2)
+    imd = math.ceil(imd_decile/2)
 
     args = [propType, ageBand, areaBand, imd]
     answer = RadNeighbours(args, region)
     print(answer)
+    print(region)
+    payload = '{"result":' + str(answer) + ',"args":' + str(args) + ',"region":"' + str(region) + '"}'
+    print(payload)
+    payload_json = json.loads(payload)
 
-    return "hello"
+    return payload_json
 
 @app.route("/api/private", methods=["GET"])
 def private():

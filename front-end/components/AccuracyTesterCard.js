@@ -5,6 +5,7 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
+import CardMedia from "@mui/material/CardMedia";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -33,22 +34,31 @@ export default function AccuracyTesterCard({
 
   return (
     <Card sx={{ maxWidth: 460 }}>
+      <CardMedia
+        component="img"
+        height="180"
+        image="/epc_compare.png"
+        alt="compare"
+      />
       <CardHeader title="EPC Accuracy Tester" />
       <CardContent>
-        <Typography variant="body1">
+        <Typography fontFamily="Nunito" variant="body1">
           Based on your real energy consumption, your Current Energy
-          Consumption, in kWh/m{<sup>2</sup>}/year, should be: {realECC} .<br></br><br></br>
-          However it is currently described as: {energyConsCurrent}
+          Consumption, in kWh/m{<sup>2</sup>}/year, should be:{" "}
+          <span className="special-word">{realECC}</span>.<br></br>
+          <br></br>
+          However it is currently described as:{" "}
+          <span className="special-word">{energyConsCurrent}</span>
         </Typography>
         <br></br>
         {higher === "estimate" && (
-          <Typography variant="body2">
+          <Typography fontFamily="Nunito" variant="body2">
             This is in line with the rest of our research. EPC certificates tend
             to overestimate the real levels of consumption in households.
           </Typography>
         )}
         {higher === "empiric" && (
-          <Typography variant="body2">
+          <Typography fontFamily="Nunito" variant="body2">
             This is anomalous compared to the rest of our research - weird!
           </Typography>
         )}
@@ -61,38 +71,26 @@ export default function AccuracyTesterCard({
           aria-label="show more"
         >
           {" "}
-          <Typography variant="body1">How do we calculate this?</Typography>
+          <Typography fontFamily="Nunito" variant="body1">How do we calculate this?</Typography>
           <ExpandMoreIcon />
         </ExpandMore>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and
-            set aside for 10 minutes.
+          <Typography fontFamily="Nunito" variant="body2">
+            {" "}
+            Octopus Energy smart meters record half-hourly consumption in your
+            home, however they're liable to miss a few. Our tool extrapolates
+            the consumption that is recorded for your electricty and gas
+            consumption, combines them over the course of a 12 month period, and
+            then divides that by the square meterage of your property, as
+            specified on your EPC certificate{" "}
           </Typography>
-          <Typography paragraph>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet
-            over medium-high heat. Add chicken, shrimp and chorizo, and cook,
-            stirring occasionally until lightly browned, 6 to 8 minutes.
-            Transfer shrimp to a large plate and set aside, leaving chicken and
-            chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes,
-            onion, salt and pepper, and cook, stirring often until thickened and
-            fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2
-            cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is
-            absorbed, 15 to 18 minutes. Reduce heat to medium-low, add reserved
-            shrimp and mussels, tucking them down into the rice, and cook again
-            without stirring, until mussels have opened and rice is just tender,
-            5 to 7 minutes more. (Discard any mussels that don&apos;t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then
-            serve.
+          <br></br>
+          <Typography fontFamily="Nunito" variant="body2">
+            This results in what the Energy Consumption Current metric on your
+            certificate estimates. Sometimes they're close - sometimes they're
+            not!
           </Typography>
         </CardContent>
       </Collapse>

@@ -9,7 +9,7 @@ import Button from "@mui/material/Button";
 import styles from "../styles/List.module.css";
 import Link from "next/link";
 import { Box } from "@mui/system";
-import { TextField } from "@mui/material";
+import { Stack, TextField } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import { useRouter } from "next/router";
 
@@ -20,11 +20,12 @@ export default function PostcodeSearch() {
   const [listOfAddresses, setListOfAddresses] = useState([]);
   const [postcode, setPostcode] = useState("");
   const { data: session, status } = useSession();
+  const [errorInput, setErrorInput] = useState(false);
 
   const router = useRouter();
   const { pid } = router.query;
 
-  const onSubmit = () => {
+  const onSearchSubmit = () => {
     setSubmitted(true);
     setAdded(false);
     setFailed(false);
@@ -57,12 +58,21 @@ export default function PostcodeSearch() {
       .then(function (response) {
         const receivedData = response.data;
         console.log(receivedData);
-        const newData = [];
-        // console.log(status)
-        for (const i in receivedData) {
-          newData.push([i, receivedData[i]]);
+
+        if (Object.keys(receivedData).length === 0) {
+          setErrorInput(true);
+        } else {
+          setErrorInput(false);
+          const newData = [];
+          for (const i in receivedData) {
+            newData.push([i, receivedData[i]]);
+          }
+          setListOfAddresses(newData);
         }
-        setListOfAddresses(newData);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setErrorInput(true);
       });
   };
 
@@ -97,7 +107,7 @@ export default function PostcodeSearch() {
       <Head>
         <title> Housing Passport | Search </title>
       </Head>
-      <Box
+      <Stack
         component="form"
         sx={{
           "& .MuiTextField-root": { m: 1, width: "25ch" },
@@ -106,19 +116,31 @@ export default function PostcodeSearch() {
         // autoComplete="off"
       >
         <div>
-          <TextField
-            required
-            id="postcode"
-            label="Postcode"
-            value={postcode}
-            onChange={(e) => setPostcode(e.target.value)}
-          />
-          <Button variant="contained" onClick={onSubmit}>
+          {!errorInput && (
+            <TextField
+              required
+              id="postcode"
+              label="Postcode"
+              value={postcode}
+              onChange={(e) => setPostcode(e.target.value)}
+            />
+          )}
+          {errorInput && (
+            <TextField
+              error
+              id="postcode"
+              label="Postcode"
+              value={postcode}
+              onChange={(e) => setPostcode(e.target.value)}
+              helperText="That's not a valid postcode!"
+            />
+          )}
+          <Button variant="contained" onClick={onSearchSubmit}>
             Submit
           </Button>
         </div>
-      </Box>
-      {isSubmitted && (
+      </Stack>
+      {isSubmitted && !errorInput && (
         <div className="listOfAddresses">
           <div>
             {" "}
@@ -170,7 +192,7 @@ export default function PostcodeSearch() {
       {isAdded && (
         <>
           <Alert severity="success"> Property added! </Alert>
-          <br> </br>
+          <br></br>
           <Link href="/myProperties"> View my properties </Link>
         </>
       )}

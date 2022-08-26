@@ -5,18 +5,21 @@ import datetime
 
 def consumption_retriever(energy_type, mpn, serial_number, auth_api):
 
-    url = "https://api.octopus.energy/v1/" + energy_type + "-meter-points/" + mpn + "/meters/" + serial_number + "/consumption/"
-    auth=(auth_api, '')
-    # params = {"page_size": 25000}
-    params = {"page_size": 25000, "period_from": "2021-06-01T00:00:00Z", "period_to": "2022-06-01T00:00:00Z"}
+    try:
+        url = "https://api.octopus.energy/v1/" + energy_type + "-meter-points/" + mpn + "/meters/" + serial_number + "/consumption/"
+        auth=(auth_api, '')
+        # params = {"page_size": 25000}
+        params = {"page_size": 25000, "period_from": "2021-06-01T00:00:00Z", "period_to": "2022-06-01T00:00:00Z"}
 
-    response = requests.get(url, auth=auth, params=params)
-    # response = requests.get(url, auth=auth)
-    response_data = response.json()
-    results = response_data['results']
-    results_df = pd.DataFrame.from_records(results)
-    print(results_df)
-    return results_df
+        response = requests.get(url, auth=auth, params=params)
+        # response = requests.get(url, auth=auth)
+        response_data = response.json()
+        results = response_data['results']
+        results_df = pd.DataFrame.from_records(results)
+        print(results_df)
+        return results_df
+    except Exception as e:
+        return e
 
 
 # trial_auth = 'sk_live_F6fSk8HDazIy7wKmWnWA3tD9'

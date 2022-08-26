@@ -12,7 +12,8 @@ const AccuracyTester = ({
   authKey,
   totalFloorArea,
   handleAccuracySubmit,
-  energyConsCurrent
+  energyConsCurrent,
+  handleCredentialsError
 }) => {
   const [annualElec, setAnnualElec] = useState();
   const [annualGas, setAnnualGas] = useState();
@@ -20,6 +21,7 @@ const AccuracyTester = ({
   const [realECC, setRealECC] = useState();
   const [reply, setReply] = useState(false);
   const [higher, setHigher] = useState("");
+  const [firstRenderStopper, setFirstRenderStopper] = useState(false);
 
   useEffect(() => {
     authKey = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9";
@@ -27,6 +29,7 @@ const AccuracyTester = ({
     serialElec = "Z18N333768";
     mprn = "511319507";
     serialGas = "E6S17789941861";
+    if(firstRenderStopper === true) {
     axios
       .post("http://localhost:5000/api/check_accuracy", {
         lmk_key,
@@ -41,6 +44,7 @@ const AccuracyTester = ({
       .then(function (response) {
         const receivedData = response.data;
         console.log(receivedData);
+        handleCredentialsError(false)
         setAnnualElec(receivedData["annualElec"]);
         setAnnualGas(receivedData["annualGas"]);
         setFloorArea(receivedData["floorArea"]);
@@ -51,7 +55,12 @@ const AccuracyTester = ({
         } else if (parseFloat(energyConsCurrent) <= parseFloat(realECC)){
           setHigher("empiric")
         }
+      }).catch(function (error){
+        console.log("there's an error over here:")
+        handleCredentialsError(true)
       });
+    }
+    setFirstRenderStopper(true)
   }, [handleAccuracySubmit]);
 
   return (

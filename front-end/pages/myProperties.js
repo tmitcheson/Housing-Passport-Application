@@ -3,6 +3,7 @@ import { useLayoutEffect, useRef } from "react";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 import axios from "axios";
 import BasicTabs from "../components/EpcTabs";
@@ -13,7 +14,7 @@ import RecsAndCosts from "../components/RecsAndCosts";
 import RecStats from "../components/recommendationPrices.json" assert { type: "json" };
 import RecsToggle from "../components/RecsToggle";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import Alert from "@mui/material/Alert"
+import Alert from "@mui/material/Alert";
 import Link from "next/link";
 import Head from "next/head";
 
@@ -33,13 +34,15 @@ const MyProperties = () => {
   const [accuracySubmit, setAccuracySubmit] = useState(false);
   const [privateRetrofits, setPrivateRetrofits] = useState([]);
   const [publicRetrofits, setPublicRetrofits] = useState([]);
+  const [noRecommendations, setNoRecommendations] = useState(false);
 
-  const[isLoading, setLoading]  = useState(false)
+  const [isLoading, setLoading] = useState(false);
 
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     if (session) {
       const email = session.user.email;
       axios
@@ -89,7 +92,7 @@ const MyProperties = () => {
               recommendations: recommendationsTemp,
             });
             setMyProperties(newProperties);
-            setLoading(false)
+            setLoading(false);
           }
         })
         .catch(function (error) {
@@ -106,66 +109,76 @@ const MyProperties = () => {
     } else {
       // do things after first render
       /* THIS SECTION ADDS THE PRICES OF PAYBACK PERIODS OF THE RECS */
+      if (chosenProperty["recommendations"][0][0] !== null) {
+        setNoRecommendations(false)
+        for (let i = 0; i < chosenProperty["recommendations"].length; i++) {
+          for (let j = 0; j < RecStats.recList.length; j++) {
+            if (
+              chosenProperty["recommendations"][i][0]
+                .toLowerCase()
+                .replaceAll(" ", "_")
+                .includes(RecStats.recList[j])
+            ) {
+              console.log(chosenProperty["recommendations"][i][0]);
+              const builtForm = chosenProperty["content"]["BUILT_FORM"]
+                .toLowerCase()
+                .replaceAll("-", "_");
+              if (RecStats.builtForms.includes(builtForm)) {
+                const timeBackNow = (
+                  RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
+                  RecStats.BillSavings[builtForm][RecStats.recList[j]]
+                ).toFixed(2);
+                const timeBackLast = (
+                  RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
+                  (RecStats.BillSavings[builtForm][RecStats.recList[j]] * 0.57)
+                ).toFixed(2);
+                const timeBackNext = (
+                  RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
+                  (RecStats.BillSavings[builtForm][RecStats.recList[j]] * 1.81)
+                ).toFixed(2);
 
-      for (let i = 0; i < chosenProperty["recommendations"].length; i++) {
-        for (let j = 0; j < RecStats.recList.length; j++) {
-          if (
-            chosenProperty["recommendations"][i][0]
-              .toLowerCase()
-              .replaceAll(" ", "_")
-              .includes(RecStats.recList[j])
-          ) {
-            console.log(chosenProperty["recommendations"][i][0]);
-            const builtForm = chosenProperty["content"]["BUILT_FORM"]
-              .toLowerCase()
-              .replaceAll("-", "_");
-            if (RecStats.builtForms.includes(builtForm)) {
-              const timeBackNow = (
-                RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
-                RecStats.BillSavings[builtForm][RecStats.recList[j]]
-              ).toFixed(2);
-              const timeBackLast = (
-                RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
-                (RecStats.BillSavings[builtForm][RecStats.recList[j]] * 0.57)
-              ).toFixed(2);
-              const timeBackNext = (
-                RecStats.InstallationCost[builtForm][RecStats.recList[j]] /
-                (RecStats.BillSavings[builtForm][RecStats.recList[j]] * 1.81)
-              ).toFixed(2);
+                chosenProperty["recommendations"][i][2] =
+                  timeBackLast + " years";
+                chosenProperty["recommendations"][i][3] =
+                  timeBackNow + " years";
+                chosenProperty["recommendations"][i][4] =
+                  timeBackNext + " years";
+              } else {
+                const timeBackNow = (
+                  RecStats.InstallationCost[RecStats.recList[j]] /
+                  RecStats.BillSavings[RecStats.recList[j]]
+                ).toFixed(2);
+                const timeBackLast = (
+                  RecStats.InstallationCost[RecStats.recList[j]] /
+                  (RecStats.BillSavings[RecStats.recList[j]] * 0.57)
+                ).toFixed(2);
+                const timeBackNext = (
+                  RecStats.InstallationCost[RecStats.recList[j]] /
+                  (RecStats.BillSavings[RecStats.recList[j]] * 1.81)
+                ).toFixed(2);
 
-              chosenProperty["recommendations"][i][2] = timeBackLast + " years";
-              chosenProperty["recommendations"][i][3] = timeBackNow + " years";
-              chosenProperty["recommendations"][i][4] = timeBackNext + " years";
-            } else {
-              const timeBackNow = (
-                RecStats.InstallationCost[RecStats.recList[j]] /
-                RecStats.BillSavings[RecStats.recList[j]]
-              ).toFixed(2);
-              const timeBackLast = (
-                RecStats.InstallationCost[RecStats.recList[j]] /
-                (RecStats.BillSavings[RecStats.recList[j]] * 0.57)
-              ).toFixed(2);
-              const timeBackNext = (
-                RecStats.InstallationCost[RecStats.recList[j]] /
-                (RecStats.BillSavings[RecStats.recList[j]] * 1.81)
-              ).toFixed(2);
-
-              chosenProperty["recommendations"][i][2] = timeBackLast + " years";
-              chosenProperty["recommendations"][i][3] = timeBackNow + " years";
-              chosenProperty["recommendations"][i][4] = timeBackNext + " years";
+                chosenProperty["recommendations"][i][2] =
+                  timeBackLast + " years";
+                chosenProperty["recommendations"][i][3] =
+                  timeBackNow + " years";
+                chosenProperty["recommendations"][i][4] =
+                  timeBackNext + " years";
+              }
+              setRecommendations(chosenProperty["recommendations"]);
+              setPrivateRetrofits(chosenProperty["privateRetrofits"]);
+              setPublicRetrofits(chosenProperty["publicRetrofits"]);
+              setRecomSubmit(true);
+              console.log(chosenProperty);
             }
-            setRecommendations(chosenProperty["recommendations"]);
-            setPrivateRetrofits(chosenProperty["privateRetrofits"]);
-            setPublicRetrofits(chosenProperty["publicRetrofits"]);
-            setRecomSubmit(true);
-            console.log(chosenProperty)
           }
         }
+      } else {
+        setNoRecommendations(true);
       }
     }
   }, [chosenProperty]);
 
-  if(isLoading) return <p> Loading... </p>
+  if (isLoading) return <p> Loading... </p>;
 
   const onDeleteProperty = (address) => {
     console.log(address);
@@ -240,7 +253,7 @@ const MyProperties = () => {
         }
       });
   };
-  
+
   return (
     <>
       <Head>
@@ -285,11 +298,17 @@ const MyProperties = () => {
               {deleted === 1 && (
                 <Alert severity="success">
                   {" "}
-                  Delete successful. Please refresh the page to see the update{" "}
+                  Delete successful. Page refreshing to update...{" "}
+                  {setTimeout(() => {
+                    router.reload(window.location.pathname);
+                  }, 1500)}
                 </Alert>
               )}
               {deleted === 2 && (
-                <Alert severity="error"> Delete unsuccessful. Please try again. </Alert>
+                <Alert severity="error">
+                  {" "}
+                  Delete unsuccessful. Please try again.{" "}
+                </Alert>
               )}
               <h2> Building Information </h2>
               <BasicTabs chosenProperty={chosenProperty} />
@@ -321,82 +340,94 @@ const MyProperties = () => {
                   );
                 })}
               <hr />
-              <h2>
-                {" "}
-                Recommendations for {chosenProperty["address"]}{" "}
-                <RecsToggle
-                  paybackOrCosts={paybackOrCosts}
-                  handlePaybackOrCosts={(paybackOrCosts) =>
-                    setPaybackOrCosts(paybackOrCosts)
-                  }
-                ></RecsToggle>{" "}
-              </h2>
-              {isRecomSubmit && paybackOrCosts === "costs" && (
-                <RecsAndCosts
-                  recommendations={recommendations}
-                  address={chosenProperty["content"]["ADDRESS"]}
-                  lmk_key={chosenProperty["content"]["LMK_KEY"]}
-                />
+              {noRecommendations && (
+                <h1> No recommendations at this property ! </h1>
               )}
-              {isRecomSubmit && paybackOrCosts === "payback" && (
-                <RecsAndPayback
-                  recommendations={recommendations}
-                  chosenProperty={chosenProperty}
-                />
-              )}
-              {session.user.role === "homeowner" && (
+              {!noRecommendations && (
                 <>
-                  <h4>
+                  <h2>
                     {" "}
-                    Time to act on the recommendations? This one-stop-shop
-                    approach means that whenever you decide you are ready to act
-                    on these recommendations, you are able to extends
-                    permissions to your house to one of these tradespeople who
-                    have signed up to our service
-                  </h4>
-                  <Button
-                    type="submit"
-                    size="small"
-                    variant="text"
-                    onClick={(e) => onRetrieveTradesClick(e)}
-                  >
-                    Find a tradesperson
-                  </Button>
-                  {isTradeSubmit && (
-                    <h4>
-                      {" "}
-                      Extend permissions for {chosenProperty["address"]} to ...{" "}
-                    </h4>
+                    Recommendations for {chosenProperty["address"]}{" "}
+                    <RecsToggle
+                      paybackOrCosts={paybackOrCosts}
+                      handlePaybackOrCosts={(paybackOrCosts) =>
+                        setPaybackOrCosts(paybackOrCosts)
+                      }
+                    ></RecsToggle>{" "}
+                  </h2>
+                  {isRecomSubmit && paybackOrCosts === "costs" && (
+                    <RecsAndCosts
+                      recommendations={recommendations}
+                      address={chosenProperty["content"]["ADDRESS"]}
+                      lmk_key={chosenProperty["content"]["LMK_KEY"]}
+                    />
                   )}
-                  {isTradeSubmit &&
-                    listOfTradespeople.map((item) => {
-                      return (
-                        <div className={styles.single} key={item}>
-                          {item[1]}
-                          <Button
-                            type="submit"
-                            size="small"
-                            variant="text"
-                            onClick={(e) =>
-                              onExtendTradeClick(
-                                e,
-                                chosenProperty["content"]["LMK_KEY"],
-                                item[1],
-                                session.user.email,
-                                publicRetrofits,
-                                privateRetrofits
-                              )
-                            }
-                          >
-                            {" "}
-                            Extend permissions{" "}
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  {isAdded && <Alert severity="success"> Permissions extended</Alert>}
-                  {isFailed && <Alert severity="error"> Something went wrong</Alert>}
-                  <hr />
+                  {isRecomSubmit && paybackOrCosts === "payback" && (
+                    <RecsAndPayback
+                      recommendations={recommendations}
+                      chosenProperty={chosenProperty}
+                    />
+                  )}
+                  {session.user.role === "homeowner" && (
+                    <>
+                      <h4>
+                        {" "}
+                        Time to act on the recommendations? This one-stop-shop
+                        approach means that whenever you decide you are ready to
+                        act on these recommendations, you are able to extends
+                        permissions to your house to one of these tradespeople
+                        who have signed up to our service
+                      </h4>
+                      <Button
+                        type="submit"
+                        size="small"
+                        variant="text"
+                        onClick={(e) => onRetrieveTradesClick(e)}
+                      >
+                        Find a tradesperson
+                      </Button>
+                      {isTradeSubmit && (
+                        <h4>
+                          {" "}
+                          Extend permissions for {chosenProperty["address"]} to
+                          ...{" "}
+                        </h4>
+                      )}
+                      {isTradeSubmit &&
+                        listOfTradespeople.map((item) => {
+                          return (
+                            <div className={styles.single} key={item}>
+                              {item[1]}
+                              <Button
+                                type="submit"
+                                size="small"
+                                variant="text"
+                                onClick={(e) =>
+                                  onExtendTradeClick(
+                                    e,
+                                    chosenProperty["content"]["LMK_KEY"],
+                                    item[1],
+                                    session.user.email,
+                                    publicRetrofits,
+                                    privateRetrofits
+                                  )
+                                }
+                              >
+                                {" "}
+                                Extend permissions{" "}
+                              </Button>
+                            </div>
+                          );
+                        })}
+                      {isAdded && (
+                        <Alert severity="success"> Permissions extended</Alert>
+                      )}
+                      {isFailed && (
+                        <Alert severity="error"> Something went wrong</Alert>
+                      )}
+                      <hr />
+                    </>
+                  )}
                 </>
               )}
             </>
