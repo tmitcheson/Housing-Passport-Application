@@ -74,7 +74,8 @@ const ConsumptionComparison = ({
 
     if(firstRenderStopper){
       axios
-        .post("http://localhost:5000/api/compare_property", {
+        // .post("http://localhost:5000/api/compare_property", {
+        .post("https://housing-passport-app.vercel.app/api/compare_property", {
           builtForm,
           age,
           floorArea,

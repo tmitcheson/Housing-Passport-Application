@@ -17,8 +17,12 @@ const propertyDetails = () => {
   useEffect(() => {
     const lmk_key = router.query["lmk"];
     console.log(lmk_key);
+    // axios
+    // .post("http://localhost:5000/api/get_a_doc", { lmk_key })
     axios
-      .post("http://localhost:5000/api/get_a_doc", { lmk_key })
+      .post("https://housing-passport-app.vercel.app/api/get_a_doc", {
+        lmk_key,
+      })
       .then(function (response) {
         console.log(response.data);
         const epcData = response.data;

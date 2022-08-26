@@ -31,7 +31,8 @@ const AccuracyTester = ({
     serialGas = "E6S17789941861";
     if(firstRenderStopper === true) {
     axios
-      .post("http://localhost:5000/api/check_accuracy", {
+      // .post("http://localhost:5000/api/check_accuracy", {
+      .post("https://housing-passport-app.vercel.app/api/check_accuracy", {
         lmk_key,
         mprn,
         serialElec,
@@ -40,7 +41,6 @@ const AccuracyTester = ({
         authKey,
         totalFloorArea,
       })
-      // axios.post('https://housing-passport-back-end.herokuapp.com/api/check_accuracy')
       .then(function (response) {
         const receivedData = response.data;
         console.log(receivedData);

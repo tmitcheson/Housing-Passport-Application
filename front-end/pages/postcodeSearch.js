@@ -53,8 +53,8 @@ export default function PostcodeSearch() {
     const data = JSON.parse('{"postcode":"' + manipulatedPostcode + '"}');
 
     axios
-      .post("http://localhost:5000/api/get_list_of_addresses", { data })
-      // axios.post('https://housing-passport-back-end.herokuapp.com/api/get_list_of_addresses', {data})
+      // .post("http://localhost:5000/api/get_list_of_addresses", { data })
+      .post('https://housing-passport-back-end.herokuapp.com/api/get_list_of_addresses', {data})
       .then(function (response) {
         const receivedData = response.data;
         console.log(receivedData);
@@ -83,8 +83,8 @@ export default function PostcodeSearch() {
     data = JSON.parse(data);
     console.log("payload ready to go: " + data);
     axios
-      .post("http://localhost:5000/api/add_property_to_user", { data })
-      // axios.post('https://housing-passport-back-end.herokuapp.com/api/add_property_to_user', {data})
+      // .post("http://localhost:5000/api/add_property_to_user", { data })
+      .post('https://housing-passport-back-end.herokuapp.com/api/add_property_to_user', {data})
       .then(function (response) {
         console.log(response);
         if (response.data === "False") {

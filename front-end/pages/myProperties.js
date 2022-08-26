@@ -46,8 +46,11 @@ const MyProperties = () => {
     if (session) {
       const email = session.user.email;
       axios
-        .post("http://localhost:5000/api/retrieve_my_properties", { email })
-        // axios.post('https://housing-passport-back-end.herokuapp.com/api/retrieve_my_properties', {data})
+        // .post("http://localhost:5000/api/retrieve_my_properties", { email })
+        .post(
+          "https://housing-passport-back-end.herokuapp.com/api/retrieve_my_properties",
+          { email }
+        )
         .then(function (response) {
           const receivedData = response.data;
           const newProperties = [];
@@ -110,7 +113,7 @@ const MyProperties = () => {
       // do things after first render
       /* THIS SECTION ADDS THE PRICES OF PAYBACK PERIODS OF THE RECS */
       if (chosenProperty["recommendations"][0][0] !== null) {
-        setNoRecommendations(false)
+        setNoRecommendations(false);
         for (let i = 0; i < chosenProperty["recommendations"].length; i++) {
           for (let j = 0; j < RecStats.recList.length; j++) {
             if (
@@ -184,11 +187,14 @@ const MyProperties = () => {
     console.log(address);
     const email = session.user.email;
     axios
-      .post("http://localhost:5000/api/delete_property_from_user", {
-        address,
-        email,
-      })
-      // axios.post('https://housing-passport-back-end.herokuapp.com/api/delete_property_from_user', {address})
+      // .post("http://localhost:5000/api/delete_property_from_user", {
+      .post(
+        "https://housing-passport-back-end.herokuapp.com/api/delete_property_from_user",
+        {
+          address,
+          email,
+        }
+      )
       .then(function (response) {
         if (response.data === "True") {
           console.log("woo");
@@ -202,8 +208,10 @@ const MyProperties = () => {
 
   const onRetrieveTradesClick = () => {
     axios
-      .post("http://localhost:5000/api/get_list_of_tradespeople")
-      // axios.post('https://housing-passport-back-end.herokuapp.com/api/get_my_property')
+      // .post("http://localhost:5000/api/get_list_of_tradespeople")
+      .post(
+        "https://housing-passport-back-end.herokuapp.com/api/get_list_of_tradespeople"
+      )
       .then(function (response) {
         const receivedTradespeople = response.data;
         console.log("tradies: " + receivedTradespeople);
@@ -237,10 +245,10 @@ const MyProperties = () => {
     };
 
     axios
-      .post("http://localhost:5000/api/extend_permissions_to_tradesperson", {
+    // .post("http://localhost:5000/api/extend_permissions_to_tradesperson", {
+    .post('https://housing-passport-back-end.herokuapp.com/api/extend_permissions_to_tradesperson', {
         data,
       })
-      // axios.post('https://housing-passport-back-end.herokuapp.com/api/extend_permissions_to_tradesperon', {data}))
       .then(function (response) {
         console.log(response);
         if (response.data === "False") {

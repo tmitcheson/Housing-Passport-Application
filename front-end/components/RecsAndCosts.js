@@ -13,7 +13,7 @@ const RecsAndCosts = ({ recommendations, address, lmk_key }) => {
   const [retrosForCosts, setRetrosForCosts] = useState([]);
   const { data: session, status } = useSession();
 
-  const router = useRouter()
+  const router = useRouter();
 
   const handleAchieved = (index) => {
     setDone(index);
@@ -21,15 +21,19 @@ const RecsAndCosts = ({ recommendations, address, lmk_key }) => {
 
   const handleShare = (retrofit, cost, index) => {
     const email = session.user.email;
+    // axios
+    // .post("http://localhost:5000/api/update_retrofit_share", {
     axios
-      .post("http://localhost:5000/api/update_retrofit_share", {
-        retrofit,
-        cost,
-        lmk_key,
-        address,
-        email,
-      })
-      // axios.post('https://housing-passport-back-end.herokuapp.com/api/update_retrofit_share', {retrofit}))
+      .post(
+        "https://housing-passport-back-end.herokuapp.com/api/update_retrofit_share",
+        {
+          retrofit,
+          cost,
+          lmk_key,
+          address,
+          email,
+        }
+      )
       .then(function (response) {
         console.log(response.data);
         if (response.data === "True") {
@@ -42,13 +46,17 @@ const RecsAndCosts = ({ recommendations, address, lmk_key }) => {
 
   const handleNoShare = (retrofit, index) => {
     const email = session.user.email;
+    // axios
+    // .post("http://localhost:5000/api/update_retrofit_no_share", {
     axios
-      .post("http://localhost:5000/api/update_retrofit_no_share", {
-        retrofit,
-        email,
-        address,
-      })
-      // axios.post('https://housing-passport-back-end.herokuapp.com/api/update_retrofit_no_share', {retrofit}))
+      .post(
+        "https://housing-passport-back-end.herokuapp.com/api/update_retrofit_no_share",
+        {
+          retrofit,
+          email,
+          address,
+        }
+      )
       .then(function (response) {
         console.log(response);
         if (response.data === "True") {
@@ -115,23 +123,23 @@ const RecsAndCosts = ({ recommendations, address, lmk_key }) => {
                 </td>
               )}
               {successfulNoShare === index && (
-                  <td>
-                    {" "}
-                    Retrofit added. Page will refresh to update in 3 seconds{" "}
-                    {setTimeout(() => {
-                      router.reload(window.location.pathname);
-                    }, 3000)}
-                  </td>
+                <td>
+                  {" "}
+                  Retrofit added. Page will refresh to update in 3 seconds{" "}
+                  {setTimeout(() => {
+                    router.reload(window.location.pathname);
+                  }, 3000)}
+                </td>
               )}
               {successfulShare === index && (
-                  <td>
-                    {" "}
-                    Retrofit added. Page will refresh to update in 3 seconds{" "}
-                    {setTimeout(() => {
-                      router.reload(window.location.pathname);
-                    }, 3000)}
-                  </td>
-                )}
+                <td>
+                  {" "}
+                  Retrofit added. Page will refresh to update in 3 seconds{" "}
+                  {setTimeout(() => {
+                    router.reload(window.location.pathname);
+                  }, 3000)}
+                </td>
+              )}
             </tr>
           );
         })}

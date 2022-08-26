@@ -55,8 +55,11 @@ const Insights = () => {
     if (session) {
       const email = session.user.email;
       axios
-        .post("http://localhost:5000/api/retrieve_my_properties", { email })
-        // axios.post('https://housing-passport-back-end.herokuapp.com/api/retrieve_my_properties', {data})
+        // .post("http://localhost:5000/api/retrieve_my_properties", { email })
+        .post(
+          "https://housing-passport-back-end.herokuapp.com/api/retrieve_my_properties",
+          { email }
+        )
         .then(function (response) {
           const receivedData = response.data;
           const newProperties = [];
