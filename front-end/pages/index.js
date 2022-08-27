@@ -12,15 +12,15 @@ import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor:"#fff",
+  backgroundColor: "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
   textAlign: "center",
-  verticalAlign:"sub",
-  fontSize:"17px",
+  verticalAlign: "sub",
+  fontSize: "17px",
   color: "#333",
-  '&:hover':{backgroundColor:"#87CB76"},
-  fontFamily:"Nunito"
+  "&:hover": { backgroundColor: "#87CB76" },
+  fontFamily: "Nunito",
 }));
 
 export default function Home() {
@@ -32,6 +32,9 @@ export default function Home() {
       <>
         <Head>
           <title> Housing Passport | Home </title>
+          <meta
+            name="Housing Passport"
+            content="Housing Passport application EPC Energy Efficiency"/>
         </Head>
         <h1>
           Welcome {session.user.name} the {session.user.role}!
@@ -39,19 +42,18 @@ export default function Home() {
 
         <Box sx={{ width: "100%" }}>
           <Stack spacing={2}>
-            <Item sx={{textAlign:"left"}}>
-              <SearchIcon color="green" fontSize="large"/>{" "}
-              Search for your property on the Postcode Search Page
+            <Item sx={{ textAlign: "left" }}>
+              <SearchIcon color="green" fontSize="large" /> Search for your
+              property on the Postcode Search Page
             </Item>
-            <Item sx={{textAlign:"right"}}>
+            <Item sx={{ textAlign: "right" }}>
               Then browse its energy efficiency information on the My Properties
-              page{" "}
-              <SummarizeIcon fontSize="large"/>
+              page <SummarizeIcon fontSize="large" />
             </Item>
-            <Item sx={{textAlign:"left"}}>
-              <AnalyticsIcon fontSize="large"/>{" "}
-              If you are an Octopus Energy customer, then you're able to get
-              real consumption information on our Insights page{" "}
+            <Item sx={{ textAlign: "left" }}>
+              <AnalyticsIcon fontSize="large" /> If you are an Octopus Energy
+              customer, then you're able to get real consumption information on
+              our Insights page{" "}
             </Item>
           </Stack>
         </Box>

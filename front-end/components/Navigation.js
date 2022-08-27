@@ -8,7 +8,7 @@ const Navigation = () => {
     <nav>
       <div className="logo">
         {/* <h1> Housing Passport Application </h1> */}
-        <img src="/Logo2.png" />
+        <img src="/Logo2.png" alt="HousingP Passport logo"/>
         {status === "authenticated" && (
           <>
             <h5>
