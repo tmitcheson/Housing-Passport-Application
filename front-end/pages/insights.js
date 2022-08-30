@@ -41,6 +41,8 @@ const Insights = () => {
   const [chosenMonth, setChosenMonth] = useState("");
   const [mprn, setMprn] = useState("");
   const [serialGas, setSerialGas] = useState("");
+  const [gasSubmit, setGasSubmit] = useState(false);
+  const [totalConsumption, setTotalConsumption] = useState(0);
 
   const [isLoading, setLoading] = useState(false);
 
@@ -98,6 +100,7 @@ const Insights = () => {
   const handleComparisonSubmit = () => {
     handleAccuracySubmit();
     handleCompareSubmit();
+    setGasSubmit(true)
   };
 
   return (
@@ -248,44 +251,49 @@ const Insights = () => {
                     </Alert>
                   )}
                   <br></br>
-                  <Grid container spacing={2}>
-                    <Grid item>
-                      <AccuracyTester
-                        lmk_key={chosenProperty["content"]["LMK_KEY"]}
-                        mpan={mpn}
-                        serialElec={serialNumber}
-                        mprn={mprn}
-                        serialGas={serialGas}
-                        authKey={authKey}
-                        totalFloorArea={
-                          chosenProperty["content"]["TOTAL_FLOOR_AREA"]
-                        }
-                        energyConsCurrent={
-                          chosenProperty["content"][
-                            "ENERGY_CONSUMPTION_CURRENT"
-                          ]
-                        }
-                        handleAccuracySubmit={accuracySubmit}
-                        handleCredentialsError={(credentialsError) =>
-                          setCredentialsError(credentialsError)
-                        }
-                      ></AccuracyTester>
+                  {!credentialsError && gasSubmit && (
+                    <Grid container spacing={2}>
+                      <Grid item>
+                        <AccuracyTester
+                          lmk_key={chosenProperty["content"]["LMK_KEY"]}
+                          mpan={mpn}
+                          serialElec={serialNumber}
+                          mprn={mprn}
+                          serialGas={serialGas}
+                          authKey={authKey}
+                          totalFloorArea={
+                            chosenProperty["content"]["TOTAL_FLOOR_AREA"]
+                          }
+                          energyConsCurrent={
+                            chosenProperty["content"][
+                              "ENERGY_CONSUMPTION_CURRENT"
+                            ]
+                          }
+                          handleAccuracySubmit={accuracySubmit}
+                          handleCredentialsError={(credentialsError) =>
+                            setCredentialsError(credentialsError)
+                          }
+                          handleTotalConsumption={(totalConsumption) =>
+                            setTotalConsumption(totalConsumption)}
+                        ></AccuracyTester>
+                      </Grid>
+                      <Grid item>
+                        <ConsumptionComparison
+                          chosenProperty={chosenProperty}
+                          mpan={mpn}
+                          serialElec={serialNumber}
+                          mprn={mprn}
+                          serialGas={serialGas}
+                          authKey={authKey}
+                          handleCompareSubmit={compareSubmit}
+                          handleCredentialsError={(credentialsError) =>
+                            setCredentialsError(credentialsError)
+                          }
+                          totalConsumption={totalConsumption}
+                        ></ConsumptionComparison>
+                      </Grid>
                     </Grid>
-                    <Grid item>
-                      <ConsumptionComparison
-                        chosenProperty={chosenProperty}
-                        mpan={mpn}
-                        serialElec={serialNumber}
-                        mprn={mprn}
-                        serialGas={serialGas}
-                        authKey={authKey}
-                        handleCompareSubmit={compareSubmit}
-                        handleCredentialsError={(credentialsError) =>
-                          setCredentialsError(credentialsError)
-                        }
-                      ></ConsumptionComparison>
-                    </Grid>
-                  </Grid>
+                  )}
                 </>
               )}{" "}
             </>

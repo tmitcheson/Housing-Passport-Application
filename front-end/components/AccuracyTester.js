@@ -13,7 +13,8 @@ const AccuracyTester = ({
   totalFloorArea,
   handleAccuracySubmit,
   energyConsCurrent,
-  handleCredentialsError
+  handleCredentialsError,
+  handleTotalConsumption
 }) => {
   const [annualElec, setAnnualElec] = useState();
   const [annualGas, setAnnualGas] = useState();
@@ -29,10 +30,10 @@ const AccuracyTester = ({
     serialElec = "Z18N333768";
     mprn = "511319507";
     serialGas = "E6S17789941861";
-    if(firstRenderStopper === true) {
+    // if(firstRenderStopper === true) {
     axios
       // .post("http://localhost:5000/api/check_accuracy", {
-      .post("https://housing-passport-app.vercel.app/api/check_accuracy", {
+      .post("https://housing-passport-back-end.herokuapp.com/api/check_accuracy", {
         lmk_key,
         mprn,
         serialElec,
@@ -47,6 +48,7 @@ const AccuracyTester = ({
         handleCredentialsError(false)
         setAnnualElec(receivedData["annualElec"]);
         setAnnualGas(receivedData["annualGas"]);
+        handleTotalConsumption((receivedData["annualElec"] + receivedData["annualGas"]).toFixed(2))
         setFloorArea(receivedData["floorArea"]);
         setRealECC(receivedData["result"].toFixed(2));
         setReply(true);
@@ -59,8 +61,8 @@ const AccuracyTester = ({
         console.log("there's an error over here:")
         handleCredentialsError(true)
       });
-    }
-    setFirstRenderStopper(true)
+    // }
+    // setFirstRenderStopper(true)
   }, [handleAccuracySubmit]);
 
   return (

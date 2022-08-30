@@ -45,7 +45,7 @@ export default function AccuracyTesterCard({
         <Typography fontFamily="Nunito" variant="body1">
           Based on your real energy consumption, your Current Energy
           Consumption, in kWh/m{<sup>2</sup>}/year, should be:{" "}
-          <span className="special-word">{realECC}</span>.<br></br>
+          <span className="special-word">{realECC}</span><br></br>
           <br></br>
           However it is currently described as:{" "}
           <span className="special-word">{energyConsCurrent}</span>

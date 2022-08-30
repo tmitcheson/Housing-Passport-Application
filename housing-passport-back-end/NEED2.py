@@ -14,7 +14,10 @@ def RadNeighbours(args, region):
 
     args = np.array(args).reshape(1,-1)
     result = model.predict(args)
-    return result
+    # print(model.n_samples_fit_)
+    # print(model.n_features_in_)
+    neigh1, neigh2 = model.radius_neighbors(args, radius=1.0)
+    return result, len(neigh2[0])
 
 args = [[4, 1, 1, 1]]
 region = "E12000001"

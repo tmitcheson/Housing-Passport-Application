@@ -245,10 +245,13 @@ const MyProperties = () => {
     };
 
     axios
-    // .post("http://localhost:5000/api/extend_permissions_to_tradesperson", {
-    .post('https://housing-passport-back-end.herokuapp.com/api/extend_permissions_to_tradesperson', {
-        data,
-      })
+      // .post("http://localhost:5000/api/extend_permissions_to_tradesperson", {
+      .post(
+        "https://housing-passport-back-end.herokuapp.com/api/extend_permissions_to_tradesperson",
+        {
+          data,
+        }
+      )
       .then(function (response) {
         console.log(response);
         if (response.data === "False") {
@@ -307,9 +310,7 @@ const MyProperties = () => {
                 <Alert severity="success">
                   {" "}
                   Delete successful. Page refreshing to update...{" "}
-                  {setTimeout(() => {
-                    router.reload(window.location.pathname);
-                  }, 1500)}
+                  {router.reload()}
                 </Alert>
               )}
               {deleted === 2 && (
@@ -355,7 +356,7 @@ const MyProperties = () => {
                 <>
                   <h2>
                     {" "}
-                    Recommendations for {chosenProperty["address"]}{" "}
+                    Recommendations for {chosenProperty["address"]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <RecsToggle
                       paybackOrCosts={paybackOrCosts}
                       handlePaybackOrCosts={(paybackOrCosts) =>

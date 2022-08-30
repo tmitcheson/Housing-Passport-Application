@@ -454,10 +454,10 @@ def compare_property():
     imd = math.ceil(imd_decile/2)
 
     args = [propType, ageBand, areaBand, imd]
-    answer = RadNeighbours(args, region)
+    answer, count = RadNeighbours(args, region)
     print(answer)
     print(region)
-    payload = '{"result":' + str(answer) + ',"args":' + str(args) + ',"region":"' + str(region) + '"}'
+    payload = '{"result":' + str(answer) + ',"args":' + str(args) + ',"region":"' + str(region) + '","count":' + count '}'
     print(payload)
     payload_json = json.loads(payload)
 

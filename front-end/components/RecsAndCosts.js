@@ -125,19 +125,15 @@ const RecsAndCosts = ({ recommendations, address, lmk_key }) => {
               {successfulNoShare === index && (
                 <td>
                   {" "}
-                  Retrofit added. Page will refresh to update in 3 seconds{" "}
-                  {setTimeout(() => {
-                    router.reload(window.location.pathname);
-                  }, 3000)}
+                  Retrofit added. Page will refresh to update.{" "}
+                  {router.reload()};
                 </td>
               )}
               {successfulShare === index && (
                 <td>
                   {" "}
-                  Retrofit added. Page will refresh to update in 3 seconds{" "}
-                  {setTimeout(() => {
-                    router.reload(window.location.pathname);
-                  }, 3000)}
+                  Retrofit added. Page will refresh to update.{" "}
+                  {router.reload()};
                 </td>
               )}
             </tr>

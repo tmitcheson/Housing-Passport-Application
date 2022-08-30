@@ -11,14 +11,15 @@ const ConsumptionComparison = ({
   serialGas,
   authKey,
   handleCompareSubmit,
-  handleCredentialsError
+  handleCredentialsError,
+  totalConsumption
 }) => {
   const [result, setResult] = useState();
   const [floorAreaSend, setFloorAreaSend] = useState();
   const [imd, setImd] = useState();
   const [region, setRegion] = useState()
-  const [credentialsError, setCredentialsError] = useState(false);
   const [firstRenderStopper, setFirstRenderStopper] = useState(false);
+  const [count, setCount] = useState();
 
   const regionConverter = (code) => {
     switch(code){
@@ -72,10 +73,10 @@ const ConsumptionComparison = ({
     let postcode = chosenProperty["content"]["POSTCODE"];
     let walls = chosenProperty["content"]["WALLS_DESCRIPTION"];
 
-    if(firstRenderStopper){
+    // if(firstRenderStopper){
       axios
         // .post("http://localhost:5000/api/compare_property", {
-        .post("https://housing-passport-app.vercel.app/api/compare_property", {
+        .post("https://housing-passport-back-end.herokuapp.com/api/compare_property", {
           builtForm,
           age,
           floorArea,
@@ -89,12 +90,13 @@ const ConsumptionComparison = ({
           setResult(parseFloat(receivedData["result"]).toFixed(2));
           setFloorAreaSend(floorAreaConverter(receivedData["args"][2]))
           setImd(receivedData["args"][3])
+          setCount(receivedData["count"])
           setRegion(regionConverter(receivedData["region"]))
         }).catch(function(error){
           handleCredentialsError(true)
         });
-      }
-      setFirstRenderStopper(true)
+      // }
+      // setFirstRenderStopper(true)
   }, [handleCompareSubmit]);
 
   return (
@@ -105,6 +107,8 @@ const ConsumptionComparison = ({
       floorArea={floorAreaSend}
       imd={imd}
       region={region}
+      totalConsumption={totalConsumption}
+      count={count}
     />
   );
 };

@@ -29,6 +29,8 @@ export default function AccuracyTesterCard({
   floorArea,
   imd,
   region,
+  totalConsumption,
+  count,
 }) {
   const [expanded, setExpanded] = React.useState(false);
 
@@ -37,7 +39,7 @@ export default function AccuracyTesterCard({
   };
 
   return (
-    <Card fontFamily="Nunito" sx={{maxWidth: 460 }}>
+    <Card fontFamily="Nunito" sx={{ maxWidth: 460 }}>
       <CardMedia
         component="img"
         height="180"
@@ -45,20 +47,27 @@ export default function AccuracyTesterCard({
         alt="compare"
       />
       <CardHeader title="Consumption Comparison Tester" />
-      <CardContent >
+      <CardContent>
         <Typography fontFamily="Nunito" variant="body1">
+          You are currently consuming{" "}
+          <span className="special-word">{totalConsumption}</span>kWh/year
+          <br></br>
+          <br></br>
           Based on the characterics of your property, properties with a similar
           disposition are averaging consumption levels around:{" "}
-          <span className="special-word">{result}</span> . <br></br>
+          <span className="special-word">{result}</span>kWh/year <br></br>
           <br></br>
-          Based on a <span className="special-word">{builtForm}</span> property
-          built <span className="special-word">{age}</span> in the{" "}
+        </Typography>
+        <Typography fontFamily="Nunito" variant="body2">
+          Based on <span className="special-word">{count}</span> properties like
+          yours... Based on a <span className="special-word">{builtForm}</span>{" "}
+          property built <span className="special-word">{age}</span> in the{" "}
           <span className="special-word">{region}</span> region of the country,
           with a floor area of{" "}
           <span className="special-word">
             {floorArea}m{<sup>2</sup>}
           </span>{" "}
-          residing in an area with an index of multiple deprivation score of{" "}
+          and residing in an area with an index of multiple deprivation score of{" "}
           <span className="special-word">{imd}</span>.
         </Typography>
       </CardContent>
@@ -70,7 +79,9 @@ export default function AccuracyTesterCard({
           aria-label="show more"
         >
           {" "}
-          <Typography fontFamily="Nunito" variant="body1">How do we calculate this?</Typography>
+          <Typography fontFamily="Nunito" variant="body1">
+            How do we calculate this?
+          </Typography>
           <ExpandMoreIcon />
         </ExpandMore>
       </CardActions>
