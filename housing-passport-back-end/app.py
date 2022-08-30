@@ -457,7 +457,7 @@ def compare_property():
     answer, count = RadNeighbours(args, region)
     print(answer)
     print(region)
-    payload = '{"result":' + str(answer) + ',"args":' + str(args) + ',"region":"' + str(region) + '","count":' + count + '}'
+    payload = '{"result":' + str(answer) + ',"args":' + str(args) + ',"region":"' + str(region) + '","count":' + str(count) + '}'
     print(payload)
     payload_json = json.loads(payload)
 
