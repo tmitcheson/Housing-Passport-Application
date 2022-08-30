@@ -19,9 +19,6 @@ def RadNeighbours(args, region):
     neigh1, neigh2 = model.radius_neighbors(args, radius=1.0)
     return result, len(neigh2[0])
 
-args = [[4, 1, 1, 1]]
-region = "E12000001"
-
 print(RadNeighbours(args, region))
 
 # ''' MAKE STRING VARIABLES ORDINAL NUMBERS '''
