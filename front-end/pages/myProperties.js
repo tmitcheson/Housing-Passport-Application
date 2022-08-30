@@ -29,13 +29,10 @@ const MyProperties = () => {
   const [isAdded, setAdded] = useState(false);
   const [myProperties, setMyProperties] = useState([]);
   const [chosenProperty, setChosenProperty] = useState();
-  const [updateGraph, setUpdateGraph] = useState(false);
   const [paybackOrCosts, setPaybackOrCosts] = useState("costs");
-  const [accuracySubmit, setAccuracySubmit] = useState(false);
   const [privateRetrofits, setPrivateRetrofits] = useState([]);
   const [publicRetrofits, setPublicRetrofits] = useState([]);
   const [noRecommendations, setNoRecommendations] = useState(false);
-
   const [isLoading, setLoading] = useState(false);
 
   const { data: session, status } = useSession();
@@ -58,34 +55,37 @@ const MyProperties = () => {
             let tempPublicRetrofits = receivedData[i]["public_retrofits"];
             let tempPrivateRetrofits = receivedData[i]["private_retrofits"];
             let recommendationsTemp = receivedData[i]["recommendations"];
-            let indexesToRemove = [];
+            let retrofitsToRemove = [];
             if (tempPublicRetrofits && recommendationsTemp) {
               for (let i = 0; i < recommendationsTemp.length; i++) {
                 for (let j = 0; j < tempPublicRetrofits.length; j++) {
                   if (recommendationsTemp[i][0] === tempPublicRetrofits[j]) {
-                    indexesToRemove.push(i);
+                    retrofitsToRemove.push(recommendationsTemp[i][0]);
                   }
                 }
               }
             } else {
               console.log("no public retrofits");
             }
-            console.log("ye:");
-            console.log(recommendationsTemp);
-            console.log(tempPrivateRetrofits);
             if (tempPrivateRetrofits && recommendationsTemp) {
               for (let i = 0; i < recommendationsTemp.length; i++) {
                 for (let j = 0; j < tempPrivateRetrofits.length; j++) {
                   if (recommendationsTemp[i][0] === tempPrivateRetrofits[j]) {
-                    indexesToRemove.push(i);
+                    retrofitsToRemove.push(recommendationsTemp[i][0]);
                   }
                 }
               }
             } else {
               console.log("no private retrofits");
             }
-            for (let k = 0; k < indexesToRemove.length; k++) {
-              recommendationsTemp.splice(indexesToRemove[k], 1);
+            for (let k = 0; k < retrofitsToRemove.length; k++) {
+              // this is hella hacky
+              recommendationsTemp = recommendationsTemp.map((j) =>
+                j.filter((e) => e !== retrofitsToRemove[k])
+              );
+              recommendationsTemp = recommendationsTemp.filter(
+                (j) => j.length > 1
+              );
             }
             newProperties.push({
               address: receivedData[i]["address"],
@@ -122,7 +122,6 @@ const MyProperties = () => {
                 .replaceAll(" ", "_")
                 .includes(RecStats.recList[j])
             ) {
-              console.log(chosenProperty["recommendations"][i][0]);
               const builtForm = chosenProperty["content"]["BUILT_FORM"]
                 .toLowerCase()
                 .replaceAll("-", "_");
@@ -171,7 +170,6 @@ const MyProperties = () => {
               setPrivateRetrofits(chosenProperty["privateRetrofits"]);
               setPublicRetrofits(chosenProperty["publicRetrofits"]);
               setRecomSubmit(true);
-              console.log(chosenProperty);
             }
           }
         }
@@ -184,7 +182,6 @@ const MyProperties = () => {
   if (isLoading) return <p> Loading... </p>;
 
   const onDeleteProperty = (address) => {
-    console.log(address);
     const email = session.user.email;
     axios
       // .post("http://localhost:5000/api/delete_property_from_user", {
@@ -233,9 +230,6 @@ const MyProperties = () => {
     public_retrofits,
     private_retrofits
   ) => {
-    console.log(lmk_key);
-    console.log(tradeEmail);
-    console.log(homeownerEmail);
     let data = {
       lmk_key: lmk_key,
       tradeEmail: tradeEmail,
@@ -321,33 +315,39 @@ const MyProperties = () => {
               )}
               <h2> Building Information </h2>
               <BasicTabs chosenProperty={chosenProperty} />
-              {publicRetrofits &&
-                publicRetrofits.map((item) => {
-                  return (
-                    <>
-                      <div> Retrofits undertaken (public): </div>
-                      <div className={styles.single} key={item}>
-                        <CheckBoxIcon sx={{ color: "green" }}></CheckBoxIcon>
-                        {"  "}
-                        {item}
-                      </div>
-                    </>
-                  );
-                })}
+              {publicRetrofits && (
+                <>
+                  <div> Retrofits undertaken (public): </div>
+                  {publicRetrofits.map((item) => {
+                    return (
+                      <>
+                        <div className={styles.single} key={item}>
+                          <CheckBoxIcon sx={{ color: "green" }}></CheckBoxIcon>
+                          {"  "}
+                          {item}
+                        </div>
+                      </>
+                    );
+                  })}
+                </>
+              )}
 
-              {privateRetrofits &&
-                privateRetrofits.map((item) => {
-                  return (
-                    <>
-                      <div> Retrofits undertaken (private to you): </div>
-                      <div className={styles.single} key={item}>
-                        <CheckBoxIcon sx={{ color: "green" }}></CheckBoxIcon>
-                        {"  "}
-                        {item}
-                      </div>
-                    </>
-                  );
-                })}
+              {privateRetrofits && (
+                <>
+                  <div> Retrofits undertaken (private to you): </div>
+                  {privateRetrofits.map((item) => {
+                    return (
+                      <>
+                        <div className={styles.single} key={item}>
+                          <CheckBoxIcon sx={{ color: "green" }}></CheckBoxIcon>
+                          {"  "}
+                          {item}
+                        </div>
+                      </>
+                    );
+                  })}
+                </>
+              )}
               <hr />
               {noRecommendations && (
                 <h1> No recommendations at this property ! </h1>
@@ -356,7 +356,8 @@ const MyProperties = () => {
                 <>
                   <h2>
                     {" "}
-                    Recommendations for {chosenProperty["address"]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Recommendations for {chosenProperty["address"]}
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <RecsToggle
                       paybackOrCosts={paybackOrCosts}
                       handlePaybackOrCosts={(paybackOrCosts) =>

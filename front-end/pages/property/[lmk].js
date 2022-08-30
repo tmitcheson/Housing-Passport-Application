@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import BasicTabs from "../../components/EpcTabs";
 import { useState } from "react";
-import { set } from "react-hook-form";
 import styles from "../../styles/List.module.css";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
@@ -20,7 +19,7 @@ const propertyDetails = () => {
     // axios
     // .post("http://localhost:5000/api/get_a_doc", { lmk_key })
     axios
-      .post("https://housing-passport-app.vercel.app/api/get_a_doc", {
+      .post("https://housing-passport-back-end.herokuapp.com/api/get_a_doc", {
         lmk_key,
       })
       .then(function (response) {

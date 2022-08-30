@@ -49,19 +49,19 @@ export default function AccuracyTesterCard({
       <CardHeader title="Consumption Comparison Tester" />
       <CardContent>
         <Typography fontFamily="Nunito" variant="body1">
-          You are currently consuming{" "}
+          You are currently consuming{" "} 
           <span className="special-word">{totalConsumption}</span>kWh/year
           <br></br>
           <br></br>
-          Based on the characterics of your property, properties with a similar
-          disposition are averaging consumption levels around:{" "}
+          Based on the characterics of your property,{" "}
+          <span className="special-word">{count}</span> properties with a
+          similar disposition are averaging consumption levels around:{" "}
           <span className="special-word">{result}</span>kWh/year <br></br>
           <br></br>
         </Typography>
         <Typography fontFamily="Nunito" variant="body2">
-          Based on <span className="special-word">{count}</span> properties like
-          yours... Based on a <span className="special-word">{builtForm}</span>{" "}
-          property built <span className="special-word">{age}</span> in the{" "}
+          Based on a <span className="special-word">{builtForm}</span> property
+          built <span className="special-word">{age}</span> in the{" "}
           <span className="special-word">{region}</span> region of the country,
           with a floor area of{" "}
           <span className="special-word">

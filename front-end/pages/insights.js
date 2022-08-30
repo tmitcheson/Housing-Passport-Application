@@ -1,28 +1,18 @@
 import { useSession, getSession } from "next-auth/react";
-import { useLayoutEffect, useRef } from "react";
 import { useState } from "react";
 import { Button, Stack } from "@mui/material";
 import { useEffect } from "react";
-
 import axios from "axios";
-import BasicTabs from "../components/EpcTabs";
 import SelectProperty from "../components/SelectProperty";
 import Grid from "@mui/material/Grid";
 import { Alert } from "@mui/material";
-
-import styles from "../styles/List.module.css";
 import SmartVsPrice from "../components/SmartVsPrice";
 import ConsumptionComparison from "../components/ConsumptionComparison";
-
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import RecsToggle from "../components/RecsToggle";
 import AccuracyTester from "../components/AccuracyTester";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import Link from "next/link";
-import Head from "next/head";
 
 const Insights = () => {
   const [isSelectSubmit, setSelectSubmit] = useState(false);
@@ -43,6 +33,7 @@ const Insights = () => {
   const [serialGas, setSerialGas] = useState("");
   const [gasSubmit, setGasSubmit] = useState(false);
   const [totalConsumption, setTotalConsumption] = useState(0);
+  const [rightProperty, setRightProperty] = useState(false);
 
   const [isLoading, setLoading] = useState(false);
 
@@ -100,12 +91,18 @@ const Insights = () => {
   const handleComparisonSubmit = () => {
     handleAccuracySubmit();
     handleCompareSubmit();
-    setGasSubmit(true)
+    setGasSubmit(true);
   };
 
   return (
     <>
-      {session && (
+      {!session && (
+        <h1> You must be signed in to view this page </h1>
+      )}
+      {session.user.role === "tradesperson" && (
+        <h1> You must be a homeowner to view this page </h1>
+      )}
+      {session.user.role === "homeowner" && (
         <>
           <h2> Welcome to your insights page </h2>
           <h3> Choose a property: </h3>
@@ -252,47 +249,62 @@ const Insights = () => {
                   )}
                   <br></br>
                   {!credentialsError && gasSubmit && (
-                    <Grid container spacing={2}>
-                      <Grid item>
-                        <AccuracyTester
-                          lmk_key={chosenProperty["content"]["LMK_KEY"]}
-                          mpan={mpn}
-                          serialElec={serialNumber}
-                          mprn={mprn}
-                          serialGas={serialGas}
-                          authKey={authKey}
-                          totalFloorArea={
-                            chosenProperty["content"]["TOTAL_FLOOR_AREA"]
-                          }
-                          energyConsCurrent={
-                            chosenProperty["content"][
-                              "ENERGY_CONSUMPTION_CURRENT"
-                            ]
-                          }
-                          handleAccuracySubmit={accuracySubmit}
-                          handleCredentialsError={(credentialsError) =>
-                            setCredentialsError(credentialsError)
-                          }
-                          handleTotalConsumption={(totalConsumption) =>
-                            setTotalConsumption(totalConsumption)}
-                        ></AccuracyTester>
+                    <>
+                      {!rightProperty && (
+                        <Alert severity="warning">
+                          Double check your input credentials line up with the
+                          current property you have chosen at the top of the
+                          page. We are unable to automate verification for this
+                          ourselves{" "}
+                          <Button onClick={() => setRightProperty(true)}>
+                            {" "}
+                            Okay !
+                          </Button>
+                        </Alert>
+                      )}
+                      <Grid container spacing={2}>
+                        <Grid item>
+                          <AccuracyTester
+                            lmk_key={chosenProperty["content"]["LMK_KEY"]}
+                            mpan={mpn}
+                            serialElec={serialNumber}
+                            mprn={mprn}
+                            serialGas={serialGas}
+                            authKey={authKey}
+                            totalFloorArea={
+                              chosenProperty["content"]["TOTAL_FLOOR_AREA"]
+                            }
+                            energyConsCurrent={
+                              chosenProperty["content"][
+                                "ENERGY_CONSUMPTION_CURRENT"
+                              ]
+                            }
+                            handleAccuracySubmit={accuracySubmit}
+                            handleCredentialsError={(credentialsError) =>
+                              setCredentialsError(credentialsError)
+                            }
+                            handleTotalConsumption={(totalConsumption) =>
+                              setTotalConsumption(totalConsumption)
+                            }
+                          ></AccuracyTester>
+                        </Grid>
+                        <Grid item>
+                          <ConsumptionComparison
+                            chosenProperty={chosenProperty}
+                            mpan={mpn}
+                            serialElec={serialNumber}
+                            mprn={mprn}
+                            serialGas={serialGas}
+                            authKey={authKey}
+                            handleCompareSubmit={compareSubmit}
+                            handleCredentialsError={(credentialsError) =>
+                              setCredentialsError(credentialsError)
+                            }
+                            totalConsumption={totalConsumption}
+                          ></ConsumptionComparison>
+                        </Grid>
                       </Grid>
-                      <Grid item>
-                        <ConsumptionComparison
-                          chosenProperty={chosenProperty}
-                          mpan={mpn}
-                          serialElec={serialNumber}
-                          mprn={mprn}
-                          serialGas={serialGas}
-                          authKey={authKey}
-                          handleCompareSubmit={compareSubmit}
-                          handleCredentialsError={(credentialsError) =>
-                            setCredentialsError(credentialsError)
-                          }
-                          totalConsumption={totalConsumption}
-                        ></ConsumptionComparison>
-                      </Grid>
-                    </Grid>
+                    </>
                   )}
                 </>
               )}{" "}

@@ -153,16 +153,6 @@ export default function PostcodeSearch() {
                   key={item}
                 >
                   {item[0]}
-                  {session.user.role === "homeowner" && (
-                    <Button
-                      type="submit"
-                      size="small"
-                      variant="text"
-                      onClick={(e) => onSignedInClick(item, e)}
-                    >
-                      Claim Property
-                    </Button>
-                  )}
                   {!session && (
                     <Button
                       type="submit"
@@ -173,15 +163,29 @@ export default function PostcodeSearch() {
                       View Property
                     </Button>
                   )}
-                  {session.user.role === "tradesperson" && (
-                    <Button
-                      type="submit"
-                      size="small"
-                      variant="text"
-                      onClick={(e) => onSignedOutClick(item, e)}
-                    >
-                      View Property
-                    </Button>
+                  {session && (
+                    <>
+                    {session.user.role === "homeowner" && (
+                      <Button
+                        type="submit"
+                        size="small"
+                        variant="text"
+                        onClick={(e) => onSignedInClick(item, e)}
+                      >
+                        Claim Property
+                      </Button>
+                    )}
+                    {session.user.role === "tradesperson" && (
+                      <Button
+                        type="submit"
+                        size="small"
+                        variant="text"
+                        onClick={(e) => onSignedOutClick(item, e)}
+                      >
+                        View Property
+                      </Button>
+                    )}
+                    </>
                   )}
                 </div>
               );
