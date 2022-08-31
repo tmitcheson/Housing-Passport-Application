@@ -2,13 +2,11 @@ import axios from "axios";
 import React from "react";
 
 import Head from "next/head";
-import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useSession, getSession } from "next-auth/react";
 import Button from "@mui/material/Button";
 import styles from "../styles/List.module.css";
 import Link from "next/link";
-import { Box } from "@mui/system";
 import { Stack, TextField } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import { useRouter } from "next/router";
@@ -54,7 +52,10 @@ export default function PostcodeSearch() {
 
     axios
       // .post("http://localhost:5000/api/get_list_of_addresses", { data })
-      .post('https://housing-passport-back-end.herokuapp.com/api/get_list_of_addresses', {data})
+      .post(
+        "https://housing-passport-back-end.herokuapp.com/api/get_list_of_addresses",
+        { data }
+      )
       .then(function (response) {
         const receivedData = response.data;
         console.log(receivedData);
@@ -84,7 +85,10 @@ export default function PostcodeSearch() {
     console.log("payload ready to go: " + data);
     axios
       // .post("http://localhost:5000/api/add_property_to_user", { data })
-      .post('https://housing-passport-back-end.herokuapp.com/api/add_property_to_user', {data})
+      .post(
+        "https://housing-passport-back-end.herokuapp.com/api/add_property_to_user",
+        { data }
+      )
       .then(function (response) {
         console.log(response);
         if (response.data === "False") {
@@ -109,36 +113,35 @@ export default function PostcodeSearch() {
       </Head>
       <Stack
         component="form"
+        direction="row"
         sx={{
           "& .MuiTextField-root": { m: 1, width: "25ch" },
         }}
         noValidate
         // autoComplete="off"
       >
-        <div>
-          {!errorInput && (
-            <TextField
-              required
-              id="postcode"
-              label="Postcode"
-              value={postcode}
-              onChange={(e) => setPostcode(e.target.value)}
-            />
-          )}
-          {errorInput && (
-            <TextField
-              error
-              id="postcode"
-              label="Postcode"
-              value={postcode}
-              onChange={(e) => setPostcode(e.target.value)}
-              helperText="That's not a valid postcode!"
-            />
-          )}
-          <Button variant="contained" onClick={onSearchSubmit}>
-            Submit
-          </Button>
-        </div>
+        {!errorInput && (
+          <TextField
+            required
+            id="postcode"
+            label="Postcode"
+            value={postcode}
+            onChange={(e) => setPostcode(e.target.value)}
+          />
+        )}
+        {errorInput && (
+          <TextField
+            error
+            id="postcode"
+            label="Postcode"
+            value={postcode}
+            onChange={(e) => setPostcode(e.target.value)}
+            helperText="That's not a valid postcode!"
+          />
+        )}
+        <Button variant="contained" onClick={onSearchSubmit}>
+          Submit
+        </Button>
       </Stack>
       {isSubmitted && !errorInput && (
         <div className="listOfAddresses">
@@ -165,26 +168,26 @@ export default function PostcodeSearch() {
                   )}
                   {session && (
                     <>
-                    {session.user.role === "homeowner" && (
-                      <Button
-                        type="submit"
-                        size="small"
-                        variant="text"
-                        onClick={(e) => onSignedInClick(item, e)}
-                      >
-                        Claim Property
-                      </Button>
-                    )}
-                    {session.user.role === "tradesperson" && (
-                      <Button
-                        type="submit"
-                        size="small"
-                        variant="text"
-                        onClick={(e) => onSignedOutClick(item, e)}
-                      >
-                        View Property
-                      </Button>
-                    )}
+                      {session.user.role === "homeowner" && (
+                        <Button
+                          type="submit"
+                          size="small"
+                          variant="text"
+                          onClick={(e) => onSignedInClick(item, e)}
+                        >
+                          Claim Property
+                        </Button>
+                      )}
+                      {session.user.role === "tradesperson" && (
+                        <Button
+                          type="submit"
+                          size="small"
+                          variant="text"
+                          onClick={(e) => onSignedOutClick(item, e)}
+                        >
+                          View Property
+                        </Button>
+                      )}
                     </>
                   )}
                 </div>
@@ -203,7 +206,6 @@ export default function PostcodeSearch() {
       {isFailed && (
         <Alert severity="error"> Something went wrong! Please try again.</Alert>
       )}
-      {/* </form> */}
     </>
   );
 }
