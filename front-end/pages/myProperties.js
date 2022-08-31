@@ -303,8 +303,7 @@ const MyProperties = () => {
               {deleted === 1 && (
                 <Alert severity="success">
                   {" "}
-                  Delete successful. Page refreshing to update...{" "}
-                  {window.location.reload()}
+                  Delete successful. Please refresh...{" "}
                 </Alert>
               )}
               {deleted === 2 && (
