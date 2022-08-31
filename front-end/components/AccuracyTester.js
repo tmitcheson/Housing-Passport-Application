@@ -25,12 +25,7 @@ const AccuracyTester = ({
   const [firstRenderStopper, setFirstRenderStopper] = useState(false);
 
   useEffect(() => {
-    // authKey = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9";
-    // mpan = "1200038779673";
-    // serialElec = "Z18N333768";
-    // mprn = "511319507";
-    // serialGas = "E6S17789941861";
-    // if(firstRenderStopper === true) {
+
     axios
       // .post("http://localhost:5000/api/check_accuracy", {
       .post("https://housing-passport-back-end.herokuapp.com/api/check_accuracy", {
@@ -61,8 +56,6 @@ const AccuracyTester = ({
         console.log("there's an error over here:")
         handleCredentialsError(true)
       });
-    // }
-    // setFirstRenderStopper(true)
   }, [handleAccuracySubmit]);
 
   return (

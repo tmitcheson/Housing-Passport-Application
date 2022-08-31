@@ -80,13 +80,7 @@ const SmartVsPrice = ({
     } else {
       console.log("Huh");
     }
-
-    // const mprn = "1250038779673";
-    // const mprn = "1200038779673";
-    // const serial_number = "Z18N333768";
-    // const auth_key = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9";
-
-    const mprn = mpn;
+    const mpan = mpn;
     const serial_number = serialNumber;
     const auth_key = authKey;
 
@@ -109,7 +103,7 @@ const SmartVsPrice = ({
     axios
       .get(
         "https://api.octopus.energy/v1/electricity-meter-points/" +
-          mprn +
+          mpan +
           "/meters/" +
           serial_number +
           "/consumption/",
