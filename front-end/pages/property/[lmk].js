@@ -17,8 +17,8 @@ const propertyDetails = () => {
     const lmk_key = router.query["lmk"];
     console.log(lmk_key);
     // axios
-    // .post("http://localhost:5000/api/get_a_doc", { lmk_key })
     axios
+    // .post("http://localhost:5000/api/get_a_doc", { lmk_key })
       .post("https://housing-passport-back-end.herokuapp.com/api/get_a_doc", {
         lmk_key,
       })

@@ -82,9 +82,13 @@ const SmartVsPrice = ({
     }
 
     // const mprn = "1250038779673";
-    const mprn = "1200038779673";
-    const serial_number = "Z18N333768";
-    const auth_key = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9";
+    // const mprn = "1200038779673";
+    // const serial_number = "Z18N333768";
+    // const auth_key = "sk_live_F6fSk8HDazIy7wKmWnWA3tD9";
+
+    const mprn = mpn;
+    const serial_number = serialNumber;
+    const auth_key = authKey;
 
     // to find a month's data, we're gonna have to start period from from
     // first day of month and period to from first day of next month minus 1
