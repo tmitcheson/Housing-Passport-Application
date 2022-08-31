@@ -14,6 +14,16 @@ from pymongoUtilityFunctions import addTradesPersonToProperty, addEPCDataToUser,
 from neighboursUtilityFunctions import fromBuiltFormToPropType, fromFloorAreaToBand, fromPostcodeToRegion, fromAgeToAgeBand
 from NEED2 import RadNeighbours
 
+from authlib.integrations.flask_oauth2 import ResourceProtector
+from validator import Auth0JWTBearerTokenValidator
+
+require_auth = ResourceProtector()
+validator = Auth0JWTBearerTokenValidator(
+    "dev-5g0j9i2z.us.auth0.com",
+    "https://housing-passport-backend.com"
+)
+require_auth.register_token_validator(validator)
+
 def fromRequestToJSON(request):
     data = request.data
     data = data.decode('utf-8')
