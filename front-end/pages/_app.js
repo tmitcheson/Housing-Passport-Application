@@ -7,13 +7,13 @@ import { Auth0Provider } from "@auth0/auth0-react";
 
 export default function App({ Component, pageProps }) {
   return (
-    <Auth0Provider>
-      <SessionProvider session={pageProps.session}>
+    <SessionProvider session={pageProps.session}>
+      <Auth0Provider>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </SessionProvider>
-    </Auth0Provider>
+      </Auth0Provider>
+    </SessionProvider>
   );
 }
 
