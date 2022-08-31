@@ -10,25 +10,19 @@ export default function App({ Component, pageProps }) {
     <Auth0Provider>
       <SessionProvider session={pageProps.session}>
         <Layout>
-          {Component.auth ? (
-            <Auth>
-              <Component {...pageProps} />
-            </Auth>
-          ) : (
-            <Component {...pageProps} />
-          )}
+          <Component {...pageProps} />
         </Layout>
       </SessionProvider>
     </Auth0Provider>
   );
 }
 
-function Auth({ children }) {
-  const { data: session, status } = useSession({ required: true });
+// function Auth({ children }) {
+//   const { data: session, status } = useSession({ required: true });
 
-  if (status === "loading") {
-    return <div> Loading... </div>;
-  }
+//   if (status === "loading") {
+//     return <div> Loading... </div>;
+//   }
 
-  return children;
-}
+//   return children;
+// }

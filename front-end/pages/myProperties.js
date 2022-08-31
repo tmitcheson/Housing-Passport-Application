@@ -303,7 +303,8 @@ const MyProperties = () => {
               {deleted === 1 && (
                 <Alert severity="success">
                   {" "}
-                  Delete successful. Please refresh...{" "}
+                  Delete successful. Page refreshing to update...{" "}
+                  {router.reload()}
                 </Alert>
               )}
               {deleted === 2 && (
